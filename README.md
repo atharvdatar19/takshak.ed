@@ -1,6 +1,3 @@
-# Mentor Bhaiyaaa – Opportunity Visibility Platform
-
-## 🚀 Innovit Phase 2 Submission
 
 Mentor Bhaiyaaa is a structured opportunity visibility platform built to solve information asymmetry faced by students from Tier-2 and Tier-3 cities. 
 
