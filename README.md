@@ -13,7 +13,7 @@ We centralize those opportunities and highlight deadlines so no student misses o
 🔗 https://mentorbhaiyaaa.base44.app
 
 ### 🛠 Under Development Full-Stack Prototype
-🔗 https://mentorbhaiyaaa_guidora.netlify.app
+🔗 https://mentorbhaiyaaaguidora.netlify.app
 
 ---
 
