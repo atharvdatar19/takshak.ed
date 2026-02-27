@@ -1,143 +1,139 @@
-import { useEffect, useState } from "react"
-import supabase from "../supabaseClient"
-import { motion } from "framer-motion"
-import { Building2, CalendarDays, AlertTriangle, TrendingUp } from "lucide-react"
+import { Building2, CalendarDays, IndianRupee, ShieldCheck, TrendingUp } from "lucide-react"
+import { useMemo } from "react"
+import DataState from "../components/DataState"
+import PageHeader from "../components/PageHeader"
+import { useAsyncData } from "../hooks/useAsyncData"
+import { APP_CONFIG } from "../lib/config"
+import { getDaysLeft, isWithinRange } from "../lib/date"
+import { getColleges, getExamsTimeline } from "../services/api"
+
+function StatCard({ icon: Icon, title, value, subtitle }) {
+  return (
+    <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="mb-4 inline-flex rounded-lg bg-indigo-50 p-2 text-indigo-700">
+        <Icon size={18} />
+      </div>
+      <h3 className="text-sm text-slate-500">{title}</h3>
+      <p className="mt-1 text-3xl font-semibold text-slate-900">{value}</p>
+      <p className="mt-1 text-xs text-slate-400">{subtitle}</p>
+    </article>
+  )
+}
 
 export default function Dashboard() {
-  const [colleges, setColleges] = useState([])
-  const [exams, setExams] = useState([])
-  const [loading, setLoading] = useState(true)
+  const collegesData = useAsyncData(getColleges, [])
+  const examsData = useAsyncData(getExamsTimeline, [])
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data: collegeData } = await supabase.from("colleges").select("*")
-      const { data: examData } = await supabase.from("exams_timeline").select("*")
-      setColleges(collegeData || [])
-      setExams(examData || [])
-      setLoading(false)
-    }
-    fetchData()
-  }, [])
+  const loading = collegesData.loading || examsData.loading
+  const error = collegesData.error || examsData.error
 
-  const today = new Date()
+  const colleges = collegesData.data
+  const exams = examsData.data
 
-  const closingSoon = colleges.filter(c => {
-    if (!c.application_end) return false
-    const diff = (new Date(c.application_end) - today) / (1000 * 60 * 60 * 24)
-    return diff <= 5 && diff >= 0
-  })
+  const closingSoon = useMemo(
+    () => colleges.filter(c => isWithinRange(c.application_end, 7)),
+    [colleges],
+  )
+  const upcomingExams = useMemo(() => exams.filter(e => isWithinRange(e.exam_date, 14)), [exams])
 
-  const upcomingExams = exams.filter(e => {
-    if (!e.exam_date) return false
-    const diff = (new Date(e.exam_date) - today) / (1000 * 60 * 60 * 24)
-    return diff >= 0 && diff <= 7
-  })
-
-  if (loading) {
-    return (
-      <div className="p-8">
-        <div className="animate-pulse text-gray-400">Loading Dashboard...</div>
-      </div>
-    )
-  }
+  const projectedMonthlyRevenue =
+    APP_CONFIG.pricing.pro * Math.max(1, Math.floor(colleges.length / 10))
 
   return (
-    <div className="p-6 md:p-10 bg-gray-50 min-h-screen">
-      
-      {/* Header */}
-      <motion.div 
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-10"
-      >
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
-          Dashboard Overview
-        </h1>
-        <p className="text-gray-500 mt-2">
-          Track opportunities, deadlines, and upcoming exams.
-        </p>
-      </motion.div>
+    <div>
+      <PageHeader
+        title="Investor-Ready Operations Dashboard"
+        description="Scalable admissions operations with monetization and risk visibility."
+        cta={
+          <div className="rounded-xl bg-slate-900 px-4 py-3 text-white">
+            <p className="text-xs text-slate-300">MRR Projection</p>
+            <p className="text-lg font-semibold">₹{projectedMonthlyRevenue.toLocaleString("en-IN")}</p>
+          </div>
+        }
+      />
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+      <DataState loading={loading} error={error} empty={!colleges.length && !exams.length}>
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          <StatCard
+            icon={Building2}
+            title="Active Opportunities"
+            value={colleges.length}
+            subtitle="Live institutions in admissions funnel"
+          />
+          <StatCard
+            icon={CalendarDays}
+            title="Exams in 14 Days"
+            value={upcomingExams.length}
+            subtitle="Time-sensitive preparation queue"
+          />
+          <StatCard
+            icon={TrendingUp}
+            title="Deadline Risk"
+            value={closingSoon.length}
+            subtitle="Applications closing within 7 days"
+          />
+          <StatCard
+            icon={IndianRupee}
+            title="Pro Plan Price"
+            value={`₹${APP_CONFIG.pricing.pro}`}
+            subtitle="Monetization baseline for B2C upsell"
+          />
+          <StatCard
+            icon={ShieldCheck}
+            title="Admin Coverage"
+            value="100%"
+            subtitle="Data visible in Admin Control panel"
+          />
+        </section>
 
-        <StatCard 
-          icon={Building2}
-          title="Total Opportunities"
-          value={colleges.length}
-          color="blue"
-        />
+        <section className="mt-6 grid gap-5 xl:grid-cols-2">
+          <InsightList
+            title="Critical Application Deadlines"
+            items={closingSoon.slice(0, 6).map(item => ({
+              id: item.id,
+              title: item.name,
+              daysLeft: getDaysLeft(item.application_end),
+            }))}
+            tone="rose"
+          />
 
-        <StatCard 
-          icon={CalendarDays}
-          title="Upcoming Exams (7 days)"
-          value={upcomingExams.length}
-          color="purple"
-        />
-
-        <StatCard 
-          icon={AlertTriangle}
-          title="Closing Soon"
-          value={closingSoon.length}
-          color="red"
-        />
-
-        <StatCard 
-          icon={TrendingUp}
-          title="Active Listings"
-          value={colleges.length}
-          color="green"
-        />
-
-      </div>
-
-      {/* Alert Section */}
-      {closingSoon.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="bg-red-50 border border-red-200 p-6 rounded-xl"
-        >
-          <h3 className="font-semibold text-red-700 mb-3">
-            ⚠ Applications Closing Soon
-          </h3>
-          <ul className="space-y-2 text-sm text-red-600">
-            {closingSoon.slice(0, 3).map((c, i) => (
-              <li key={i}>
-                {c.name} – closes on {new Date(c.application_end).toLocaleDateString()}
-              </li>
-            ))}
-          </ul>
-        </motion.div>
-      )}
+          <InsightList
+            title="Upcoming Exam Events"
+            items={upcomingExams.slice(0, 6).map(item => ({
+              id: item.id,
+              title: item.exam_name,
+              daysLeft: getDaysLeft(item.exam_date),
+            }))}
+            tone="indigo"
+          />
+        </section>
+      </DataState>
     </div>
   )
 }
 
-
-/* Reusable Stat Card Component */
-
-function StatCard({ icon: Icon, title, value, color }) {
-
-  const colorMap = {
-    blue: "bg-blue-50 text-blue-600",
-    purple: "bg-purple-50 text-purple-600",
-    red: "bg-red-50 text-red-600",
-    green: "bg-green-50 text-green-600",
-  }
-
+function InsightList({ title, items, tone }) {
   return (
-    <motion.div
-      whileHover={{ scale: 1.03 }}
-      className="bg-white p-6 rounded-2xl shadow-md transition"
-    >
-      <div className="flex items-center justify-between mb-4">
-        <div className={`p-3 rounded-xl ${colorMap[color]}`}>
-          <Icon size={22} />
-        </div>
-      </div>
-      <h3 className="text-gray-500 text-sm">{title}</h3>
-      <p className="text-3xl font-bold mt-2">{value}</p>
-    </motion.div>
+    <article className="rounded-2xl bg-white p-6 shadow-sm">
+      <h3 className="text-base font-semibold text-slate-900">{title}</h3>
+      {items.length === 0 ? (
+        <p className="mt-4 rounded-lg bg-slate-50 p-4 text-sm text-slate-500">No urgent items.</p>
+      ) : (
+        <ul className="mt-4 space-y-3">
+          {items.map(item => (
+            <li key={item.id} className="flex items-center justify-between rounded-lg bg-slate-50 p-3">
+              <span className="text-sm font-medium text-slate-800">{item.title}</span>
+              <span
+                className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                  tone === "rose" ? "bg-rose-100 text-rose-700" : "bg-indigo-100 text-indigo-700"
+                }`}
+              >
+                {item.daysLeft}d left
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </article>
   )
 }

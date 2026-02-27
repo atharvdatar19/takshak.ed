@@ -1,33 +1,33 @@
-import { useEffect, useState } from "react"
-import supabase from "../supabaseClient"
+import DataState from "../components/DataState"
+import PageHeader from "../components/PageHeader"
+import { formatDate, isWithinRange } from "../lib/date"
+import { useAsyncData } from "../hooks/useAsyncData"
+import { getColleges } from "../services/api"
 
 export default function Alerts() {
-  const [alerts, setAlerts] = useState([])
+  const { data: colleges, loading, error } = useAsyncData(getColleges, [])
 
-  useEffect(() => {
-    async function fetchAlerts() {
-      const { data } = await supabase.from("colleges").select("*")
-      const today = new Date()
-
-      const closing = (data || []).filter(c => {
-        const diff = (new Date(c.application_end) - today) / (1000*60*60*24)
-        return diff <= 5 && diff >= 0
-      })
-
-      setAlerts(closing)
-    }
-    fetchAlerts()
-  }, [])
+  const alerts = colleges.filter(college => isWithinRange(college.application_end, 5))
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6">Alerts</h2>
-      {alerts.length === 0 && <p>No urgent deadlines.</p>}
-      {alerts.map(a => (
-        <div key={a.id} className="bg-white p-4 mb-4 rounded shadow">
-          {a.name} is closing soon!
+      <PageHeader
+        title="Alerts"
+        description="Urgency feed for deadlines requiring immediate counselor action."
+      />
+
+      <DataState loading={loading} error={error} empty={alerts.length === 0}>
+        <div className="space-y-3">
+          {alerts.map(alert => (
+            <div key={alert.id} className="rounded-xl border border-rose-200 bg-white p-5 shadow-sm">
+              <p className="font-medium text-slate-900">{alert.name}</p>
+              <p className="mt-1 text-sm text-rose-700">
+                Application closes on {formatDate(alert.application_end)}
+              </p>
+            </div>
+          ))}
         </div>
-      ))}
+      </DataState>
     </div>
   )
 }
