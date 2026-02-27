@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom"
 import { APP_CONFIG } from "../lib/config"
+import ChatbotAssistant from "./chatbot/ChatbotAssistant"
 
 const links = [
   { to: "/dashboard", label: "Dashboard" },
@@ -36,6 +37,7 @@ export default function AppLayout({ children }) {
       </aside>
 
       <main className="flex-1 p-5 md:p-8">{children}</main>
+      <ChatbotAssistant />
     </div>
   )
 }
