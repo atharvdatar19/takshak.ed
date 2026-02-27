@@ -5,6 +5,7 @@ import CollegeDirectory from "./pages/CollegeDirectory"
 import Dashboard from "./pages/Dashboard"
 import Timeline from "./pages/Timeline"
 import AdminControl from "./pages/admin/AdminControl"
+import MentorMarketplace from "./pages/MentorMarketplace"
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/timeline" element={<Timeline />} />
           <Route path="/alerts" element={<Alerts />} />
           <Route path="/admin" element={<AdminControl />} />
+          <Route path="/mentors" element={<MentorMarketplace />} />
         </Routes>
       </AppLayout>
     </BrowserRouter>

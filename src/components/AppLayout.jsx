@@ -7,6 +7,7 @@ const links = [
   { to: "/", label: "College Directory" },
   { to: "/timeline", label: "Timeline" },
   { to: "/alerts", label: "Alerts" },
+  { to: "/mentors", label: "Mentor Marketplace" },
   { to: "/admin", label: "Admin Control" },
 ]
 
