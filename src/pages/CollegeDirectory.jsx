@@ -1,62 +1,67 @@
-import { useEffect, useState } from "react"
-import supabase from "../supabaseClient"
+import { useMemo, useState } from "react"
+import DataState from "../components/DataState"
+import PageHeader from "../components/PageHeader"
+import { formatDate, isWithinRange } from "../lib/date"
+import { trackEvent } from "../lib/analytics"
+import { useAsyncData } from "../hooks/useAsyncData"
+import { getColleges } from "../services/api"
 
 export default function CollegeDirectory() {
-  const [colleges, setColleges] = useState([])
   const [search, setSearch] = useState("")
+  const { data: colleges, loading, error } = useAsyncData(getColleges, [])
 
-  useEffect(() => {
-    async function fetchColleges() {
-      const { data } = await supabase
-        .from("colleges")
-        .select("*")
-        .order("application_end", { ascending: true })
-      setColleges(data || [])
-    }
-    fetchColleges()
-  }, [])
-
-  const today = new Date()
-
-  const filtered = colleges.filter(c =>
-    c.name.toLowerCase().includes(search.toLowerCase())
+  const filtered = useMemo(
+    () => colleges.filter(c => c.name?.toLowerCase().includes(search.toLowerCase())),
+    [colleges, search],
   )
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6">College Opportunities</h2>
-
-      <input
-        type="text"
-        placeholder="Search college..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="mb-6 p-2 border rounded w-full"
+      <PageHeader
+        title="College Opportunities"
+        description="Discovery pipeline for high-intent admissions opportunities across India."
       />
 
-      <div className="grid md:grid-cols-2 gap-6">
-        {filtered.map((college) => {
-          const diff = (new Date(college.application_end) - today) / (1000*60*60*24)
-          return (
-            <div key={college.id} className="bg-white p-6 rounded shadow">
-              <h3 className="font-bold text-lg">{college.name}</h3>
-              <p className="text-sm text-gray-600">{college.city}, {college.state}</p>
-              <p className="mt-2">{college.admission_type}</p>
-              <p className="mt-2">Last Date: {college.application_end}</p>
+      <div className="mb-6 rounded-xl bg-white p-4 shadow-sm">
+        <input
+          type="text"
+          placeholder="Search college..."
+          value={search}
+          onChange={event => setSearch(event.target.value)}
+          className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-none focus:border-indigo-500"
+        />
+      </div>
 
-              {diff <= 5 && diff >= 0 && (
-                <span className="text-sm bg-red-100 text-red-600 px-2 py-1 rounded mt-2 inline-block">
+      <DataState loading={loading} error={error} empty={filtered.length === 0}>
+        <div className="grid gap-5 lg:grid-cols-2">
+          {filtered.map(college => (
+            <article key={college.id} className="rounded-xl bg-white p-5 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-900">{college.name}</h3>
+              <p className="mt-1 text-sm text-slate-500">
+                {college.city}, {college.state}
+              </p>
+              <p className="mt-3 text-sm text-slate-700">Admission Type: {college.admission_type}</p>
+              <p className="text-sm text-slate-700">Last Date: {formatDate(college.application_end)}</p>
+
+              {isWithinRange(college.application_end, 5) && (
+                <span className="mt-3 inline-block rounded-full bg-rose-100 px-3 py-1 text-xs font-medium text-rose-700">
                   Closing Soon
                 </span>
               )}
 
-              <a href={college.official_link} target="_blank" className="text-blue-600 mt-4 block">
-                Official Link
+              <a
+                href={college.official_link}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => trackEvent("open_college_link", { collegeId: college.id })}
+                className="mt-4 block text-sm font-medium text-indigo-600"
+              >
+                Official Link →
               </a>
-            </div>
-          )
-        })}
-      </div>
+            </article>
+          ))}
+        </div>
+      </DataState>
     </div>
   )
 }

@@ -1,211 +1,139 @@
-import { useEffect, useState } from "react"
-import supabase from "../supabaseClient"
-import { motion } from "framer-motion"
-import {
-  AlertTriangle,
-  ArrowUpRight,
-  Building2,
-  CalendarDays,
-  Clock3,
-  TrendingUp,
-} from "lucide-react"
+import { Building2, CalendarDays, IndianRupee, ShieldCheck, TrendingUp } from "lucide-react"
+import { useMemo } from "react"
+import DataState from "../components/DataState"
+import PageHeader from "../components/PageHeader"
+import { useAsyncData } from "../hooks/useAsyncData"
+import { APP_CONFIG } from "../lib/config"
+import { getDaysLeft, isWithinRange } from "../lib/date"
+import { getColleges, getExamsTimeline } from "../services/api"
 
-function formatDate(value) {
-  return new Date(value).toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  })
-}
-
-function getDaysLeft(date) {
-  return Math.ceil((new Date(date) - new Date()) / (1000 * 60 * 60 * 24))
+function StatCard({ icon: Icon, title, value, subtitle }) {
+  return (
+    <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="mb-4 inline-flex rounded-lg bg-indigo-50 p-2 text-indigo-700">
+        <Icon size={18} />
+      </div>
+      <h3 className="text-sm text-slate-500">{title}</h3>
+      <p className="mt-1 text-3xl font-semibold text-slate-900">{value}</p>
+      <p className="mt-1 text-xs text-slate-400">{subtitle}</p>
+    </article>
+  )
 }
 
 export default function Dashboard() {
-  const [colleges, setColleges] = useState([])
-  const [exams, setExams] = useState([])
-  const [loading, setLoading] = useState(true)
+  const collegesData = useAsyncData(getColleges, [])
+  const examsData = useAsyncData(getExamsTimeline, [])
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data: collegeData } = await supabase.from("colleges").select("*")
-      const { data: examData } = await supabase.from("exams_timeline").select("*")
-      setColleges(collegeData || [])
-      setExams(examData || [])
-      setLoading(false)
-    }
+  const loading = collegesData.loading || examsData.loading
+  const error = collegesData.error || examsData.error
 
-    fetchData()
-  }, [])
+  const colleges = collegesData.data
+  const exams = examsData.data
 
-  const today = new Date()
+  const closingSoon = useMemo(
+    () => colleges.filter(c => isWithinRange(c.application_end, 7)),
+    [colleges],
+  )
+  const upcomingExams = useMemo(() => exams.filter(e => isWithinRange(e.exam_date, 14)), [exams])
 
-  const closingSoon = colleges
-    .filter(c => {
-      if (!c.application_end) return false
-      const diff = (new Date(c.application_end) - today) / (1000 * 60 * 60 * 24)
-      return diff <= 7 && diff >= 0
-    })
-    .sort((a, b) => new Date(a.application_end) - new Date(b.application_end))
-
-  const upcomingExams = exams
-    .filter(e => {
-      if (!e.exam_date) return false
-      const diff = (new Date(e.exam_date) - today) / (1000 * 60 * 60 * 24)
-      return diff >= 0 && diff <= 14
-    })
-    .sort((a, b) => new Date(a.exam_date) - new Date(b.exam_date))
-
-  if (loading) {
-    return (
-      <div className="rounded-3xl border border-slate-200 bg-white p-10 shadow-sm">
-        <div className="animate-pulse text-slate-500">Loading dashboard insights...</div>
-      </div>
-    )
-  }
+  const projectedMonthlyRevenue =
+    APP_CONFIG.pricing.pro * Math.max(1, Math.floor(colleges.length / 10))
 
   return (
-    <div className="space-y-8">
-      <motion.section
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-900 p-8 text-white shadow-xl"
-      >
-        <p className="text-sm uppercase tracking-[0.2em] text-slate-300">Professional Dashboard</p>
-        <h1 className="mt-2 text-3xl font-semibold md:text-4xl">Admissions Command Center</h1>
-        <p className="mt-3 max-w-2xl text-slate-200">
-          Keep your team aligned with upcoming exams, application deadlines, and active
-          opportunities from one executive-ready view.
-        </p>
-      </motion.section>
+    <div>
+      <PageHeader
+        title="Investor-Ready Operations Dashboard"
+        description="Scalable admissions operations with monetization and risk visibility."
+        cta={
+          <div className="rounded-xl bg-slate-900 px-4 py-3 text-white">
+            <p className="text-xs text-slate-300">MRR Projection</p>
+            <p className="text-lg font-semibold">₹{projectedMonthlyRevenue.toLocaleString("en-IN")}</p>
+          </div>
+        }
+      />
 
-      <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          icon={Building2}
-          title="Total Opportunities"
-          value={colleges.length}
-          subtitle="Live records from college directory"
-          color="indigo"
-        />
-        <StatCard
-          icon={CalendarDays}
-          title="Upcoming Exams"
-          value={upcomingExams.length}
-          subtitle="Scheduled within next 14 days"
-          color="violet"
-        />
-        <StatCard
-          icon={AlertTriangle}
-          title="Deadlines Approaching"
-          value={closingSoon.length}
-          subtitle="Applications closing within a week"
-          color="rose"
-        />
-        <StatCard
-          icon={TrendingUp}
-          title="Active Listings"
-          value={colleges.length}
-          subtitle="Potential opportunities to explore"
-          color="emerald"
-        />
-      </section>
+      <DataState loading={loading} error={error} empty={!colleges.length && !exams.length}>
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          <StatCard
+            icon={Building2}
+            title="Active Opportunities"
+            value={colleges.length}
+            subtitle="Live institutions in admissions funnel"
+          />
+          <StatCard
+            icon={CalendarDays}
+            title="Exams in 14 Days"
+            value={upcomingExams.length}
+            subtitle="Time-sensitive preparation queue"
+          />
+          <StatCard
+            icon={TrendingUp}
+            title="Deadline Risk"
+            value={closingSoon.length}
+            subtitle="Applications closing within 7 days"
+          />
+          <StatCard
+            icon={IndianRupee}
+            title="Pro Plan Price"
+            value={`₹${APP_CONFIG.pricing.pro}`}
+            subtitle="Monetization baseline for B2C upsell"
+          />
+          <StatCard
+            icon={ShieldCheck}
+            title="Admin Coverage"
+            value="100%"
+            subtitle="Data visible in Admin Control panel"
+          />
+        </section>
 
-      <section className="grid gap-5 xl:grid-cols-2">
-        <Panel
-          title="Application deadlines"
-          icon={Clock3}
-          iconClass="text-rose-500"
-          emptyText="No deadlines in the next 7 days."
-          items={closingSoon.slice(0, 5).map(item => ({
-            title: item.name,
-            meta: `Closes ${formatDate(item.application_end)}`,
-            tag: `${getDaysLeft(item.application_end)}d left`,
-            tone: "rose",
-          }))}
-        />
+        <section className="mt-6 grid gap-5 xl:grid-cols-2">
+          <InsightList
+            title="Critical Application Deadlines"
+            items={closingSoon.slice(0, 6).map(item => ({
+              id: item.id,
+              title: item.name,
+              daysLeft: getDaysLeft(item.application_end),
+            }))}
+            tone="rose"
+          />
 
-        <Panel
-          title="Upcoming exams"
-          icon={ArrowUpRight}
-          iconClass="text-indigo-500"
-          emptyText="No exams scheduled in the next 14 days."
-          items={upcomingExams.slice(0, 5).map(item => ({
-            title: item.exam_name,
-            meta: `${item.college_name || "College"} • ${formatDate(item.exam_date)}`,
-            tag: `${getDaysLeft(item.exam_date)}d left`,
-            tone: "indigo",
-          }))}
-        />
-      </section>
+          <InsightList
+            title="Upcoming Exam Events"
+            items={upcomingExams.slice(0, 6).map(item => ({
+              id: item.id,
+              title: item.exam_name,
+              daysLeft: getDaysLeft(item.exam_date),
+            }))}
+            tone="indigo"
+          />
+        </section>
+      </DataState>
     </div>
   )
 }
 
-function StatCard({ icon: Icon, title, value, subtitle, color }) {
-  const colorMap = {
-    indigo: "bg-indigo-100 text-indigo-700",
-    violet: "bg-violet-100 text-violet-700",
-    rose: "bg-rose-100 text-rose-700",
-    emerald: "bg-emerald-100 text-emerald-700",
-  }
-
+function InsightList({ title, items, tone }) {
   return (
-    <motion.div
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2 }}
-      className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-    >
-      <div className="mb-5 flex items-start justify-between">
-        <div className={`rounded-xl p-3 ${colorMap[color]}`}>
-          <Icon size={20} />
-        </div>
-      </div>
-      <p className="text-sm font-medium text-slate-500">{title}</p>
-      <p className="mt-2 text-3xl font-semibold text-slate-900">{value}</p>
-      <p className="mt-2 text-xs text-slate-400">{subtitle}</p>
-    </motion.div>
-  )
-}
-
-function Panel({ title, icon: Icon, iconClass, items, emptyText }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-    >
-      <div className="mb-4 flex items-center gap-2">
-        <Icon className={iconClass} size={18} />
-        <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-      </div>
-
+    <article className="rounded-2xl bg-white p-6 shadow-sm">
+      <h3 className="text-base font-semibold text-slate-900">{title}</h3>
       {items.length === 0 ? (
-        <p className="rounded-xl bg-slate-50 px-4 py-6 text-sm text-slate-500">{emptyText}</p>
+        <p className="mt-4 rounded-lg bg-slate-50 p-4 text-sm text-slate-500">No urgent items.</p>
       ) : (
-        <ul className="space-y-3">
-          {items.map((item, i) => (
-            <li
-              key={i}
-              className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3"
-            >
-              <div>
-                <p className="font-medium text-slate-800">{item.title}</p>
-                <p className="text-sm text-slate-500">{item.meta}</p>
-              </div>
+        <ul className="mt-4 space-y-3">
+          {items.map(item => (
+            <li key={item.id} className="flex items-center justify-between rounded-lg bg-slate-50 p-3">
+              <span className="text-sm font-medium text-slate-800">{item.title}</span>
               <span
-                className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                  item.tone === "rose"
-                    ? "bg-rose-100 text-rose-700"
-                    : "bg-indigo-100 text-indigo-700"
+                className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                  tone === "rose" ? "bg-rose-100 text-rose-700" : "bg-indigo-100 text-indigo-700"
                 }`}
               >
-                {item.tag}
+                {item.daysLeft}d left
               </span>
             </li>
           ))}
         </ul>
       )}
-    </motion.div>
+    </article>
   )
 }
