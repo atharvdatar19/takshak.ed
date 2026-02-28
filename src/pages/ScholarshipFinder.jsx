@@ -2,14 +2,14 @@ import { motion } from "framer-motion"
 import {
     Award,
     Calendar,
+    ChevronRight,
     DollarSign,
     ExternalLink,
-    Filter,
-    GraduationCap,
     Search,
     Sparkles,
 } from "lucide-react"
 import { useMemo, useState } from "react"
+import { useAutoReveal } from "../hooks/useScrollReveal"
 
 const DEMO_SCHOLARSHIPS = [
     { id: 1, name: "National Merit Scholarship", amount: "₹50,000/year", deadline: "2026-05-15", streams: ["PCM", "PCB", "Commerce", "Arts"], categories: ["General", "OBC", "SC", "ST"], income_limit: 800000, state: "All India", eligibility: "12th pass with 80%+", apply_link: "https://scholarships.gov.in" },
@@ -22,13 +22,14 @@ const DEMO_SCHOLARSHIPS = [
     { id: 8, name: "Vidyasiri Scholarship (Karnataka)", amount: "₹15,000-25,000/year", deadline: "2026-04-30", streams: ["PCM", "PCB", "Commerce", "Arts"], categories: ["General", "OBC", "SC", "ST"], income_limit: 250000, state: "Karnataka", eligibility: "Karnataka domicile, backward classes", apply_link: "https://sw.kar.nic.in" },
 ]
 
-const STREAMS = ["", "PCM", "PCB", "Commerce", "Arts"]
-const CATEGORIES = ["", "General", "OBC", "SC", "ST", "EWS"]
+const STREAMS = ["PCM", "PCB", "Commerce", "Arts"]
+const CATEGORIES = ["General", "OBC", "SC", "ST", "EWS"]
 
 export default function ScholarshipFinder() {
     const [search, setSearch] = useState("")
     const [stream, setStream] = useState("")
     const [category, setCategory] = useState("")
+    useAutoReveal()
 
     const filtered = useMemo(() => {
         return DEMO_SCHOLARSHIPS.filter(s => {
@@ -40,111 +41,79 @@ export default function ScholarshipFinder() {
     }, [search, stream, category])
 
     return (
-        <div className="space-y-6">
-            {/* Hero */}
-            <motion.section
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="card-gradient-orange rounded-3xl p-8 text-center text-white shadow-xl md:p-12"
-            >
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 shadow-lg">
-                    <Award size={40} />
-                </div>
-                <h1 className="text-4xl font-extrabold md:text-5xl">Scholarship Finder</h1>
-                <p className="mt-3 text-lg text-white/80">Discover scholarships you're eligible for — don't leave money on the table</p>
-            </motion.section>
-
-            {/* Filters */}
-            <motion.section
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="rounded-3xl border border-slate-200/60 bg-white p-5 shadow-card"
-            >
-                <div className="grid gap-3 md:grid-cols-3">
-                    <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
-                        <Search size={16} className="text-slate-400" />
-                        <input
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            placeholder="Search scholarships..."
-                            className="flex-1 bg-transparent text-sm outline-none"
-                        />
+        <div className="space-y-10 md:space-y-16">
+            {/* ═══ HERO ═══ */}
+            <section className="relative overflow-hidden rounded-[32px] card-gradient-orange px-8 py-12 text-white md:px-14 md:py-20">
+                <div className="orb orb-purple w-40 h-40 -top-10 right-10" />
+                <div className="relative z-10 text-center max-w-2xl mx-auto">
+                    <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-sm">
+                        <Award size={40} />
                     </div>
-                    <select value={stream} onChange={e => setStream(e.target.value)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
+                    <h1 className="text-display text-4xl md:text-6xl">Scholarship Finder</h1>
+                    <p className="text-body-lg mt-4 text-white/80 text-base">
+                        Discover scholarships you're eligible for — don't leave money on the table
+                    </p>
+                </div>
+            </section>
+
+            {/* ═══ FILTERS ═══ */}
+            <section className="reveal card-bb p-6 md:p-8">
+                <div className="grid gap-4 md:grid-cols-3">
+                    <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                        <Search size={16} className="text-slate-400" />
+                        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search scholarships..." className="flex-1 bg-transparent text-sm outline-none" />
+                    </div>
+                    <select value={stream} onChange={e => setStream(e.target.value)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
                         <option value="">All Streams</option>
-                        {STREAMS.filter(Boolean).map(s => <option key={s} value={s}>{s}</option>)}
+                        {STREAMS.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
-                    <select value={category} onChange={e => setCategory(e.target.value)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
+                    <select value={category} onChange={e => setCategory(e.target.value)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
                         <option value="">All Categories</option>
-                        {CATEGORIES.filter(Boolean).map(c => <option key={c} value={c}>{c}</option>)}
+                        {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                 </div>
-            </motion.section>
+            </section>
 
-            {/* Results */}
-            <p className="text-sm text-slate-500">Showing {filtered.length} scholarships</p>
+            {/* ═══ RESULTS ═══ */}
+            <section>
+                <p className="mb-6 text-sm text-slate-500 tracking-wide">Showing <strong>{filtered.length}</strong> scholarships</p>
+                <div className="grid gap-5 md:grid-cols-2">
+                    {filtered.map((s, i) => {
+                        const isExpired = new Date(s.deadline) < new Date()
+                        return (
+                            <div key={s.id} className={`reveal reveal-delay-${(i % 4) + 1} card-bb overflow-hidden`}>
+                                <div className="p-6 md:p-8 space-y-4">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <h3 className="text-card-title text-lg text-slate-900">{s.name}</h3>
+                                        <span className="pill pill-primary text-xs py-1">{s.amount}</span>
+                                    </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-                {filtered.map((s, i) => {
-                    const isExpired = new Date(s.deadline) < new Date()
-                    return (
-                        <motion.article
-                            key={s.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.03 }}
-                            className="scroll-3d-card overflow-hidden rounded-3xl border border-slate-200/60 bg-white shadow-card transition-all hover:shadow-card-hover hover:-translate-y-1"
-                        >
-                            <div className="p-5 space-y-3">
-                                <div className="flex items-start justify-between gap-2">
-                                    <h3 className="text-base font-bold text-slate-900">{s.name}</h3>
-                                    <span className="shrink-0 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
-                                        {s.amount}
-                                    </span>
+                                    <p className="text-sm text-slate-600 leading-relaxed">{s.eligibility}</p>
+
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {s.streams.map(st => <span key={st} className="pill pill-outline text-[10px] py-0.5 px-2.5">{st}</span>)}
+                                        {s.categories.filter(c => c !== "General").map(c => <span key={c} className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[10px] font-medium text-amber-700">{c}</span>)}
+                                    </div>
+
+                                    <div className="flex items-center justify-between text-xs text-slate-500">
+                                        <span className="flex items-center gap-1"><Calendar size={12} /> {s.deadline}</span>
+                                        <span>{s.state}</span>
+                                    </div>
+
+                                    {s.income_limit && <p className="text-xs text-slate-500"><DollarSign size={11} className="inline mr-0.5" /> Income limit: ₹{s.income_limit.toLocaleString()}</p>}
+
+                                    <a href={s.apply_link} target="_blank" rel="noopener noreferrer" className={`flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition ${isExpired ? "bg-slate-100 text-slate-400 cursor-not-allowed" : "pill-primary w-full"}`}>
+                                        <ExternalLink size={14} /> {isExpired ? "Deadline Passed" : "Apply Now"}
+                                    </a>
                                 </div>
-
-                                <p className="text-sm text-slate-600">{s.eligibility}</p>
-
-                                <div className="flex flex-wrap gap-1.5">
-                                    {s.streams.map(st => (
-                                        <span key={st} className="rounded-full border border-indigo-200 px-2 py-0.5 text-[10px] font-medium text-indigo-600">{st}</span>
-                                    ))}
-                                    {s.categories.filter(c => c !== "General").map(c => (
-                                        <span key={c} className="rounded-full border border-amber-200 px-2 py-0.5 text-[10px] font-medium text-amber-600">{c}</span>
-                                    ))}
-                                </div>
-
-                                <div className="flex items-center justify-between text-xs text-slate-500">
-                                    <span className="flex items-center gap-1"><Calendar size={12} /> Deadline: {s.deadline}</span>
-                                    <span>{s.state}</span>
-                                </div>
-
-                                {s.income_limit && (
-                                    <p className="text-xs text-slate-500">
-                                        <DollarSign size={11} className="mr-0.5 inline" /> Income limit: ₹{s.income_limit.toLocaleString()}
-                                    </p>
-                                )}
-
-                                <a
-                                    href={s.apply_link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-semibold shadow-md transition ${isExpired
-                                            ? "bg-slate-200 text-slate-500 cursor-not-allowed"
-                                            : "bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:shadow-lg hover:-translate-y-0.5"
-                                        }`}
-                                >
-                                    <ExternalLink size={12} /> {isExpired ? "Deadline Passed" : "Apply Now"}
-                                </a>
                             </div>
-                        </motion.article>
-                    )
-                })}
-            </div>
+                        )
+                    })}
+                </div>
+            </section>
 
             {filtered.length === 0 && (
-                <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500">
+                <div className="card-bb border-dashed p-12 text-center text-slate-500">
                     No scholarships match your filters. Try broadening your search.
                 </div>
             )}

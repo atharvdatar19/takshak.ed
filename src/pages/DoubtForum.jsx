@@ -9,6 +9,7 @@ import {
     X,
 } from "lucide-react"
 import { useMemo, useState } from "react"
+import { useAutoReveal } from "../hooks/useScrollReveal"
 
 const STREAMS = ["All", "PCM", "PCB", "Commerce", "Arts", "Defence", "General"]
 
@@ -40,21 +41,13 @@ export default function DoubtForum() {
     const [newPost, setNewPost] = useState({ title: "", body: "", stream: "General" })
     const [newReply, setNewReply] = useState("")
     const [upvoted, setUpvoted] = useState({})
+    useAutoReveal()
 
-    const filtered = useMemo(() => {
-        if (stream === "All") return posts
-        return posts.filter(p => p.stream === stream)
-    }, [posts, stream])
+    const filtered = useMemo(() => stream === "All" ? posts : posts.filter(p => p.stream === stream), [posts, stream])
 
     function submitPost() {
         if (!newPost.title || !newPost.body) return
-        setPosts(prev => [{
-            id: Date.now(),
-            ...newPost,
-            upvotes: 0,
-            replies: 0,
-            created_at: new Date().toISOString(),
-        }, ...prev])
+        setPosts(prev => [{ id: Date.now(), ...newPost, upvotes: 0, replies: 0, created_at: new Date().toISOString() }, ...prev])
         setNewPost({ title: "", body: "", stream: "General" })
         setShowPost(false)
     }
@@ -68,101 +61,84 @@ export default function DoubtForum() {
     }
 
     function toggleUpvote(id, type) {
-        const key = `${type}_${id}`
-        setUpvoted(prev => ({ ...prev, [key]: !prev[key] }))
+        setUpvoted(prev => ({ ...prev, [`${type}_${id}`]: !prev[`${type}_${id}`] }))
     }
 
     return (
-        <div className="space-y-6">
-            {/* Hero */}
-            <motion.section
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="rounded-3xl bg-gradient-to-br from-violet-600 to-indigo-600 p-8 text-center text-white shadow-xl md:p-10"
-            >
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 shadow-lg">
-                    <MessageSquare size={40} />
+        <div className="space-y-10 md:space-y-16">
+            {/* ═══ HERO ═══ */}
+            <section className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-violet-600 to-indigo-600 px-8 py-12 text-white md:px-14 md:py-20">
+                <div className="orb orb-purple w-44 h-44 -top-12 right-8" />
+                <div className="relative z-10 text-center max-w-2xl mx-auto">
+                    <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-sm">
+                        <MessageSquare size={40} />
+                    </div>
+                    <h1 className="text-display text-4xl md:text-6xl">Doubt Forum</h1>
+                    <p className="text-body-lg mt-4 text-indigo-100/80 text-base">Ask anonymously. Learn together. No judgment.</p>
                 </div>
-                <h1 className="text-4xl font-extrabold md:text-5xl">Doubt Forum</h1>
-                <p className="mt-3 text-lg text-white/80">Ask anonymously. Learn together. No judgment.</p>
-            </motion.section>
+            </section>
 
-            {/* Top Bar */}
+            {/* ═══ FILTERS + POST ═══ */}
             <div className="flex flex-wrap items-center gap-3">
                 <div className="flex flex-1 flex-wrap gap-2">
                     {STREAMS.map(s => (
-                        <button
-                            key={s}
-                            type="button"
-                            onClick={() => setStream(s)}
-                            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${stream === s ? "bg-indigo-600 text-white" : "bg-white text-slate-600 border border-slate-200 hover:border-indigo-300"}`}
-                        >
+                        <button key={s} type="button" onClick={() => setStream(s)} className={`pill text-sm ${stream === s ? "pill-primary" : "pill-outline"}`}>
                             {s}
                         </button>
                     ))}
                 </div>
-                <button
-                    type="button"
-                    onClick={() => setShowPost(true)}
-                    className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-5 py-2.5 text-sm font-semibold text-white shadow"
-                >
+                <button type="button" onClick={() => setShowPost(true)} className="pill pill-primary">
                     <Plus size={16} /> Ask Anonymously
                 </button>
             </div>
 
-            {/* Post Modal */}
+            {/* ═══ POST MODAL ═══ */}
             <AnimatePresence>
                 {showPost && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                        <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="mx-4 w-full max-w-lg space-y-4 rounded-3xl bg-white p-6 shadow-2xl">
+                        <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="mx-4 w-full max-w-lg space-y-5 rounded-[28px] bg-white p-8 shadow-2xl">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-bold text-slate-900">Ask Anonymously</h3>
-                                <button type="button" onClick={() => setShowPost(false)} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
+                                <h3 className="text-section text-xl text-slate-900">Ask Anonymously</h3>
+                                <button type="button" onClick={() => setShowPost(false)} className="text-slate-400 hover:text-slate-600"><X size={20} /></button>
                             </div>
-                            <select value={newPost.stream} onChange={e => setNewPost(p => ({ ...p, stream: e.target.value }))} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
+                            <select value={newPost.stream} onChange={e => setNewPost(p => ({ ...p, stream: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
                                 {STREAMS.filter(s => s !== "All").map(s => <option key={s} value={s}>{s}</option>)}
                             </select>
-                            <input value={newPost.title} onChange={e => setNewPost(p => ({ ...p, title: e.target.value }))} placeholder="Your question (clear & specific)" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-indigo-400" />
-                            <textarea value={newPost.body} onChange={e => setNewPost(p => ({ ...p, body: e.target.value }))} placeholder="Add details..." rows={4} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none" />
-                            <p className="text-xs text-slate-400">🔒 Your identity will not be shared with other students</p>
-                            <button type="button" onClick={submitPost} disabled={!newPost.title || !newPost.body} className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50">Post Question</button>
+                            <input value={newPost.title} onChange={e => setNewPost(p => ({ ...p, title: e.target.value }))} placeholder="Your question (clear & specific)" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-indigo-400" />
+                            <textarea value={newPost.body} onChange={e => setNewPost(p => ({ ...p, body: e.target.value }))} placeholder="Add details..." rows={4} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none" />
+                            <p className="text-xs text-slate-400">🔒 Your identity is never shared</p>
+                            <button type="button" onClick={submitPost} disabled={!newPost.title || !newPost.body} className="pill pill-primary w-full justify-center py-3.5 text-base disabled:opacity-50">Post Question</button>
                         </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Posts */}
-            <div className="space-y-4">
+            {/* ═══ POSTS ═══ */}
+            <div className="space-y-5">
                 {filtered.map((post, i) => {
                     const replies = localReplies[post.id] || []
                     const isExpanded = expandedPost === post.id
                     const upvoteKey = `post_${post.id}`
                     return (
-                        <motion.article
-                            key={post.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.04 }}
-                            className="scroll-3d-card overflow-hidden rounded-3xl border border-slate-200/60 bg-white shadow-card"
-                        >
-                            <div className="p-5">
-                                <div className="flex items-start gap-3">
+                        <div key={post.id} className={`reveal reveal-delay-${(i % 4) + 1} card-bb overflow-hidden`}>
+                            <div className="p-6 md:p-8">
+                                <div className="flex items-start gap-4">
                                     <div className="flex flex-col items-center gap-1">
-                                        <button type="button" onClick={() => toggleUpvote(post.id, "post")} className={`rounded-lg p-1 transition ${upvoted[upvoteKey] ? "text-indigo-600" : "text-slate-400 hover:text-indigo-500"}`}>
-                                            <ThumbsUp size={15} />
+                                        <button type="button" onClick={() => toggleUpvote(post.id, "post")} className={`rounded-xl p-2 transition ${upvoted[upvoteKey] ? "bg-indigo-100 text-indigo-600" : "text-slate-400 hover:text-indigo-500"}`}>
+                                            <ThumbsUp size={16} />
                                         </button>
-                                        <span className="text-xs font-bold text-slate-700">{post.upvotes + (upvoted[upvoteKey] ? 1 : 0)}</span>
+                                        <span className="text-sm font-bold text-slate-700">{post.upvotes + (upvoted[upvoteKey] ? 1 : 0)}</span>
                                     </div>
                                     <div className="flex-1">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <span className="rounded-full bg-indigo-100 px-2.5 py-0.5 text-[10px] font-bold text-indigo-700">{post.stream}</span>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="pill pill-outline text-[10px] py-0.5 px-2.5">{post.stream}</span>
                                             <span className="text-xs text-slate-400">{new Date(post.created_at).toLocaleDateString("en-IN")}</span>
                                         </div>
-                                        <h3 className="font-semibold text-slate-900">{post.title}</h3>
-                                        <p className="mt-1 text-sm text-slate-600">{post.body}</p>
-                                        <button type="button" onClick={() => setExpandedPost(isExpanded ? null : post.id)} className="mt-2 flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-800">
-                                            <MessageCircle size={12} /> {replies.length} replies
-                                            {isExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                                        <h3 className="text-card-title text-base md:text-lg text-slate-900">{post.title}</h3>
+                                        <p className="mt-2 text-sm text-slate-600 leading-relaxed">{post.body}</p>
+                                        <button type="button" onClick={() => setExpandedPost(isExpanded ? null : post.id)} className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-800">
+                                            <MessageCircle size={14} /> {replies.length} replies
+                                            {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                                         </button>
                                     </div>
                                 </div>
@@ -170,21 +146,21 @@ export default function DoubtForum() {
 
                             <AnimatePresence>
                                 {isExpanded && (
-                                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="border-t border-slate-100 bg-slate-50 px-5 py-4 space-y-3">
+                                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="border-t border-slate-100 bg-slate-50/50 px-6 py-5 md:px-8 space-y-3">
                                         {replies.map(r => (
-                                            <div key={r.id} className={`rounded-2xl p-3 text-sm ${r.is_mentor ? "border border-indigo-200 bg-indigo-50" : "bg-white border border-slate-200"}`}>
-                                                <p className="mb-1 text-xs font-semibold text-indigo-700">{r.is_mentor ? "✨ Mentor" : "Anonymous"}</p>
-                                                <p className="text-slate-700">{r.body}</p>
+                                            <div key={r.id} className={`rounded-2xl p-4 text-sm ${r.is_mentor ? "card-bb border-indigo-200 bg-indigo-50" : "card-bb"}`}>
+                                                <p className="mb-1 text-xs font-bold text-indigo-600">{r.is_mentor ? "✨ Mentor" : "Anonymous"}</p>
+                                                <p className="text-slate-700 leading-relaxed">{r.body}</p>
                                             </div>
                                         ))}
                                         <div className="flex gap-2">
-                                            <input value={newReply} onChange={e => setNewReply(e.target.value)} placeholder="Add a reply..." className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-400" />
-                                            <button type="button" onClick={() => submitReply(post.id)} className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white">Reply</button>
+                                            <input value={newReply} onChange={e => setNewReply(e.target.value)} placeholder="Add a reply..." className="flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-400" />
+                                            <button type="button" onClick={() => submitReply(post.id)} className="pill pill-primary py-2.5">Reply</button>
                                         </div>
                                     </motion.div>
                                 )}
                             </AnimatePresence>
-                        </motion.article>
+                        </div>
                     )
                 })}
             </div>

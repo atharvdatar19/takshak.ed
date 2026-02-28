@@ -3,14 +3,13 @@ import {
     Calendar,
     CheckCircle2,
     Clock,
-    Link,
+    Star,
+    Users,
     Video,
     X,
-    Users,
-    Star,
-    Sparkles,
 } from "lucide-react"
 import { useState } from "react"
+import { useAutoReveal } from "../hooks/useScrollReveal"
 
 const DEMO_MENTORS = [
     { id: "m1", name: "Raghav Mishra", field: "JEE / IIT Preparation", rating: 4.9, sessions: 120, bio: "IIT Bombay alum. Cracked JEE Advanced with AIR 204. 3 years of mentoring experience.", avatar: "RM", slots: ["10:00 AM", "2:00 PM", "6:00 PM"] },
@@ -32,28 +31,13 @@ export default function MeetingScheduler() {
     const [slot, setSlot] = useState("")
     const [message, setMessage] = useState("")
     const [success, setSuccess] = useState(null)
+    useAutoReveal()
 
-    function openModal(mentor) {
-        setSelected(mentor)
-        setDate("")
-        setSlot("")
-        setMessage("")
-    }
+    function openModal(mentor) { setSelected(mentor); setDate(""); setSlot(""); setMessage("") }
 
     function submitRequest() {
         if (!date || !slot) return
-        const booking = {
-            id: Date.now(),
-            mentor_id: selected.id,
-            mentor_name: selected.name,
-            field: selected.field,
-            date,
-            slot,
-            message,
-            status: "pending",
-            meet_link: null,
-            requested_at: new Date().toISOString(),
-        }
+        const booking = { id: Date.now(), mentor_id: selected.id, mentor_name: selected.name, field: selected.field, date, slot, message, status: "pending", meet_link: null, requested_at: new Date().toISOString() }
         const updated = [booking, ...bookings]
         setBookings(updated)
         saveBookings(updated)
@@ -62,62 +46,54 @@ export default function MeetingScheduler() {
     }
 
     return (
-        <div className="space-y-6">
-            {/* Hero */}
-            <motion.section
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="rounded-3xl bg-gradient-to-br from-teal-500 to-emerald-600 p-8 text-center text-white shadow-xl md:p-10"
-            >
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 shadow-lg">
-                    <Video size={40} />
+        <div className="space-y-10 md:space-y-16">
+            {/* ═══ HERO ═══ */}
+            <section className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-teal-500 to-emerald-600 px-8 py-12 text-white md:px-14 md:py-20">
+                <div className="orb orb-blue w-44 h-44 -top-12 -right-12" />
+                <div className="relative z-10 text-center max-w-2xl mx-auto">
+                    <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-sm">
+                        <Video size={40} />
+                    </div>
+                    <h1 className="text-display text-4xl md:text-6xl">Mentor Sessions</h1>
+                    <p className="text-body-lg mt-4 text-emerald-100/80 text-base">Schedule 1:1 sessions — mentor accepts and Google Meet link is shared</p>
+                    <div className="mt-5 inline-flex items-center gap-2 pill pill-glass text-sm">
+                        <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" /> Book → Mentor Confirms → Meet Link
+                    </div>
                 </div>
-                <h1 className="text-4xl font-extrabold md:text-5xl">Mentor Sessions</h1>
-                <p className="mt-3 text-lg text-white/80">Schedule a 1:1 session — mentor accepts and Google Meet link is shared</p>
-                <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 text-sm">
-                    <span className="h-2 w-2 rounded-full bg-emerald-300 animate-pulse" /> No live calls yet — book a session, mentor confirms with Meet link
-                </div>
-            </motion.section>
+            </section>
 
-            {/* Success Banner */}
+            {/* ═══ SUCCESS ═══ */}
             <AnimatePresence>
                 {success && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="flex items-center gap-3 rounded-3xl border border-emerald-200 bg-emerald-50 p-5"
-                    >
-                        <CheckCircle2 size={24} className="text-emerald-500 shrink-0" />
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="card-bb border-emerald-200 bg-emerald-50 p-6 md:p-8 flex items-center gap-4">
+                        <CheckCircle2 size={28} className="text-emerald-500 shrink-0" />
                         <div className="flex-1">
-                            <p className="font-semibold text-emerald-800">Session Request Sent! 🎉</p>
-                            <p className="text-sm text-emerald-600">Your request to <strong>{success.mentor_name}</strong> on {success.date} at {success.slot} is <strong>pending</strong>. You'll get a notification with the Google Meet link once they accept.</p>
+                            <p className="text-card-title text-emerald-800">Session Request Sent! 🎉</p>
+                            <p className="text-sm text-emerald-600 mt-1">Requested <strong>{success.mentor_name}</strong> on {success.date} at {success.slot}. You'll get a Meet link once accepted.</p>
                         </div>
-                        <button type="button" onClick={() => setSuccess(null)} className="text-emerald-400 hover:text-emerald-600"><X size={16} /></button>
+                        <button type="button" onClick={() => setSuccess(null)} className="text-emerald-400 hover:text-emerald-600"><X size={18} /></button>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* My Bookings */}
+            {/* ═══ MY BOOKINGS ═══ */}
             {bookings.length > 0 && (
                 <section>
-                    <h2 className="mb-3 text-lg font-bold text-slate-900">📋 My Session Requests</h2>
-                    <div className="space-y-3">
+                    <h2 className="text-section text-2xl md:text-3xl text-slate-900 mb-6">📋 My Session Requests</h2>
+                    <div className="space-y-4">
                         {bookings.map(b => (
-                            <div key={b.id} className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-sm font-bold text-indigo-700">
+                            <div key={b.id} className="card-bb flex items-center gap-4 p-5 md:p-6">
+                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-sm font-bold text-white">
                                     {b.mentor_name.split(" ").map(n => n[0]).join("").slice(0, 2)}
                                 </div>
                                 <div className="flex-1">
-                                    <p className="font-semibold text-slate-900">{b.mentor_name}</p>
+                                    <p className="text-card-title text-base text-slate-900">{b.mentor_name}</p>
                                     <p className="text-sm text-slate-500">{b.field} · {b.date} at {b.slot}</p>
                                 </div>
                                 {b.status === "confirmed" && b.meet_link ? (
-                                    <a href={b.meet_link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white">
-                                        <Video size={14} /> Join Meet
-                                    </a>
+                                    <a href={b.meet_link} target="_blank" rel="noopener noreferrer" className="pill pill-primary"><Video size={14} /> Join Meet</a>
                                 ) : (
-                                    <span className={`rounded-full px-3 py-1 text-xs font-bold ${b.status === "confirmed" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                                    <span className={`pill text-xs ${b.status === "confirmed" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
                                         {b.status === "confirmed" ? "✅ Confirmed" : "⏳ Pending"}
                                     </span>
                                 )}
@@ -127,98 +103,60 @@ export default function MeetingScheduler() {
                 </section>
             )}
 
-            {/* Mentor Grid */}
+            {/* ═══ MENTORS ═══ */}
             <section>
-                <h2 className="mb-4 text-lg font-bold text-slate-900">👨‍🏫 Choose Your Mentor</h2>
-                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                <h2 className="text-section text-2xl md:text-4xl text-slate-900 mb-6 md:mb-10">👨‍🏫 Choose Your Mentor</h2>
+                <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {DEMO_MENTORS.map((mentor, i) => (
-                        <motion.article
-                            key={mentor.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.04 }}
-                            className="scroll-3d-card overflow-hidden rounded-3xl border border-slate-200/60 bg-white shadow-card transition-all hover:shadow-card-hover hover:-translate-y-1"
-                        >
-                            <div className="p-5 space-y-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-base font-bold text-white">
-                                        {mentor.avatar}
-                                    </div>
+                        <div key={mentor.id} className={`reveal reveal-delay-${(i % 4) + 1} card-bb overflow-hidden`}>
+                            <div className="p-6 md:p-8 space-y-4">
+                                <div className="flex items-center gap-4">
+                                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-lg font-bold text-white">{mentor.avatar}</div>
                                     <div>
-                                        <p className="font-bold text-slate-900">{mentor.name}</p>
-                                        <p className="text-xs text-indigo-600 font-medium">{mentor.field}</p>
+                                        <p className="text-card-title text-base text-slate-900">{mentor.name}</p>
+                                        <p className="text-sm text-indigo-600 font-medium">{mentor.field}</p>
                                     </div>
                                 </div>
-
-                                <p className="text-sm text-slate-600">{mentor.bio}</p>
-
-                                <div className="flex items-center gap-3 text-xs text-slate-500">
-                                    <span className="flex items-center gap-1"><Star size={12} className="text-amber-400" /> {mentor.rating}</span>
-                                    <span className="flex items-center gap-1"><Users size={12} /> {mentor.sessions} sessions</span>
+                                <p className="text-sm text-slate-600 leading-relaxed">{mentor.bio}</p>
+                                <div className="flex items-center gap-4 text-sm text-slate-500">
+                                    <span className="flex items-center gap-1"><Star size={14} className="text-amber-400" /> {mentor.rating}</span>
+                                    <span className="flex items-center gap-1"><Users size={14} /> {mentor.sessions} sessions</span>
                                 </div>
-
-                                <div className="flex flex-wrap gap-1.5">
-                                    {mentor.slots.map(s => (
-                                        <span key={s} className="rounded-full border border-teal-200 bg-teal-50 px-2.5 py-0.5 text-[10px] font-medium text-teal-700">
-                                            <Clock size={10} className="mr-0.5 inline" /> {s}
-                                        </span>
-                                    ))}
+                                <div className="flex flex-wrap gap-2">
+                                    {mentor.slots.map(s => <span key={s} className="pill pill-outline text-[10px] py-0.5 px-2.5"><Clock size={10} className="mr-0.5" /> {s}</span>)}
                                 </div>
-
-                                <button
-                                    type="button"
-                                    onClick={() => openModal(mentor)}
-                                    className="w-full rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 py-2.5 text-sm font-semibold text-white shadow-md transition hover:shadow-lg hover:-translate-y-0.5"
-                                >
+                                <button type="button" onClick={() => openModal(mentor)} className="pill pill-primary w-full justify-center py-3 text-sm">
                                     📅 Schedule Session
                                 </button>
                             </div>
-                        </motion.article>
+                        </div>
                     ))}
                 </div>
             </section>
 
-            {/* Booking Modal */}
+            {/* ═══ BOOKING MODAL ═══ */}
             <AnimatePresence>
                 {selected && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                        <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="mx-4 w-full max-w-md space-y-4 rounded-3xl bg-white p-6 shadow-2xl">
+                        <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="mx-4 w-full max-w-md space-y-5 rounded-[28px] bg-white p-8 shadow-2xl">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-bold text-slate-900">Schedule with {selected.name}</h3>
-                                <button type="button" onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
+                                <h3 className="text-section text-xl text-slate-900">Schedule with {selected.name}</h3>
+                                <button type="button" onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600"><X size={20} /></button>
                             </div>
                             <p className="text-sm text-slate-500">{selected.field}</p>
-
                             <div>
-                                <label className="mb-1 block text-xs font-medium text-slate-600">Preferred Date</label>
-                                <input type="date" value={date} onChange={e => setDate(e.target.value)} min={new Date().toISOString().split("T")[0]} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm" />
+                                <label className="mb-2 block text-sm font-semibold text-slate-700">Preferred Date</label>
+                                <input type="date" value={date} onChange={e => setDate(e.target.value)} min={new Date().toISOString().split("T")[0]} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm" />
                             </div>
-
                             <div>
-                                <label className="mb-1 block text-xs font-medium text-slate-600">Preferred Time Slot</label>
+                                <label className="mb-2 block text-sm font-semibold text-slate-700">Preferred Time</label>
                                 <div className="flex flex-wrap gap-2">
-                                    {selected.slots.map(s => (
-                                        <button key={s} type="button" onClick={() => setSlot(s)} className={`rounded-full border px-3 py-1.5 text-sm transition ${slot === s ? "border-teal-500 bg-teal-500 text-white" : "border-slate-200 text-slate-600 hover:border-teal-300"}`}>
-                                            {s}
-                                        </button>
-                                    ))}
+                                    {selected.slots.map(s => <button key={s} type="button" onClick={() => setSlot(s)} className={`pill text-sm ${slot === s ? "pill-primary" : "pill-outline"}`}>{s}</button>)}
                                 </div>
                             </div>
-
-                            <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="What do you want to discuss? (optional)" rows={3} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-400" />
-
-                            <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-700">
-                                ⚡ After you submit, the mentor will review and accept your request. You'll receive a Google Meet link via notification.
-                            </div>
-
-                            <button
-                                type="button"
-                                onClick={submitRequest}
-                                disabled={!date || !slot}
-                                className="w-full rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50"
-                            >
-                                Send Session Request
-                            </button>
+                            <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="What do you want to discuss? (optional)" rows={3} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none" />
+                            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-700">⚡ Mentor will review and share a Google Meet link after acceptance.</div>
+                            <button type="button" onClick={submitRequest} disabled={!date || !slot} className="pill pill-primary w-full justify-center py-3.5 text-base disabled:opacity-50">Send Session Request</button>
                         </motion.div>
                     </motion.div>
                 )}

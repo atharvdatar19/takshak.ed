@@ -1,211 +1,159 @@
 import { motion } from "framer-motion"
 import {
     BarChart3,
-    ChevronDown,
-    GraduationCap,
-    Search,
+    ChevronRight,
     Sparkles,
     Target,
     TrendingUp,
 } from "lucide-react"
 import { useMemo, useState } from "react"
-import { getCutoffData, predictChances } from "../services/student"
+import { useAutoReveal } from "../hooks/useScrollReveal"
 
-const STREAMS = ["PCM", "PCB", "Commerce", "Arts", "Defence"]
-const CATEGORIES = ["General", "OBC", "SC", "ST", "EWS"]
-
-// Demo cutoff data for when Supabase tables don't exist yet
 const DEMO_CUTOFFS = [
-    { id: 1, colleges: { name: "IIT Bombay", city: "Mumbai", state: "Maharashtra", type: "government" }, stream: "PCM", category: "General", opening_rank: 1, closing_rank: 1200 },
-    { id: 2, colleges: { name: "IIT Delhi", city: "New Delhi", state: "Delhi", type: "government" }, stream: "PCM", category: "General", opening_rank: 50, closing_rank: 1800 },
-    { id: 3, colleges: { name: "IIT Madras", city: "Chennai", state: "Tamil Nadu", type: "government" }, stream: "PCM", category: "General", opening_rank: 100, closing_rank: 2200 },
-    { id: 4, colleges: { name: "IIT Kanpur", city: "Kanpur", state: "Uttar Pradesh", type: "government" }, stream: "PCM", category: "General", opening_rank: 200, closing_rank: 3500 },
-    { id: 5, colleges: { name: "IIT Kharagpur", city: "Kharagpur", state: "West Bengal", type: "government" }, stream: "PCM", category: "General", opening_rank: 300, closing_rank: 4500 },
-    { id: 6, colleges: { name: "NIT Trichy", city: "Tiruchirappalli", state: "Tamil Nadu", type: "government" }, stream: "PCM", category: "General", opening_rank: 2000, closing_rank: 12000 },
-    { id: 7, colleges: { name: "NIT Warangal", city: "Warangal", state: "Telangana", type: "government" }, stream: "PCM", category: "General", opening_rank: 3000, closing_rank: 15000 },
-    { id: 8, colleges: { name: "BITS Pilani", city: "Pilani", state: "Rajasthan", type: "private" }, stream: "PCM", category: "General", opening_rank: 1000, closing_rank: 8000 },
-    { id: 9, colleges: { name: "VIT Vellore", city: "Vellore", state: "Tamil Nadu", type: "private" }, stream: "PCM", category: "General", opening_rank: 5000, closing_rank: 50000 },
-    { id: 10, colleges: { name: "AIIMS Delhi", city: "New Delhi", state: "Delhi", type: "government" }, stream: "PCB", category: "General", opening_rank: 1, closing_rank: 100 },
-    { id: 11, colleges: { name: "JIPMER Puducherry", city: "Puducherry", state: "Puducherry", type: "government" }, stream: "PCB", category: "General", opening_rank: 50, closing_rank: 500 },
-    { id: 12, colleges: { name: "Maulana Azad Medical", city: "New Delhi", state: "Delhi", type: "government" }, stream: "PCB", category: "General", opening_rank: 100, closing_rank: 3000 },
+    { id: 1, college: "IIT Bombay", stream: "PCM", category: "General", closing_rank: 800, type: "government" },
+    { id: 2, college: "IIT Delhi", stream: "PCM", category: "General", closing_rank: 1200, type: "government" },
+    { id: 3, college: "IIT Madras", stream: "PCM", category: "General", closing_rank: 1500, type: "government" },
+    { id: 4, college: "IIT Kanpur", stream: "PCM", category: "General", closing_rank: 2000, type: "government" },
+    { id: 5, college: "AIIMS Delhi", stream: "PCB", category: "General", closing_rank: 50, type: "government" },
+    { id: 6, college: "AIIMS Jodhpur", stream: "PCB", category: "General", closing_rank: 200, type: "government" },
+    { id: 7, college: "NIT Trichy", stream: "PCM", category: "General", closing_rank: 5000, type: "government" },
+    { id: 8, college: "NIT Warangal", stream: "PCM", category: "General", closing_rank: 6000, type: "government" },
+    { id: 9, college: "NIT Surathkal", stream: "PCM", category: "General", closing_rank: 7000, type: "government" },
+    { id: 10, college: "BITS Pilani", stream: "PCM", category: "General", closing_rank: 3500, type: "private" },
+    { id: 11, college: "VIT Vellore", stream: "PCM", category: "General", closing_rank: 15000, type: "private" },
+    { id: 12, college: "SRM Chennai", stream: "PCM", category: "General", closing_rank: 20000, type: "private" },
+    { id: 13, college: "JIPMER", stream: "PCB", category: "General", closing_rank: 150, type: "government" },
+    { id: 14, college: "IIT Bombay", stream: "PCM", category: "OBC", closing_rank: 2500, type: "government" },
+    { id: 15, college: "IIT Delhi", stream: "PCM", category: "OBC", closing_rank: 3500, type: "government" },
+    { id: 16, college: "NIT Trichy", stream: "PCM", category: "OBC", closing_rank: 12000, type: "government" },
 ]
+
+function chanceLevel(rank, closing) {
+    if (rank <= closing * 0.8) return "high"
+    if (rank <= closing * 1.1) return "medium"
+    return "low"
+}
+
+const CHANCE_CONFIG = {
+    high: { label: "High Chance", bg: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-700", dot: "bg-emerald-500" },
+    medium: { label: "Medium Chance", bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-700", dot: "bg-amber-500" },
+    low: { label: "Low Chance", bg: "bg-rose-50", border: "border-rose-200", text: "text-rose-600", dot: "bg-rose-500" },
+}
 
 export default function CutoffPredictor() {
     const [rank, setRank] = useState("")
     const [stream, setStream] = useState("PCM")
     const [category, setCategory] = useState("General")
-    const [results, setResults] = useState(null)
-    const [loading, setLoading] = useState(false)
+    const [showResults, setShowResults] = useState(false)
+    useAutoReveal()
 
-    async function handlePredict() {
+    const results = useMemo(() => {
+        if (!rank) return { high: [], medium: [], low: [] }
+        const r = parseInt(rank, 10)
+        if (isNaN(r)) return { high: [], medium: [], low: [] }
+
+        const matched = DEMO_CUTOFFS.filter(c => c.stream === stream && c.category === category)
+        const grouped = { high: [], medium: [], low: [] }
+        matched.forEach(c => { grouped[chanceLevel(r, c.closing_rank)].push(c) })
+        return grouped
+    }, [rank, stream, category])
+
+    function handlePredict() {
         if (!rank) return
-        setLoading(true)
-        try {
-            let cutoffs = await getCutoffData({ stream, category })
-            // Fallback to demo data if no Supabase data
-            if (!cutoffs.length) {
-                cutoffs = DEMO_CUTOFFS.filter(
-                    c => c.stream === stream && c.category === category,
-                )
-            }
-            const predictions = predictChances(Number(rank), cutoffs)
-            setResults(predictions)
-        } catch {
-            // Use demo data on error
-            const cutoffs = DEMO_CUTOFFS.filter(
-                c => c.stream === stream && c.category === category,
-            )
-            setResults(predictChances(Number(rank), cutoffs))
-        } finally {
-            setLoading(false)
-        }
+        setShowResults(true)
     }
 
-    const grouped = useMemo(() => {
-        if (!results) return null
-        return {
-            high: results.filter(r => r.chance === "High"),
-            medium: results.filter(r => r.chance === "Medium"),
-            low: results.filter(r => r.chance === "Low"),
-        }
-    }, [results])
+    const totalResults = results.high.length + results.medium.length + results.low.length
 
     return (
-        <div className="space-y-6">
-            {/* Hero */}
-            <motion.section
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="hero-gradient rounded-3xl p-8 text-center text-white shadow-xl md:p-12"
-            >
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 shadow-lg">
-                    <Target size={40} />
+        <div className="space-y-10 md:space-y-16">
+            {/* ═══ HERO ═══ */}
+            <section className="relative overflow-hidden rounded-[32px] hero-gradient px-8 py-12 text-white md:px-14 md:py-20">
+                <div className="orb orb-blue w-48 h-48 -top-16 -right-16" />
+                <div className="orb orb-purple w-32 h-32 bottom-0 left-10" />
+                <div className="relative z-10 text-center max-w-2xl mx-auto">
+                    <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-sm">
+                        <Target size={40} />
+                    </div>
+                    <h1 className="text-display text-4xl md:text-6xl">Cutoff Predictor</h1>
+                    <p className="text-body-lg mt-4 text-indigo-100/80 text-base">
+                        Check your chances at top colleges based on your rank
+                    </p>
                 </div>
-                <h1 className="text-4xl font-extrabold md:text-5xl">Cutoff Predictor</h1>
-                <p className="mt-3 text-lg text-white/80">Check your chances at top colleges based on your rank</p>
-            </motion.section>
+            </section>
 
-            {/* Input Card */}
-            <motion.section
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="scroll-3d-card rounded-3xl border border-slate-200/60 bg-white p-6 shadow-card"
-            >
-                <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900">
-                    <BarChart3 size={20} className="text-indigo-600" /> Enter Your Details
+            {/* ═══ INPUT FORM ═══ */}
+            <section className="reveal card-bb p-6 md:p-10 max-w-2xl mx-auto">
+                <h2 className="text-section text-xl md:text-2xl text-slate-900 mb-6 flex items-center gap-2">
+                    <BarChart3 size={22} className="text-indigo-600" /> Enter Your Details
                 </h2>
-                <div className="grid gap-4 md:grid-cols-4">
+                <div className="space-y-5">
                     <div>
-                        <label className="mb-1 block text-xs font-medium text-slate-600">Your Rank</label>
-                        <input
-                            type="number"
-                            value={rank}
-                            onChange={e => setRank(e.target.value)}
-                            placeholder="e.g. 5000"
-                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                        />
+                        <label className="mb-2 block text-sm font-semibold text-slate-700">Your Rank</label>
+                        <input type="number" value={rank} onChange={e => setRank(e.target.value)} placeholder="e.g. 5000" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-base outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition" />
                     </div>
-                    <div>
-                        <label className="mb-1 block text-xs font-medium text-slate-600">Stream</label>
-                        <select
-                            value={stream}
-                            onChange={e => setStream(e.target.value)}
-                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm"
-                        >
-                            {STREAMS.map(s => <option key={s} value={s}>{s}</option>)}
-                        </select>
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <div>
+                            <label className="mb-2 block text-sm font-semibold text-slate-700">Stream</label>
+                            <select value={stream} onChange={e => setStream(e.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm">
+                                <option value="PCM">PCM (Engineering)</option>
+                                <option value="PCB">PCB (Medical)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="mb-2 block text-sm font-semibold text-slate-700">Category</label>
+                            <select value={category} onChange={e => setCategory(e.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm">
+                                <option value="General">General</option>
+                                <option value="OBC">OBC</option>
+                                <option value="SC">SC</option>
+                                <option value="ST">ST</option>
+                                <option value="EWS">EWS</option>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <label className="mb-1 block text-xs font-medium text-slate-600">Category</label>
-                        <select
-                            value={category}
-                            onChange={e => setCategory(e.target.value)}
-                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm"
-                        >
-                            {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                        </select>
-                    </div>
-                    <div className="flex items-end">
-                        <button
-                            type="button"
-                            onClick={handlePredict}
-                            disabled={!rank || loading}
-                            className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl disabled:opacity-50"
-                        >
-                            {loading ? "Analyzing..." : "🎯 Predict Chances"}
-                        </button>
-                    </div>
+                    <button type="button" onClick={handlePredict} disabled={!rank} className="pill pill-primary w-full justify-center py-4 text-base disabled:opacity-50">
+                        <Target size={18} /> Predict Chances
+                    </button>
                 </div>
-            </motion.section>
+            </section>
 
-            {/* Results */}
-            {grouped && (
-                <motion.section
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="space-y-5"
-                >
-                    {grouped.high.length > 0 && (
-                        <ChanceGroup title="High Chance" emoji="🟢" color="emerald" items={grouped.high} />
-                    )}
-                    {grouped.medium.length > 0 && (
-                        <ChanceGroup title="Medium Chance" emoji="🟡" color="amber" items={grouped.medium} />
-                    )}
-                    {grouped.low.length > 0 && (
-                        <ChanceGroup title="Low Chance" emoji="🔴" color="rose" items={grouped.low} />
-                    )}
-                    {grouped.high.length === 0 && grouped.medium.length === 0 && grouped.low.length === 0 && (
-                        <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500">
-                            No cutoff data found for this combination. Try a different stream or category.
-                        </div>
-                    )}
-                </motion.section>
-            )}
-        </div>
-    )
-}
+            {/* ═══ RESULTS ═══ */}
+            {showResults && (
+                <section className="space-y-8">
+                    <div className="text-center">
+                        <h2 className="text-section text-2xl md:text-4xl text-slate-900">
+                            Results for Rank <span className="text-indigo-600">#{rank}</span>
+                        </h2>
+                        <p className="text-body-lg mt-2">{totalResults} colleges found · {stream} · {category}</p>
+                    </div>
 
-function ChanceGroup({ title, emoji, color, items }) {
-    const colorMap = {
-        emerald: "border-emerald-200 bg-emerald-50",
-        amber: "border-amber-200 bg-amber-50",
-        rose: "border-rose-200 bg-rose-50",
-    }
-    const badgeMap = {
-        emerald: "bg-emerald-100 text-emerald-700",
-        amber: "bg-amber-100 text-amber-700",
-        rose: "bg-rose-100 text-rose-700",
-    }
-
-    return (
-        <div>
-            <h3 className="mb-3 text-lg font-bold text-slate-900">{emoji} {title} — {items.length} colleges</h3>
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                {items.map(item => (
-                    <motion.div
-                        key={item.id}
-                        initial={{ opacity: 0, scale: 0.97 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className={`scroll-3d-card rounded-2xl border ${colorMap[color]} p-4 transition hover:-translate-y-1`}
-                    >
-                        <div className="flex items-start justify-between gap-2">
-                            <div>
-                                <p className="font-semibold text-slate-900">{item.colleges?.name || "Unknown"}</p>
-                                <p className="text-xs text-slate-500">{item.colleges?.city}, {item.colleges?.state}</p>
+                    {["high", "medium", "low"].map(level => {
+                        const items = results[level]
+                        const config = CHANCE_CONFIG[level]
+                        if (items.length === 0) return null
+                        return (
+                            <div key={level} className="reveal">
+                                <h3 className="text-card-title text-lg text-slate-900 mb-4 flex items-center gap-2">
+                                    <span className={`h-3 w-3 rounded-full ${config.dot}`} />
+                                    {config.label} ({items.length})
+                                </h3>
+                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                                    {items.map(college => (
+                                        <div key={college.id} className={`card-bb ${config.border} ${config.bg} p-5 md:p-6`}>
+                                            <h4 className="text-card-title text-base text-slate-900">{college.college}</h4>
+                                            <p className="mt-1 text-sm text-slate-500">Closing rank: <strong>#{college.closing_rank.toLocaleString()}</strong></p>
+                                            <div className="mt-3 flex items-center justify-between">
+                                                <span className="pill pill-outline text-[10px] py-0.5 px-2">{college.type}</span>
+                                                <span className={`text-xs font-bold ${config.text}`}>{config.label}</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${badgeMap[color]}`}>
-                                {item.chance}
-                            </span>
-                        </div>
-                        <div className="mt-3 flex gap-4 text-xs text-slate-600">
-                            <span>Open: {item.opening_rank?.toLocaleString()}</span>
-                            <span>Close: {item.closing_rank?.toLocaleString()}</span>
-                            <span className="font-medium">{item.colleges?.type}</span>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
+                        )
+                    })}
+                </section>
+            )}
         </div>
     )
 }
