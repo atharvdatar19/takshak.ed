@@ -1,9 +1,14 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
 import { ToastProvider } from "./components/Toast"
+import SplashScreen from "./components/SplashScreen"
 import AppLayout from "./components/AppLayout"
+import ProtectedRoute from "./components/ProtectedRoute"
+
+// Pages
 import Alerts from "./pages/Alerts"
 import ApplicationTracker from "./pages/ApplicationTracker"
+import AuthPage from "./pages/AuthPage"
 import CollegeCompare from "./pages/CollegeCompare"
 import CollegeDirectory from "./pages/CollegeDirectory"
 import CutoffPredictor from "./pages/CutoffPredictor"
@@ -22,28 +27,40 @@ export default function App() {
   return (
     <AuthProvider>
       <ToastProvider>
-        <BrowserRouter>
-          <AppLayout>
+        <SplashScreen>
+          <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/dashboard" element={<Navigate to="/" replace />} />
-              <Route path="/colleges" element={<CollegeDirectory />} />
-              <Route path="/cutoff" element={<CutoffPredictor />} />
-              <Route path="/applications" element={<ApplicationTracker />} />
-              <Route path="/scholarships" element={<ScholarshipFinder />} />
-              <Route path="/timeline" element={<Timeline />} />
-              <Route path="/alerts" element={<Alerts />} />
-              <Route path="/planner" element={<StudyPlanner />} />
-              <Route path="/documents" element={<DocumentChecklist />} />
-              <Route path="/compare" element={<CollegeCompare />} />
-              <Route path="/forum" element={<DoubtForum />} />
-              <Route path="/mentors" element={<MentorMarketplace />} />
-              <Route path="/sessions" element={<MeetingScheduler />} />
-              <Route path="/wellness" element={<StressCheckin />} />
-              <Route path="/admin" element={<AdminControl />} />
+              {/* ── Auth Pages (no layout) ── */}
+              <Route path="/login" element={<AuthPage defaultTab="login" />} />
+              <Route path="/signup" element={<AuthPage defaultTab="signup" />} />
+
+              {/* ── App Pages (with layout) ── */}
+              <Route element={<AppLayout />}>
+                {/* Public routes */}
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Navigate to="/" replace />} />
+                <Route path="/colleges" element={<CollegeDirectory />} />
+                <Route path="/cutoff" element={<CutoffPredictor />} />
+                <Route path="/scholarships" element={<ScholarshipFinder />} />
+                <Route path="/timeline" element={<Timeline />} />
+
+                {/* Student+ routes (require login) */}
+                <Route path="/planner" element={<ProtectedRoute><StudyPlanner /></ProtectedRoute>} />
+                <Route path="/forum" element={<ProtectedRoute><DoubtForum /></ProtectedRoute>} />
+                <Route path="/wellness" element={<ProtectedRoute><StressCheckin /></ProtectedRoute>} />
+                <Route path="/applications" element={<ProtectedRoute><ApplicationTracker /></ProtectedRoute>} />
+                <Route path="/documents" element={<ProtectedRoute><DocumentChecklist /></ProtectedRoute>} />
+                <Route path="/compare" element={<ProtectedRoute><CollegeCompare /></ProtectedRoute>} />
+                <Route path="/sessions" element={<ProtectedRoute><MeetingScheduler /></ProtectedRoute>} />
+                <Route path="/mentors" element={<ProtectedRoute><MentorMarketplace /></ProtectedRoute>} />
+                <Route path="/alerts" element={<ProtectedRoute><Alerts /></ProtectedRoute>} />
+
+                {/* Admin only */}
+                <Route path="/admin" element={<ProtectedRoute roles={["admin"]}><AdminControl /></ProtectedRoute>} />
+              </Route>
             </Routes>
-          </AppLayout>
-        </BrowserRouter>
+          </BrowserRouter>
+        </SplashScreen>
       </ToastProvider>
     </AuthProvider>
   )

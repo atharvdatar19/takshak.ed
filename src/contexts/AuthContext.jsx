@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react"
 import supabase from "../supabaseClient"
+import { signOut as authSignOut } from "../services/auth"
 
 const ADMIN_EMAILS = ["mentorbhaiyaaa.notifications@gmail.com"]
 
@@ -7,7 +8,10 @@ const AuthContext = createContext({
     user: null,
     profile: null,
     isAdmin: false,
+    isMentor: false,
+    role: "guest",
     loading: true,
+    signOut: () => { },
 })
 
 export function AuthProvider({ children }) {
@@ -55,9 +59,22 @@ export function AuthProvider({ children }) {
         [user],
     )
 
+    const role = useMemo(() => {
+        if (isAdmin) return "admin"
+        return profile?.role || "student"
+    }, [profile, isAdmin])
+
+    const isMentor = useMemo(() => role === "mentor" || role === "admin", [role])
+
+    async function handleSignOut() {
+        await authSignOut()
+        setUser(null)
+        setProfile(null)
+    }
+
     const value = useMemo(
-        () => ({ user, profile, isAdmin, loading }),
-        [user, profile, isAdmin, loading],
+        () => ({ user, profile, isAdmin, isMentor, role, loading, signOut: handleSignOut }),
+        [user, profile, isAdmin, isMentor, role, loading],
     )
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -1,6 +1,7 @@
 import { Component, Suspense, lazy, useState } from "react"
-import { NavLink, useLocation } from "react-router-dom"
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
+import { useAuth } from "../contexts/AuthContext"
 import {
   ArrowLeftRight,
   Bell,
@@ -79,16 +80,12 @@ const NAV_SECTIONS = [
       { to: "/wellness", label: "Wellness Check-in", icon: Heart },
     ],
   },
-  {
-    title: "Account",
-    icon: User,
-    links: [
-      { to: "/admin", label: "Admin Control", icon: ShieldCheck },
-    ],
-  },
 ]
 
 function SidebarContent({ onNavigate }) {
+  const { user, profile, isAdmin, signOut } = useAuth()
+  const navigate = useNavigate()
+
   return (
     <>
       {/* Brand */}
@@ -130,24 +127,68 @@ function SidebarContent({ onNavigate }) {
             </div>
           )
         })}
+
+        {/* Admin link — only visible to admins */}
+        {isAdmin && (
+          <div>
+            <p className="mb-1.5 flex items-center gap-1.5 px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <ShieldCheck size={11} /> Admin
+            </p>
+            <nav>
+              <NavLink
+                to="/admin"
+                onClick={onNavigate}
+                className={({ isActive }) =>
+                  `group flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-200 ${isActive ? "nav-active" : "text-slate-600 hover:bg-indigo-50 hover:text-indigo-600"}`
+                }
+              >
+                <ShieldCheck size={16} className="shrink-0" />
+                <span className="truncate">Admin Control</span>
+              </NavLink>
+            </nav>
+          </div>
+        )}
       </div>
 
-      {/* Bottom */}
+      {/* Bottom — Auth */}
       <div className="space-y-2 px-4 pb-5 pt-3">
         <ThemeToggle />
         <p className="hidden px-2 text-[10px] text-slate-400 md:block">Ctrl+K quick nav</p>
-        <button
-          type="button"
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:shadow-xl"
-        >
-          <LogIn size={15} /> Log In
-        </button>
+
+        {user ? (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2.5 rounded-xl bg-indigo-50 px-3 py-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-xs font-bold text-white">
+                {(profile?.full_name || user.email || "U").charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-slate-900 truncate">{profile?.full_name || "User"}</p>
+                <p className="text-[10px] text-slate-500 truncate">{user.email}</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={async () => { await signOut(); navigate("/login"); onNavigate() }}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition"
+            >
+              <LogIn size={15} className="rotate-180" /> Sign Out
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => { navigate("/signup"); onNavigate() }}
+            className="btn-ripple flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:shadow-xl"
+          >
+            <LogIn size={15} /> Sign Up / Log In
+          </button>
+        )}
       </div>
     </>
   )
 }
 
-export default function AppLayout({ children }) {
+export default function AppLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
 
@@ -218,7 +259,7 @@ export default function AppLayout({ children }) {
       {/* ── Main Content ── */}
       <main className="perspective-scroll relative z-10 flex-1 overflow-y-auto p-5 pt-20 md:p-8 md:pt-8">
         <PageTransition>
-          {children}
+          <Outlet />
         </PageTransition>
       </main>
 
