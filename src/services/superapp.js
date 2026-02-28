@@ -1,17 +1,20 @@
 import supabase from "../supabaseClient"
 
 async function safeQuery(queryBuilder, fallback = []) {
+  if (!queryBuilder) return fallback
   const { data, error } = await queryBuilder
   if (error) return fallback
   return data ?? fallback
 }
 
 export async function getCurrentUser() {
+  if (!supabase) return null
   const { data } = await supabase.auth.getUser()
   return data?.user || null
 }
 
 export async function getCurrentUserProfile() {
+  if (!supabase) return null
   const user = await getCurrentUser()
   if (!user) return null
 

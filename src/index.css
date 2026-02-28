@@ -2,18 +2,172 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  color: #0f172a;
-  background-color: #f1f5f9;
+/* ── Smooth Defaults ── */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
-  min-height: 100vh;
-  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
+/* ── Main Background ── */
+.bg-app {
+  background: linear-gradient(180deg, #f1f0fb 0%, #f8f7ff 30%, #ffffff 70%, #f1f0fb 100%);
+  min-height: 100vh;
+}
+
+/* ── Animated Gradient ── */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.bg-animated-gradient {
+  background: linear-gradient(-45deg, #0f172a, #1e1b4b, #172554, #0c1a2e);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+/* ── Glassmorphism Sidebar ── */
+.sidebar-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(228, 226, 241, 0.6);
+}
+
+/* ── Hero Gradient (Purple) ── */
+.hero-gradient {
+  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 30%, #7c3aed 60%, #6366f1 100%);
+}
+
+/* ── Card Gradient Tops ── */
+.card-gradient-blue {
+  background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+}
+
+.card-gradient-teal {
+  background: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%);
+}
+
+.card-gradient-purple {
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+}
+
+.card-gradient-orange {
+  background: linear-gradient(135deg, #ea580c 0%, #f59e0b 100%);
+}
+
+/* ── Active Nav Glow ── */
+@keyframes nav-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 16px rgba(99, 102, 241, 0.5);
+  }
+}
+
+.nav-active {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  animation: nav-glow 3s ease-in-out infinite;
+}
+
+/* ── Premium Shadows ── */
+.shadow-card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-card-hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Shimmer ── */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ── Custom Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* ── Scrollable 3D Perspective ── */
+.perspective-scroll {
+  perspective: 1200px;
+  perspective-origin: center top;
+}
+
+.scroll-3d-card {
+  transition: transform 0.4s ease, box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+.scroll-3d-card:hover {
+  transform: translateY(-4px) rotateX(2deg) scale(1.01);
+}
+
+/* ── Tilt Glare ── */
+.tilt-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* ── Confetti ── */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
 }

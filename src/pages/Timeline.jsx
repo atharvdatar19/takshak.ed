@@ -1,12 +1,13 @@
 import { motion } from "framer-motion"
 import { BellRing, Clock3 } from "lucide-react"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import DataState from "../components/DataState"
 import LoadingSkeleton from "../components/LoadingSkeleton"
 import PageHeader from "../components/PageHeader"
 import { formatDate, getDaysLeft } from "../lib/date"
 import { getExamsTimeline } from "../services/api"
 import { getCurrentUserProfile } from "../services/superapp"
+import { useRealtimeSync } from "../hooks/useRealtimeSync"
 
 export default function Timeline() {
   const [profile, setProfile] = useState(null)
@@ -14,6 +15,7 @@ export default function Timeline() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
+<<<<<<< HEAD
   useEffect(() => {
     async function loadTimeline() {
       try {
@@ -35,10 +37,34 @@ export default function Timeline() {
       } finally {
         setLoading(false)
       }
-    }
+=======
+  const loadTimeline = useCallback(async () => {
+    setLoading(true)
+    setError("")
 
-    loadTimeline()
+    try {
+      const userProfile = await getCurrentUserProfile()
+      setProfile(userProfile)
+      const data = await getExamsTimeline({
+        stream: userProfile?.stream || "",
+        state: userProfile?.state || "",
+        targetExam: userProfile?.target_exam || "",
+      })
+      setTimeline(data)
+    } catch (err) {
+      setError(err.message || "Failed to load timeline")
+    } finally {
+      setLoading(false)
+>>>>>>> fea72e3 (Updated UI components and fixes)
+    }
   }, [])
+
+  useEffect(() => {
+    loadTimeline()
+  }, [loadTimeline])
+
+  // ── Realtime: auto-reload when exams_timeline table changes ──
+  useRealtimeSync("exams_timeline", () => loadTimeline())
 
   const now = new Date()
 
@@ -57,10 +83,14 @@ export default function Timeline() {
     const recentlyAdded = [...timeline].slice(0, 5)
 
     return { upcoming, closingSoon, recentlyAdded }
+<<<<<<< HEAD
   }, [timeline])
+=======
+  }, [timeline, now])
+>>>>>>> fea72e3 (Updated UI components and fixes)
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div>
       <PageHeader
         title="Smart Academic Timeline"
         description={`Filtered for ${profile?.stream || "all streams"}${

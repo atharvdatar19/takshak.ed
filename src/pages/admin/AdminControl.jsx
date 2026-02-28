@@ -1,65 +1,77 @@
-import { useMemo, useState } from "react"
+import { useState } from "react"
+import {
+  BarChart3,
+  Bell,
+  BookOpen,
+  Building2,
+  CalendarDays,
+  GraduationCap,
+  Users,
+} from "lucide-react"
 import PageHeader from "../../components/PageHeader"
-import DataState from "../../components/DataState"
-import { useAsyncData } from "../../hooks/useAsyncData"
-import { getColleges, getExamsTimeline } from "../../services/api"
+import AdminDashboard from "./AdminDashboard"
+import CollegeManager from "./CollegeManager"
+import ExamManager from "./ExamManager"
+import MentorManager from "./MentorManager"
+import BookingManager from "./BookingManager"
+import UserManager from "./UserManager"
+import NotificationBroadcaster from "./NotificationBroadcaster"
+
+const TABS = [
+  { key: "dashboard", label: "Dashboard", icon: BarChart3 },
+  { key: "colleges", label: "Colleges", icon: Building2 },
+  { key: "exams", label: "Exams", icon: CalendarDays },
+  { key: "mentors", label: "Mentors", icon: GraduationCap },
+  { key: "bookings", label: "Bookings", icon: BookOpen },
+  { key: "users", label: "Users", icon: Users },
+  { key: "notifications", label: "Notifications", icon: Bell },
+]
+
+const TAB_COMPONENTS = {
+  dashboard: AdminDashboard,
+  colleges: CollegeManager,
+  exams: ExamManager,
+  mentors: MentorManager,
+  bookings: BookingManager,
+  users: UserManager,
+  notifications: NotificationBroadcaster,
+}
 
 export default function AdminControl() {
-  const [query, setQuery] = useState("")
-  const collegesData = useAsyncData(getColleges, [])
-  const examsData = useAsyncData(getExamsTimeline, [])
-
-  const loading = collegesData.loading || examsData.loading
-  const error = collegesData.error || examsData.error
-
-  const filteredColleges = useMemo(
-    () =>
-      collegesData.data.filter(college =>
-        college.name?.toLowerCase().includes(query.toLowerCase()),
-      ),
-    [collegesData.data, query],
-  )
+  const [activeTab, setActiveTab] = useState("dashboard")
+  const ActiveComponent = TAB_COMPONENTS[activeTab]
 
   return (
     <div>
       <PageHeader
         title="Admin Control Center"
-        description="Operational guardrails for catalog quality, compliance and growth planning."
+        description="Manage colleges, exams, mentors, bookings, users, and notifications from one place."
       />
 
-      <DataState loading={loading} error={error} empty={!collegesData.data.length && !examsData.data.length}>
-        <section className="grid gap-4 md:grid-cols-3">
-          <AdminMetric label="Colleges Indexed" value={collegesData.data.length} />
-          <AdminMetric label="Exam Records" value={examsData.data.length} />
-          <AdminMetric label="Search Coverage" value="Realtime" />
-        </section>
+      {/* ── Tab Navigation ── */}
+      <nav className="mb-6 flex flex-wrap gap-1 rounded-xl border border-slate-200 bg-white p-1.5 shadow-sm">
+        {TABS.map(tab => {
+          const Icon = tab.icon
+          const isActive = activeTab === tab.key
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setActiveTab(tab.key)}
+              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${isActive
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                }`}
+            >
+              <Icon size={14} />
+              {tab.label}
+            </button>
+          )
+        })}
+      </nav>
 
-        <section className="mt-5 rounded-xl bg-white p-5 shadow-sm">
-          <input
-            value={query}
-            onChange={event => setQuery(event.target.value)}
-            placeholder="Filter colleges for moderation..."
-            className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-none focus:border-indigo-500"
-          />
-
-          <ul className="mt-4 space-y-2">
-            {filteredColleges.slice(0, 12).map(college => (
-              <li key={college.id} className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700">
-                {college.name} — {college.city}, {college.state}
-              </li>
-            ))}
-          </ul>
-        </section>
-      </DataState>
-    </div>
-  )
-}
-
-function AdminMetric({ label, value }) {
-  return (
-    <div className="rounded-xl bg-white p-5 shadow-sm">
-      <p className="text-sm text-slate-500">{label}</p>
-      <p className="mt-1 text-2xl font-semibold text-slate-900">{value}</p>
+      {/* ── Active Tab Content ── */}
+      <ActiveComponent />
     </div>
   )
 }

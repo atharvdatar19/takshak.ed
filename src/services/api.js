@@ -1,10 +1,14 @@
 import supabase from "../supabaseClient"
 
+const EMPTY_RESULT = { records: [], total: 0, page: 1, pageSize: 8 }
+
 function applyEquals(query, key, value) {
   return value ? query.eq(key, value) : query
 }
 
 export async function getColleges(params = {}) {
+  if (!supabase) return EMPTY_RESULT
+
   const {
     search = "",
     state = "",
@@ -67,6 +71,8 @@ export async function getColleges(params = {}) {
 }
 
 export async function getExamsTimeline(params = {}) {
+  if (!supabase) return []
+
   const { stream = "", state = "", targetExam = "" } = params
 
   let query = supabase
@@ -90,6 +96,7 @@ export async function getExamsTimeline(params = {}) {
 }
 
 export async function getMentors(params = {}) {
+<<<<<<< HEAD
   let query = supabase
     .from("mentors")
     .select("*")
@@ -99,9 +106,18 @@ export async function getMentors(params = {}) {
     query = query.eq("stream", params.stream)
   }
 
+=======
+  if (!supabase) return []
+
+  let query = supabase.from("mentors").select("*").order("rating", { ascending: false })
+  if (params.stream) query = query.eq("stream", params.stream)
+>>>>>>> fea72e3 (Updated UI components and fixes)
   const { data, error } = await query
 
   if (error) throw new Error(error.message)
+<<<<<<< HEAD
 
+=======
+>>>>>>> fea72e3 (Updated UI components and fixes)
   return data || []
 }
