@@ -22,10 +22,20 @@ import WeeklyTrendChart from "../components/WeeklyTrendChart"
 import { formatDate, getDaysLeft, isWithinRange } from "../lib/date"
 import { getDashboardBundle } from "../services/superapp"
 
-const quoteOptions = [
+// 🚀 Animation imports
+import AnimatedCounter from "../components/animations/AnimatedCounter"
+import TextReveal from "../components/animations/TextReveal"
+import TypewriterText from "../components/animations/TypewriterText"
+import ParticleField from "../components/animations/ParticleField"
+import MagneticCard from "../components/animations/MagneticCard"
+import { StaggerContainer, StaggerItem, FloatingElement, PulseGlow, SlideIn } from "../components/animations/AnimationUtils"
+
+const MOTIVATIONAL_QUOTES = [
   "Your future is shaped by the actions you take today.",
   "Small daily consistency compounds into rank-changing outcomes.",
   "Build discipline now, and opportunities will follow.",
+  "Every practice test is a step closer to your dream college.",
+  "Nations are built by minds that never stopped learning.",
 ]
 
 const QUICK_ACTIONS = [
@@ -34,12 +44,6 @@ const QUICK_ACTIONS = [
   { title: "Ask Doubts", description: "Ask anonymously, learn together", icon: MessageSquare, gradient: "card-gradient-purple", link: "/forum" },
   { title: "Predict Cutoff", description: "Check your chances at top colleges", icon: Target, gradient: "card-gradient-orange", link: "/cutoff" },
 ]
-
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, delay, ease: [0.25, 0.46, 0.45, 0.94] },
-})
 
 export default function Dashboard() {
   const [bundle, setBundle] = useState(null)
@@ -54,8 +58,6 @@ export default function Dashboard() {
     }
     loadBundle()
   }, [])
-
-  const quote = useMemo(() => quoteOptions[new Date().getDay() % quoteOptions.length], [])
 
   const computed = useMemo(() => {
     if (!bundle) {
@@ -93,102 +95,165 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 md:space-y-12">
 
-      {/* ═══ HERO ═══ */}
-      <motion.section {...fadeUp(0)} className="relative overflow-hidden rounded-[32px] hero-gradient px-8 py-10 text-white md:px-12 md:py-16">
+      {/* ═══ HERO — Particles + Text Reveal + Typewriter ═══ */}
+      <motion.section
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="relative overflow-hidden rounded-[32px] hero-gradient px-8 py-10 text-white md:px-12 md:py-16"
+      >
+        {/* Particle constellation */}
+        <ParticleField count={40} color="rgba(255,255,255,0.6)" lineColor="rgba(255,255,255,0.12)" maxDist={100} />
+        {/* Floating orbs */}
         <div className="orb orb-purple w-40 h-40 -top-10 -right-10" />
         <div className="orb orb-blue w-32 h-32 bottom-0 left-10" />
+
         <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div>
-            <span className="pill pill-glass text-xs mb-4">{dayName}</span>
-            <h1 className="text-display text-3xl md:text-5xl lg:text-6xl mt-3">
-              Welcome back,<br />
-              <span className="bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
-                {bundle?.profile?.full_name || "Student"}
-              </span>
-            </h1>
-            <p className="mt-3 max-w-md text-indigo-100/80 text-sm md:text-base">{quote}</p>
-          </div>
-          <div className="flex flex-col items-end gap-3 shrink-0">
-            <NotificationBell unreadCount={computed.unreadCount + computed.deadlineAlerts.length} />
-            <div className="rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 px-6 py-4 text-center">
-              <p className="text-xs text-indigo-200 uppercase tracking-widest">XP / Level</p>
-              <p className="stat-number text-3xl mt-1">{computed.xp} <span className="text-lg text-indigo-200">· L{computed.level}</span></p>
+          <div className="max-w-lg">
+            <SlideIn direction="down" delay={0.2}>
+              <span className="pill pill-glass text-xs mb-4">{dayName}</span>
+            </SlideIn>
+
+            {/* Character-by-character reveal */}
+            <TextReveal
+              text={`Welcome back, ${bundle?.profile?.full_name || "Student"}`}
+              mode="word"
+              stagger={0.08}
+              delay={0.3}
+              className="text-display text-3xl md:text-5xl lg:text-6xl mt-3"
+            />
+
+            {/* Typewriter motivational quote */}
+            <div className="mt-4 h-12">
+              <TypewriterText
+                texts={MOTIVATIONAL_QUOTES}
+                speed={40}
+                deleteSpeed={20}
+                pauseMs={3000}
+                className="text-indigo-100/80 text-sm md:text-base"
+              />
             </div>
           </div>
+
+          <SlideIn direction="right" delay={0.5}>
+            <div className="flex flex-col items-end gap-3 shrink-0">
+              <NotificationBell unreadCount={computed.unreadCount + computed.deadlineAlerts.length} />
+              <PulseGlow color="rgba(129, 140, 248, 0.3)" className="rounded-2xl">
+                <div className="rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 px-6 py-4 text-center">
+                  <p className="text-xs text-indigo-200 uppercase tracking-widest">XP / Level</p>
+                  <p className="stat-number text-3xl mt-1">
+                    <AnimatedCounter value={computed.xp} className="text-white" /> <span className="text-lg text-indigo-200">· L{computed.level}</span>
+                  </p>
+                </div>
+              </PulseGlow>
+            </div>
+          </SlideIn>
         </div>
       </motion.section>
 
-      {/* ═══ QUICK ACTIONS ═══ */}
+      {/* ═══ QUICK ACTIONS — Staggered + Magnetic + Shimmer ═══ */}
       <section>
-        <motion.h2 {...fadeUp(0.1)} className="text-section text-xl md:text-3xl text-slate-900 mb-5 md:mb-8 flex items-center gap-2">
-          <Zap size={24} className="text-amber-500" /> Quick Actions
-        </motion.h2>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <SlideIn direction="left" delay={0.1}>
+          <h2 className="text-section text-xl md:text-3xl text-slate-900 mb-5 md:mb-8 flex items-center gap-2">
+            <Zap size={24} className="text-amber-500" /> Quick Actions
+          </h2>
+        </SlideIn>
+
+        <StaggerContainer stagger={0.1} delay={0.2} className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {QUICK_ACTIONS.map((action, i) => {
             const Icon = action.icon
             return (
-              <motion.div key={action.title} {...fadeUp(0.15 + i * 0.08)}>
-                <Link
-                  to={action.link}
-                  className={`group relative flex flex-col overflow-hidden rounded-[24px] ${action.gradient} p-6 md:p-8 text-white transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl h-full`}
-                >
-                  {action.tag && (
-                    <span className="absolute right-3 top-3 rounded-full bg-amber-400 px-2.5 py-0.5 text-[10px] font-bold text-amber-900">
-                      ✨ {action.tag}
-                    </span>
-                  )}
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
-                    <Icon size={24} />
-                  </div>
-                  <h3 className="text-card-title text-base md:text-lg">{action.title}</h3>
-                  <p className="mt-1.5 text-xs md:text-sm text-white/70 leading-relaxed flex-1">{action.description}</p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-white/80 group-hover:text-white transition">
-                    Explore <ChevronRight size={12} className="group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </Link>
-              </motion.div>
+              <StaggerItem key={action.title}>
+                <MagneticCard intensity={0.05} className="h-full">
+                  <Link
+                    to={action.link}
+                    className={`shimmer-hover btn-ripple group flex flex-col overflow-hidden rounded-[24px] ${action.gradient} p-6 md:p-8 text-white transition-all duration-300 hover:shadow-2xl h-full`}
+                  >
+                    {action.tag && (
+                      <span className="absolute right-3 top-3 rounded-full bg-amber-400 px-2.5 py-0.5 text-[10px] font-bold text-amber-900 z-20">
+                        ✨ {action.tag}
+                      </span>
+                    )}
+                    <FloatingElement amplitude={3} duration={3 + i}>
+                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
+                        <Icon size={24} />
+                      </div>
+                    </FloatingElement>
+                    <h3 className="text-card-title text-base md:text-lg">{action.title}</h3>
+                    <p className="mt-1.5 text-xs md:text-sm text-white/70 leading-relaxed flex-1">{action.description}</p>
+                    <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-white/80 group-hover:text-white transition">
+                      Explore <ChevronRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </Link>
+                </MagneticCard>
+              </StaggerItem>
             )
           })}
-        </div>
+        </StaggerContainer>
       </section>
 
-      {/* ═══ STATS ═══ */}
+      {/* ═══ STATS — Animated Counters ═══ */}
       <section>
-        <motion.h2 {...fadeUp(0.2)} className="text-section text-xl md:text-3xl text-slate-900 mb-5 md:mb-8 flex items-center gap-2">
-          <Rocket size={24} className="text-indigo-600" /> Today's Progress
-        </motion.h2>
-        <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-          <StatCard delay={0.25} icon={TrendingUp} label="Study Sessions" value={bundle?.studySessions?.length || 0} sub="Tracked units" color="indigo" />
-          <StatCard delay={0.3} icon={Award} label="Quiz Attempts" value={bundle?.quizAttempts?.length || 0} sub="Assessments" color="emerald" />
-          <StatCard delay={0.35} icon={CalendarDays} label="Upcoming" value={computed.upcomingBookings.length} sub="Mentor bookings" color="blue" />
-          <StatCard delay={0.4} icon={Bell} label="Unread" value={computed.unreadCount} sub="Notifications" color="amber" />
-        </div>
+        <SlideIn direction="left" delay={0.1}>
+          <h2 className="text-section text-xl md:text-3xl text-slate-900 mb-5 md:mb-8 flex items-center gap-2">
+            <Rocket size={24} className="text-indigo-600" /> Today's Progress
+          </h2>
+        </SlideIn>
+
+        <StaggerContainer stagger={0.1} delay={0.15} className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+          <StaggerItem>
+            <StatCard icon={TrendingUp} label="Study Sessions" value={bundle?.studySessions?.length || 0} sub="Tracked units" color="indigo" />
+          </StaggerItem>
+          <StaggerItem>
+            <StatCard icon={Award} label="Quiz Attempts" value={bundle?.quizAttempts?.length || 0} sub="Assessments" color="emerald" />
+          </StaggerItem>
+          <StaggerItem>
+            <StatCard icon={CalendarDays} label="Upcoming" value={computed.upcomingBookings.length} sub="Mentor bookings" color="blue" />
+          </StaggerItem>
+          <StaggerItem>
+            <StatCard icon={Bell} label="Unread" value={computed.unreadCount} sub="Notifications" color="amber" />
+          </StaggerItem>
+        </StaggerContainer>
       </section>
 
-      {/* ═══ WEEKLY TRENDS ═══ */}
+      {/* ═══ WEEKLY TRENDS — Gradient border ═══ */}
       <section>
         <div className="divider-gradient mb-8" />
-        <div className="grid gap-5 xl:grid-cols-2">
-          <motion.div {...fadeUp(0.3)} className="card-bb p-5 md:p-7">
-            <WeeklyTrendChart title="Weekly Study Minutes" data={computed.weeklyStudyData} color="indigo" />
-          </motion.div>
-          <motion.div {...fadeUp(0.35)} className="card-bb p-5 md:p-7">
-            <WeeklyTrendChart title="Weekly Avg Score" data={computed.weeklyScoreData} color="emerald" />
-          </motion.div>
-        </div>
+        <StaggerContainer stagger={0.12} className="grid gap-5 xl:grid-cols-2">
+          <StaggerItem>
+            <div className="gradient-border">
+              <div className="card-bb p-5 md:p-7 bg-white rounded-[24px]">
+                <WeeklyTrendChart title="Weekly Study Minutes" data={computed.weeklyStudyData} color="indigo" />
+              </div>
+            </div>
+          </StaggerItem>
+          <StaggerItem>
+            <div className="gradient-border">
+              <div className="card-bb p-5 md:p-7 bg-white rounded-[24px]">
+                <WeeklyTrendChart title="Weekly Avg Score" data={computed.weeklyScoreData} color="emerald" />
+              </div>
+            </div>
+          </StaggerItem>
+        </StaggerContainer>
       </section>
 
-      {/* ═══ ALERTS ═══ */}
+      {/* ═══ DEADLINE ALERTS ═══ */}
       <AnimatePresence>
         {computed.deadlineAlerts.length > 0 && (
-          <motion.section {...fadeUp(0)} className="card-bb border-rose-200 bg-rose-50 p-5 md:p-7">
+          <motion.section
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 30 }}
+            transition={{ type: "spring", stiffness: 120, damping: 14 }}
+            className="card-bb border-rose-200 bg-rose-50 p-5 md:p-7 glow-breathe"
+          >
             <h3 className="text-card-title text-lg text-rose-800 mb-3 flex items-center gap-2">
               <Flame size={20} /> Applications closing within 3 days
             </h3>
             <ul className="space-y-2 text-sm text-rose-700">
               {computed.deadlineAlerts.map(a => (
                 <li key={a.id} className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-rose-500 shrink-0" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-rose-500 shrink-0 animate-pulse" />
                   {a.name} — closes {formatDate(a.application_end)} ({getDaysLeft(a.application_end)}d left)
                 </li>
               ))}
@@ -199,7 +264,12 @@ export default function Dashboard() {
 
       {/* ═══ NO ACTIVITY NUDGE ═══ */}
       {!computed.hasActivityToday && (
-        <motion.section {...fadeUp(0.4)} className="card-bb border-indigo-100 bg-indigo-50/60 p-5 md:p-7 text-center">
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
+          className="card-bb border-indigo-100 bg-indigo-50/60 p-5 md:p-7 text-center"
+        >
           <p className="text-sm text-indigo-700">
             <Rocket size={16} className="inline mr-1.5 text-indigo-500" />
             No activity logged today. A 30-minute session keeps your streak alive! 🔥
@@ -210,18 +280,22 @@ export default function Dashboard() {
   )
 }
 
-function StatCard({ icon: Icon, label, value, sub, color = "indigo", delay = 0 }) {
+function StatCard({ icon: Icon, label, value, sub, color = "indigo" }) {
   const bgMap = { indigo: "bg-indigo-50 border-indigo-100", emerald: "bg-emerald-50 border-emerald-100", blue: "bg-blue-50 border-blue-100", amber: "bg-amber-50 border-amber-100" }
   const iconBg = { indigo: "bg-indigo-100 text-indigo-600", emerald: "bg-emerald-100 text-emerald-600", blue: "bg-blue-100 text-blue-600", amber: "bg-amber-100 text-amber-600" }
 
   return (
-    <motion.div {...fadeUp(delay)} className={`card-bb ${bgMap[color]} p-5 md:p-6`}>
-      <div className={`mb-3 inline-flex rounded-xl p-2.5 ${iconBg[color]}`}>
-        <Icon size={20} />
+    <MagneticCard intensity={0.03} className="h-full">
+      <div className={`card-bb ${bgMap[color]} p-5 md:p-6 h-full shimmer-hover`}>
+        <FloatingElement amplitude={2} duration={4}>
+          <div className={`mb-3 inline-flex rounded-xl p-2.5 ${iconBg[color]}`}>
+            <Icon size={20} />
+          </div>
+        </FloatingElement>
+        <p className="text-xs text-slate-500 tracking-wide uppercase">{label}</p>
+        <AnimatedCounter value={value} className="stat-number text-3xl md:text-4xl text-slate-900 block mt-1" />
+        <p className="mt-1 text-xs text-slate-400">{sub}</p>
       </div>
-      <p className="text-xs text-slate-500 tracking-wide uppercase">{label}</p>
-      <p className="stat-number text-3xl md:text-4xl text-slate-900 mt-1">{value}</p>
-      <p className="mt-1 text-xs text-slate-400">{sub}</p>
-    </motion.div>
+    </MagneticCard>
   )
 }
