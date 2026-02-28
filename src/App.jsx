@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
 import { ToastProvider } from "./components/Toast"
 import AppLayout from "./components/AppLayout"
@@ -25,8 +25,9 @@ export default function App() {
         <BrowserRouter>
           <AppLayout>
             <Routes>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/" element={<CollegeDirectory />} />
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Navigate to="/" replace />} />
+              <Route path="/colleges" element={<CollegeDirectory />} />
               <Route path="/cutoff" element={<CutoffPredictor />} />
               <Route path="/applications" element={<ApplicationTracker />} />
               <Route path="/scholarships" element={<ScholarshipFinder />} />
