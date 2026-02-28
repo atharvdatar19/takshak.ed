@@ -1,13 +1,12 @@
 import { motion } from "framer-motion"
-import {
-    BarChart3,
-    ChevronRight,
-    Sparkles,
-    Target,
-    TrendingUp,
-} from "lucide-react"
+import { BarChart3, Target } from "lucide-react"
 import { useMemo, useState } from "react"
-import { useAutoReveal } from "../hooks/useScrollReveal"
+
+const fadeUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5, delay, ease: [0.25, 0.46, 0.45, 0.94] },
+})
 
 const DEMO_CUTOFFS = [
     { id: 1, college: "IIT Bombay", stream: "PCM", category: "General", closing_rank: 800, type: "government" },
@@ -35,9 +34,9 @@ function chanceLevel(rank, closing) {
 }
 
 const CHANCE_CONFIG = {
-    high: { label: "High Chance", bg: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-700", dot: "bg-emerald-500" },
-    medium: { label: "Medium Chance", bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-700", dot: "bg-amber-500" },
-    low: { label: "Low Chance", bg: "bg-rose-50", border: "border-rose-200", text: "text-rose-600", dot: "bg-rose-500" },
+    high: { label: "High Chance", bg: "bg-emerald-50 border-emerald-200", text: "text-emerald-700", dot: "bg-emerald-500" },
+    medium: { label: "Medium Chance", bg: "bg-amber-50 border-amber-200", text: "text-amber-700", dot: "bg-amber-500" },
+    low: { label: "Low Chance", bg: "bg-rose-50 border-rose-200", text: "text-rose-600", dot: "bg-rose-500" },
 }
 
 export default function CutoffPredictor() {
@@ -45,64 +44,55 @@ export default function CutoffPredictor() {
     const [stream, setStream] = useState("PCM")
     const [category, setCategory] = useState("General")
     const [showResults, setShowResults] = useState(false)
-    useAutoReveal()
 
     const results = useMemo(() => {
         if (!rank) return { high: [], medium: [], low: [] }
         const r = parseInt(rank, 10)
         if (isNaN(r)) return { high: [], medium: [], low: [] }
-
         const matched = DEMO_CUTOFFS.filter(c => c.stream === stream && c.category === category)
         const grouped = { high: [], medium: [], low: [] }
         matched.forEach(c => { grouped[chanceLevel(r, c.closing_rank)].push(c) })
         return grouped
     }, [rank, stream, category])
 
-    function handlePredict() {
-        if (!rank) return
-        setShowResults(true)
-    }
-
     const totalResults = results.high.length + results.medium.length + results.low.length
 
     return (
-        <div className="space-y-10 md:space-y-16">
+        <div className="space-y-8 md:space-y-12">
             {/* ═══ HERO ═══ */}
-            <section className="relative overflow-hidden rounded-[32px] hero-gradient px-8 py-12 text-white md:px-14 md:py-20">
+            <motion.section {...fadeUp(0)} className="relative overflow-hidden rounded-[32px] hero-gradient px-8 py-10 text-white md:px-12 md:py-16">
                 <div className="orb orb-blue w-48 h-48 -top-16 -right-16" />
                 <div className="orb orb-purple w-32 h-32 bottom-0 left-10" />
                 <div className="relative z-10 text-center max-w-2xl mx-auto">
-                    <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-sm">
-                        <Target size={40} />
+                    <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
+                        <Target size={32} />
                     </div>
-                    <h1 className="text-display text-4xl md:text-6xl">Cutoff Predictor</h1>
-                    <p className="text-body-lg mt-4 text-indigo-100/80 text-base">
-                        Check your chances at top colleges based on your rank
-                    </p>
+                    <h1 className="text-display text-3xl md:text-5xl">Cutoff Predictor</h1>
+                    <p className="mt-3 text-indigo-100/80 text-sm md:text-base">Check your chances at top colleges based on your rank</p>
                 </div>
-            </section>
+            </motion.section>
 
             {/* ═══ INPUT FORM ═══ */}
-            <section className="reveal card-bb p-6 md:p-10 max-w-2xl mx-auto">
-                <h2 className="text-section text-xl md:text-2xl text-slate-900 mb-6 flex items-center gap-2">
-                    <BarChart3 size={22} className="text-indigo-600" /> Enter Your Details
+            <motion.section {...fadeUp(0.1)} className="card-bb p-6 md:p-8 max-w-2xl mx-auto">
+                <h2 className="text-section text-lg md:text-xl text-slate-900 mb-5 flex items-center gap-2">
+                    <BarChart3 size={20} className="text-indigo-600" /> Enter Your Details
                 </h2>
-                <div className="space-y-5">
+                <div className="space-y-4">
                     <div>
-                        <label className="mb-2 block text-sm font-semibold text-slate-700">Your Rank</label>
-                        <input type="number" value={rank} onChange={e => setRank(e.target.value)} placeholder="e.g. 5000" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-base outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition" />
+                        <label className="mb-1.5 block text-sm font-semibold text-slate-700">Your Rank</label>
+                        <input type="number" value={rank} onChange={e => setRank(e.target.value)} placeholder="e.g. 5000" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition" />
                     </div>
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid gap-3 md:grid-cols-2">
                         <div>
-                            <label className="mb-2 block text-sm font-semibold text-slate-700">Stream</label>
-                            <select value={stream} onChange={e => setStream(e.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm">
+                            <label className="mb-1.5 block text-sm font-semibold text-slate-700">Stream</label>
+                            <select value={stream} onChange={e => setStream(e.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm">
                                 <option value="PCM">PCM (Engineering)</option>
                                 <option value="PCB">PCB (Medical)</option>
                             </select>
                         </div>
                         <div>
-                            <label className="mb-2 block text-sm font-semibold text-slate-700">Category</label>
-                            <select value={category} onChange={e => setCategory(e.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm">
+                            <label className="mb-1.5 block text-sm font-semibold text-slate-700">Category</label>
+                            <select value={category} onChange={e => setCategory(e.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm">
                                 <option value="General">General</option>
                                 <option value="OBC">OBC</option>
                                 <option value="SC">SC</option>
@@ -111,45 +101,45 @@ export default function CutoffPredictor() {
                             </select>
                         </div>
                     </div>
-                    <button type="button" onClick={handlePredict} disabled={!rank} className="pill pill-primary w-full justify-center py-4 text-base disabled:opacity-50">
+                    <button type="button" onClick={() => rank && setShowResults(true)} disabled={!rank} className="w-full rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 flex items-center justify-center gap-2">
                         <Target size={18} /> Predict Chances
                     </button>
                 </div>
-            </section>
+            </motion.section>
 
             {/* ═══ RESULTS ═══ */}
             {showResults && (
-                <section className="space-y-8">
-                    <div className="text-center">
-                        <h2 className="text-section text-2xl md:text-4xl text-slate-900">
+                <section className="space-y-6">
+                    <motion.div {...fadeUp(0)} className="text-center">
+                        <h2 className="text-section text-xl md:text-3xl text-slate-900">
                             Results for Rank <span className="text-indigo-600">#{rank}</span>
                         </h2>
-                        <p className="text-body-lg mt-2">{totalResults} colleges found · {stream} · {category}</p>
-                    </div>
+                        <p className="mt-2 text-sm text-slate-500">{totalResults} colleges found · {stream} · {category}</p>
+                    </motion.div>
 
                     {["high", "medium", "low"].map(level => {
                         const items = results[level]
                         const config = CHANCE_CONFIG[level]
                         if (items.length === 0) return null
                         return (
-                            <div key={level} className="reveal">
-                                <h3 className="text-card-title text-lg text-slate-900 mb-4 flex items-center gap-2">
+                            <motion.div key={level} {...fadeUp(0.1)}>
+                                <h3 className="text-card-title text-base text-slate-900 mb-3 flex items-center gap-2">
                                     <span className={`h-3 w-3 rounded-full ${config.dot}`} />
                                     {config.label} ({items.length})
                                 </h3>
-                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                    {items.map(college => (
-                                        <div key={college.id} className={`card-bb ${config.border} ${config.bg} p-5 md:p-6`}>
-                                            <h4 className="text-card-title text-base text-slate-900">{college.college}</h4>
-                                            <p className="mt-1 text-sm text-slate-500">Closing rank: <strong>#{college.closing_rank.toLocaleString()}</strong></p>
-                                            <div className="mt-3 flex items-center justify-between">
+                                <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                                    {items.map((college, ci) => (
+                                        <motion.div key={college.id} {...fadeUp(0.15 + ci * 0.05)} className={`card-bb ${config.bg} p-5`}>
+                                            <h4 className="text-card-title text-sm text-slate-900">{college.college}</h4>
+                                            <p className="mt-1 text-xs text-slate-500">Closing: <strong>#{college.closing_rank.toLocaleString()}</strong></p>
+                                            <div className="mt-2 flex items-center justify-between">
                                                 <span className="pill pill-outline text-[10px] py-0.5 px-2">{college.type}</span>
                                                 <span className={`text-xs font-bold ${config.text}`}>{config.label}</span>
                                             </div>
-                                        </div>
+                                        </motion.div>
                                     ))}
                                 </div>
-                            </div>
+                            </motion.div>
                         )
                     })}
                 </section>

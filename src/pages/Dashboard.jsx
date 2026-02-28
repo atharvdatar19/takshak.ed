@@ -15,12 +15,12 @@ import {
 } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useMemo, useState } from "react"
+import { Link } from "react-router-dom"
 import LoadingSkeleton from "../components/LoadingSkeleton"
 import NotificationBell from "../components/NotificationBell"
 import WeeklyTrendChart from "../components/WeeklyTrendChart"
 import { formatDate, getDaysLeft, isWithinRange } from "../lib/date"
 import { getDashboardBundle } from "../services/superapp"
-import { useAutoReveal } from "../hooks/useScrollReveal"
 
 const quoteOptions = [
   "Your future is shaped by the actions you take today.",
@@ -35,11 +35,15 @@ const QUICK_ACTIONS = [
   { title: "Predict Cutoff", description: "Check your chances at top colleges", icon: Target, gradient: "card-gradient-orange", link: "/cutoff" },
 ]
 
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5, delay, ease: [0.25, 0.46, 0.45, 0.94] },
+})
+
 export default function Dashboard() {
   const [bundle, setBundle] = useState(null)
   const [loading, setLoading] = useState(true)
-
-  useAutoReveal()
 
   useEffect(() => {
     async function loadBundle() {
@@ -55,14 +59,12 @@ export default function Dashboard() {
 
   const computed = useMemo(() => {
     if (!bundle) {
-      return { xp: 0, level: 1, unreadCount: 0, deadlineAlerts: [], hasActivityToday: false, weeklyStudyData: [], weeklyScoreData: [], activeGoals: [], upcomingBookings: [], streamMentors: [] }
+      return { xp: 0, level: 1, unreadCount: 0, deadlineAlerts: [], hasActivityToday: false, weeklyStudyData: [], weeklyScoreData: [], upcomingBookings: [] }
     }
-
     const today = new Date().toDateString()
     const studySessions = bundle.studySessions || []
     const quizAttempts = bundle.quizAttempts || []
     const bookings = bundle.bookings || []
-
     const xp = studySessions.length * 20 + quizAttempts.length * 35 + bookings.length * 40
     const level = Math.max(1, Math.floor(xp / 250) + 1)
     const unreadCount = (bundle.notifications || []).filter(n => !n.is_read).length
@@ -70,7 +72,6 @@ export default function Dashboard() {
     const hasActivityToday =
       studySessions.some(s => new Date(s.created_date).toDateString() === today) ||
       quizAttempts.some(a => new Date(a.created_date).toDateString() === today)
-
     const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     const weeklyStudyData = weekdays.map((day, idx) => {
       const total = studySessions.filter(s => new Date(s.created_date).getDay() === ((idx + 1) % 7)).reduce((sum, s) => sum + (s.duration_minutes || 0), 0)
@@ -81,12 +82,8 @@ export default function Dashboard() {
       const score = attempts.length ? attempts.reduce((sum, a) => sum + (a.score || 0), 0) / attempts.length : 0
       return { label: day, percent: Math.round(score) }
     })
-
-    const activeGoals = (bundle.goals || []).filter(g => g.status === "active" || g.status === "in_progress")
     const upcomingBookings = bookings.filter(b => new Date(b.requested_datetime) >= new Date())
-    const streamMentors = (bundle.mentors || []).filter(m => !bundle.profile?.stream || m.stream === bundle.profile.stream)
-
-    return { xp, level, unreadCount, deadlineAlerts, hasActivityToday, weeklyStudyData, weeklyScoreData, activeGoals, upcomingBookings, streamMentors }
+    return { xp, level, unreadCount, deadlineAlerts, hasActivityToday, weeklyStudyData, weeklyScoreData, upcomingBookings }
   }, [bundle])
 
   if (loading) return <LoadingSkeleton rows={12} />
@@ -94,29 +91,24 @@ export default function Dashboard() {
   const dayName = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" })
 
   return (
-    <div className="space-y-10 md:space-y-16">
+    <div className="space-y-8 md:space-y-12">
 
-      {/* ═══ HERO — BB Agency massive header ═══ */}
-      <section className="relative overflow-hidden rounded-[32px] hero-gradient px-8 py-12 text-white md:px-14 md:py-20">
-        {/* Floating orbs */}
+      {/* ═══ HERO ═══ */}
+      <motion.section {...fadeUp(0)} className="relative overflow-hidden rounded-[32px] hero-gradient px-8 py-10 text-white md:px-12 md:py-16">
         <div className="orb orb-purple w-40 h-40 -top-10 -right-10" />
         <div className="orb orb-blue w-32 h-32 bottom-0 left-10" />
-
         <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="pill pill-glass mb-4 text-xs">{dayName}</p>
-            <h1 className="text-display text-4xl md:text-6xl lg:text-7xl">
+            <span className="pill pill-glass text-xs mb-4">{dayName}</span>
+            <h1 className="text-display text-3xl md:text-5xl lg:text-6xl mt-3">
               Welcome back,<br />
               <span className="bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
                 {bundle?.profile?.full_name || "Student"}
               </span>
             </h1>
-            <p className="text-body-lg mt-4 max-w-md text-indigo-100/80 text-base">
-              {quote}
-            </p>
+            <p className="mt-3 max-w-md text-indigo-100/80 text-sm md:text-base">{quote}</p>
           </div>
-
-          <div className="flex flex-col items-end gap-3">
+          <div className="flex flex-col items-end gap-3 shrink-0">
             <NotificationBell unreadCount={computed.unreadCount + computed.deadlineAlerts.length} />
             <div className="rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 px-6 py-4 text-center">
               <p className="text-xs text-indigo-200 uppercase tracking-widest">XP / Level</p>
@@ -124,81 +116,80 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* ═══ QUICK ACTIONS — Bento Grid ═══ */}
+      {/* ═══ QUICK ACTIONS ═══ */}
       <section>
-        <h2 className="text-section text-2xl md:text-4xl text-slate-900 mb-6 md:mb-10">
-          <Zap size={28} className="inline text-amber-500 mr-2" />
-          Quick Actions
-        </h2>
-        <div className="bento-grid">
+        <motion.h2 {...fadeUp(0.1)} className="text-section text-xl md:text-3xl text-slate-900 mb-5 md:mb-8 flex items-center gap-2">
+          <Zap size={24} className="text-amber-500" /> Quick Actions
+        </motion.h2>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {QUICK_ACTIONS.map((action, i) => {
             const Icon = action.icon
             return (
-              <a
-                key={action.title}
-                href={action.link}
-                className={`reveal reveal-delay-${i + 1} group relative overflow-hidden rounded-[28px] ${action.gradient} p-7 md:p-9 text-white transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl ${i === 0 ? "bento-span-2 md:row-span-2" : ""}`}
-              >
-                {action.tag && (
-                  <span className="absolute right-4 top-4 pill pill-dark text-[10px] py-1 px-3">
-                    ✨ {action.tag}
-                  </span>
-                )}
-                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
-                  <Icon size={28} />
-                </div>
-                <h3 className="text-card-title text-xl md:text-2xl">{action.title}</h3>
-                <p className="mt-2 text-sm text-white/70 leading-relaxed">{action.description}</p>
-                <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-white/80 group-hover:text-white transition">
-                  Explore <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </div>
-              </a>
+              <motion.div key={action.title} {...fadeUp(0.15 + i * 0.08)}>
+                <Link
+                  to={action.link}
+                  className={`group relative flex flex-col overflow-hidden rounded-[24px] ${action.gradient} p-6 md:p-8 text-white transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl h-full`}
+                >
+                  {action.tag && (
+                    <span className="absolute right-3 top-3 rounded-full bg-amber-400 px-2.5 py-0.5 text-[10px] font-bold text-amber-900">
+                      ✨ {action.tag}
+                    </span>
+                  )}
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
+                    <Icon size={24} />
+                  </div>
+                  <h3 className="text-card-title text-base md:text-lg">{action.title}</h3>
+                  <p className="mt-1.5 text-xs md:text-sm text-white/70 leading-relaxed flex-1">{action.description}</p>
+                  <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-white/80 group-hover:text-white transition">
+                    Explore <ChevronRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Link>
+              </motion.div>
             )
           })}
         </div>
       </section>
 
-      {/* ═══ TODAY'S PROGRESS — Stats Row ═══ */}
+      {/* ═══ STATS ═══ */}
       <section>
-        <h2 className="text-section text-2xl md:text-4xl text-slate-900 mb-6 md:mb-10">
-          <Rocket size={28} className="inline text-indigo-600 mr-2" />
-          Today's Progress
-        </h2>
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          <StatCard icon={TrendingUp} label="Study Sessions" value={bundle?.studySessions?.length || 0} sub="Tracked performance units" color="indigo" />
-          <StatCard icon={Award} label="Quiz Attempts" value={bundle?.quizAttempts?.length || 0} sub="Assessment attempts" color="emerald" />
-          <StatCard icon={CalendarDays} label="Upcoming Sessions" value={computed.upcomingBookings.length} sub="Mentor bookings" color="blue" />
-          <StatCard icon={Bell} label="Unread Alerts" value={computed.unreadCount} sub="Notifications pending" color="amber" />
+        <motion.h2 {...fadeUp(0.2)} className="text-section text-xl md:text-3xl text-slate-900 mb-5 md:mb-8 flex items-center gap-2">
+          <Rocket size={24} className="text-indigo-600" /> Today's Progress
+        </motion.h2>
+        <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+          <StatCard delay={0.25} icon={TrendingUp} label="Study Sessions" value={bundle?.studySessions?.length || 0} sub="Tracked units" color="indigo" />
+          <StatCard delay={0.3} icon={Award} label="Quiz Attempts" value={bundle?.quizAttempts?.length || 0} sub="Assessments" color="emerald" />
+          <StatCard delay={0.35} icon={CalendarDays} label="Upcoming" value={computed.upcomingBookings.length} sub="Mentor bookings" color="blue" />
+          <StatCard delay={0.4} icon={Bell} label="Unread" value={computed.unreadCount} sub="Notifications" color="amber" />
         </div>
       </section>
 
       {/* ═══ WEEKLY TRENDS ═══ */}
       <section>
-        <div className="divider-gradient mb-10" />
-        <div className="grid gap-6 xl:grid-cols-2">
-          <div className="reveal card-bb p-6 md:p-8">
+        <div className="divider-gradient mb-8" />
+        <div className="grid gap-5 xl:grid-cols-2">
+          <motion.div {...fadeUp(0.3)} className="card-bb p-5 md:p-7">
             <WeeklyTrendChart title="Weekly Study Minutes" data={computed.weeklyStudyData} color="indigo" />
-          </div>
-          <div className="reveal card-bb p-6 md:p-8">
+          </motion.div>
+          <motion.div {...fadeUp(0.35)} className="card-bb p-5 md:p-7">
             <WeeklyTrendChart title="Weekly Avg Score" data={computed.weeklyScoreData} color="emerald" />
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ═══ DEADLINE ALERTS ═══ */}
+      {/* ═══ ALERTS ═══ */}
       <AnimatePresence>
         {computed.deadlineAlerts.length > 0 && (
-          <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="card-bb border-rose-200 bg-rose-50 p-6 md:p-8">
-            <h3 className="text-card-title text-lg text-rose-800 mb-4 flex items-center gap-2">
+          <motion.section {...fadeUp(0)} className="card-bb border-rose-200 bg-rose-50 p-5 md:p-7">
+            <h3 className="text-card-title text-lg text-rose-800 mb-3 flex items-center gap-2">
               <Flame size={20} /> Applications closing within 3 days
             </h3>
             <ul className="space-y-2 text-sm text-rose-700">
               {computed.deadlineAlerts.map(a => (
                 <li key={a.id} className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
-                  {a.name} · closes {formatDate(a.application_end)} ({getDaysLeft(a.application_end)}d)
+                  <span className="h-1.5 w-1.5 rounded-full bg-rose-500 shrink-0" />
+                  {a.name} — closes {formatDate(a.application_end)} ({getDaysLeft(a.application_end)}d left)
                 </li>
               ))}
             </ul>
@@ -208,29 +199,29 @@ export default function Dashboard() {
 
       {/* ═══ NO ACTIVITY NUDGE ═══ */}
       {!computed.hasActivityToday && (
-        <section className="card-bb border-indigo-100 bg-indigo-50/50 p-6 md:p-8 text-center">
-          <p className="text-body-lg text-indigo-700">
-            <Rocket size={18} className="inline mr-2 text-indigo-500" />
-            No activity logged today. A 30-minute session keeps your streak alive!
+        <motion.section {...fadeUp(0.4)} className="card-bb border-indigo-100 bg-indigo-50/60 p-5 md:p-7 text-center">
+          <p className="text-sm text-indigo-700">
+            <Rocket size={16} className="inline mr-1.5 text-indigo-500" />
+            No activity logged today. A 30-minute session keeps your streak alive! 🔥
           </p>
-        </section>
+        </motion.section>
       )}
     </div>
   )
 }
 
-function StatCard({ icon: Icon, label, value, sub, color = "indigo" }) {
-  const bgMap = { indigo: "bg-indigo-50", emerald: "bg-emerald-50", blue: "bg-blue-50", amber: "bg-amber-50" }
-  const iconMap = { indigo: "text-indigo-600", emerald: "text-emerald-600", blue: "text-blue-600", amber: "text-amber-600" }
+function StatCard({ icon: Icon, label, value, sub, color = "indigo", delay = 0 }) {
+  const bgMap = { indigo: "bg-indigo-50 border-indigo-100", emerald: "bg-emerald-50 border-emerald-100", blue: "bg-blue-50 border-blue-100", amber: "bg-amber-50 border-amber-100" }
+  const iconBg = { indigo: "bg-indigo-100 text-indigo-600", emerald: "bg-emerald-100 text-emerald-600", blue: "bg-blue-100 text-blue-600", amber: "bg-amber-100 text-amber-600" }
 
   return (
-    <div className="reveal card-bb p-6 md:p-8">
-      <div className={`mb-4 inline-flex rounded-2xl p-3 ${bgMap[color]}`}>
-        <Icon size={22} className={iconMap[color]} />
+    <motion.div {...fadeUp(delay)} className={`card-bb ${bgMap[color]} p-5 md:p-6`}>
+      <div className={`mb-3 inline-flex rounded-xl p-2.5 ${iconBg[color]}`}>
+        <Icon size={20} />
       </div>
-      <p className="text-sm text-slate-500 tracking-wide">{label}</p>
-      <p className="stat-number text-4xl md:text-5xl text-slate-900 mt-1">{value}</p>
-      <p className="mt-2 text-xs text-slate-400">{sub}</p>
-    </div>
+      <p className="text-xs text-slate-500 tracking-wide uppercase">{label}</p>
+      <p className="stat-number text-3xl md:text-4xl text-slate-900 mt-1">{value}</p>
+      <p className="mt-1 text-xs text-slate-400">{sub}</p>
+    </motion.div>
   )
 }

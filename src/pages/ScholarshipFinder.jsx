@@ -1,25 +1,28 @@
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import {
     Award,
     Calendar,
-    ChevronRight,
     DollarSign,
     ExternalLink,
     Search,
-    Sparkles,
 } from "lucide-react"
 import { useMemo, useState } from "react"
-import { useAutoReveal } from "../hooks/useScrollReveal"
+
+const fadeUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5, delay, ease: [0.25, 0.46, 0.45, 0.94] },
+})
 
 const DEMO_SCHOLARSHIPS = [
     { id: 1, name: "National Merit Scholarship", amount: "₹50,000/year", deadline: "2026-05-15", streams: ["PCM", "PCB", "Commerce", "Arts"], categories: ["General", "OBC", "SC", "ST"], income_limit: 800000, state: "All India", eligibility: "12th pass with 80%+", apply_link: "https://scholarships.gov.in" },
-    { id: 2, name: "Post Matric SC/ST Scholarship", amount: "Full tuition + ₹10,000/month", deadline: "2026-04-30", streams: ["PCM", "PCB", "Commerce", "Arts"], categories: ["SC", "ST"], income_limit: 250000, state: "All India", eligibility: "SC/ST category, income below 2.5L", apply_link: "https://scholarships.gov.in" },
+    { id: 2, name: "Post Matric SC/ST Scholarship", amount: "Full tuition + ₹10K/mo", deadline: "2026-04-30", streams: ["PCM", "PCB", "Commerce", "Arts"], categories: ["SC", "ST"], income_limit: 250000, state: "All India", eligibility: "SC/ST category, income below 2.5L", apply_link: "https://scholarships.gov.in" },
     { id: 3, name: "INSPIRE Scholarship", amount: "₹80,000/year", deadline: "2026-06-30", streams: ["PCM", "PCB"], categories: ["General", "OBC", "SC", "ST", "EWS"], income_limit: null, state: "All India", eligibility: "Top 1% in 12th board OR JEE/NEET qualified", apply_link: "https://online-inspire.gov.in" },
-    { id: 4, name: "Central Sector Scheme (CSSS)", amount: "₹12,000/year (UG) to ₹20,000/year", deadline: "2026-05-31", streams: ["PCM", "PCB", "Commerce", "Arts"], categories: ["General", "OBC", "SC", "ST", "EWS"], income_limit: 600000, state: "All India", eligibility: "Top 20% in 12th board, family income < 6L", apply_link: "https://scholarships.gov.in" },
+    { id: 4, name: "Central Sector Scheme (CSSS)", amount: "₹12K-20K/year", deadline: "2026-05-31", streams: ["PCM", "PCB", "Commerce", "Arts"], categories: ["General", "OBC", "SC", "ST", "EWS"], income_limit: 600000, state: "All India", eligibility: "Top 20% in 12th board, family income < 6L", apply_link: "https://scholarships.gov.in" },
     { id: 5, name: "Pragati Scholarship (Girls)", amount: "₹50,000/year + tuition", deadline: "2026-04-15", streams: ["PCM"], categories: ["General", "OBC", "SC", "ST"], income_limit: 800000, state: "All India", eligibility: "Female students in AICTE approved institutions", apply_link: "https://www.aicte-india.org" },
-    { id: 6, name: "Kishore Vaigyanik Protsahan Yojana", amount: "₹5,000-7,000/month", deadline: "2026-08-31", streams: ["PCM", "PCB"], categories: ["General", "OBC", "SC", "ST", "EWS"], income_limit: null, state: "All India", eligibility: "Stream: Science, must clear KVPY exam", apply_link: "https://kvpy.iisc.ac.in" },
-    { id: 7, name: "Maulana Azad National Fellowship", amount: "₹31,000/month", deadline: "2026-07-15", streams: ["PCM", "PCB", "Commerce", "Arts"], categories: ["OBC"], income_limit: 600000, state: "All India", eligibility: "Minority community students for higher studies", apply_link: "https://scholarships.gov.in" },
-    { id: 8, name: "Vidyasiri Scholarship (Karnataka)", amount: "₹15,000-25,000/year", deadline: "2026-04-30", streams: ["PCM", "PCB", "Commerce", "Arts"], categories: ["General", "OBC", "SC", "ST"], income_limit: 250000, state: "Karnataka", eligibility: "Karnataka domicile, backward classes", apply_link: "https://sw.kar.nic.in" },
+    { id: 6, name: "Kishore Vaigyanik Protsahan Yojana", amount: "₹5K-7K/month", deadline: "2026-08-31", streams: ["PCM", "PCB"], categories: ["General", "OBC", "SC", "ST", "EWS"], income_limit: null, state: "All India", eligibility: "Science stream, must clear KVPY exam", apply_link: "https://kvpy.iisc.ac.in" },
+    { id: 7, name: "Maulana Azad National Fellowship", amount: "₹31,000/month", deadline: "2026-07-15", streams: ["PCM", "PCB", "Commerce", "Arts"], categories: ["OBC"], income_limit: 600000, state: "All India", eligibility: "Minority community students", apply_link: "https://scholarships.gov.in" },
+    { id: 8, name: "Vidyasiri Scholarship (Karnataka)", amount: "₹15K-25K/year", deadline: "2026-04-30", streams: ["PCM", "PCB", "Commerce", "Arts"], categories: ["General", "OBC", "SC", "ST"], income_limit: 250000, state: "Karnataka", eligibility: "Karnataka domicile, backward classes", apply_link: "https://sw.kar.nic.in" },
 ]
 
 const STREAMS = ["PCM", "PCB", "Commerce", "Arts"]
@@ -29,7 +32,6 @@ export default function ScholarshipFinder() {
     const [search, setSearch] = useState("")
     const [stream, setStream] = useState("")
     const [category, setCategory] = useState("")
-    useAutoReveal()
 
     const filtered = useMemo(() => {
         return DEMO_SCHOLARSHIPS.filter(s => {
@@ -41,24 +43,22 @@ export default function ScholarshipFinder() {
     }, [search, stream, category])
 
     return (
-        <div className="space-y-10 md:space-y-16">
+        <div className="space-y-8 md:space-y-12">
             {/* ═══ HERO ═══ */}
-            <section className="relative overflow-hidden rounded-[32px] card-gradient-orange px-8 py-12 text-white md:px-14 md:py-20">
+            <motion.section {...fadeUp(0)} className="relative overflow-hidden rounded-[32px] card-gradient-orange px-8 py-10 text-white md:px-12 md:py-16">
                 <div className="orb orb-purple w-40 h-40 -top-10 right-10" />
                 <div className="relative z-10 text-center max-w-2xl mx-auto">
-                    <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-sm">
-                        <Award size={40} />
+                    <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
+                        <Award size={32} />
                     </div>
-                    <h1 className="text-display text-4xl md:text-6xl">Scholarship Finder</h1>
-                    <p className="text-body-lg mt-4 text-white/80 text-base">
-                        Discover scholarships you're eligible for — don't leave money on the table
-                    </p>
+                    <h1 className="text-display text-3xl md:text-5xl">Scholarship Finder</h1>
+                    <p className="mt-3 text-white/80 text-sm md:text-base">Discover scholarships you're eligible for — don't leave money on the table</p>
                 </div>
-            </section>
+            </motion.section>
 
             {/* ═══ FILTERS ═══ */}
-            <section className="reveal card-bb p-6 md:p-8">
-                <div className="grid gap-4 md:grid-cols-3">
+            <motion.section {...fadeUp(0.1)} className="card-bb p-5 md:p-7">
+                <div className="grid gap-3 md:grid-cols-3">
                     <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
                         <Search size={16} className="text-slate-400" />
                         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search scholarships..." className="flex-1 bg-transparent text-sm outline-none" />
@@ -72,51 +72,40 @@ export default function ScholarshipFinder() {
                         {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                 </div>
-            </section>
+            </motion.section>
 
             {/* ═══ RESULTS ═══ */}
             <section>
-                <p className="mb-6 text-sm text-slate-500 tracking-wide">Showing <strong>{filtered.length}</strong> scholarships</p>
-                <div className="grid gap-5 md:grid-cols-2">
+                <motion.p {...fadeUp(0.15)} className="mb-5 text-sm text-slate-500">Showing <strong className="text-slate-900">{filtered.length}</strong> scholarships</motion.p>
+                <div className="grid gap-4 md:grid-cols-2">
                     {filtered.map((s, i) => {
                         const isExpired = new Date(s.deadline) < new Date()
                         return (
-                            <div key={s.id} className={`reveal reveal-delay-${(i % 4) + 1} card-bb overflow-hidden`}>
-                                <div className="p-6 md:p-8 space-y-4">
+                            <motion.div key={s.id} {...fadeUp(0.2 + i * 0.05)} className="card-bb overflow-hidden">
+                                <div className="p-5 md:p-7 space-y-3">
                                     <div className="flex items-start justify-between gap-3">
-                                        <h3 className="text-card-title text-lg text-slate-900">{s.name}</h3>
-                                        <span className="pill pill-primary text-xs py-1">{s.amount}</span>
+                                        <h3 className="text-card-title text-base text-slate-900">{s.name}</h3>
+                                        <span className="shrink-0 pill pill-primary text-xs py-1">{s.amount}</span>
                                     </div>
-
-                                    <p className="text-sm text-slate-600 leading-relaxed">{s.eligibility}</p>
-
+                                    <p className="text-sm text-slate-600">{s.eligibility}</p>
                                     <div className="flex flex-wrap gap-1.5">
                                         {s.streams.map(st => <span key={st} className="pill pill-outline text-[10px] py-0.5 px-2.5">{st}</span>)}
                                         {s.categories.filter(c => c !== "General").map(c => <span key={c} className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[10px] font-medium text-amber-700">{c}</span>)}
                                     </div>
-
                                     <div className="flex items-center justify-between text-xs text-slate-500">
                                         <span className="flex items-center gap-1"><Calendar size={12} /> {s.deadline}</span>
                                         <span>{s.state}</span>
                                     </div>
-
                                     {s.income_limit && <p className="text-xs text-slate-500"><DollarSign size={11} className="inline mr-0.5" /> Income limit: ₹{s.income_limit.toLocaleString()}</p>}
-
-                                    <a href={s.apply_link} target="_blank" rel="noopener noreferrer" className={`flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition ${isExpired ? "bg-slate-100 text-slate-400 cursor-not-allowed" : "pill-primary w-full"}`}>
+                                    <a href={s.apply_link} target="_blank" rel="noopener noreferrer" className={`flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition ${isExpired ? "bg-slate-100 text-slate-400 cursor-not-allowed" : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:shadow-lg hover:-translate-y-0.5"}`}>
                                         <ExternalLink size={14} /> {isExpired ? "Deadline Passed" : "Apply Now"}
                                     </a>
                                 </div>
-                            </div>
+                            </motion.div>
                         )
                     })}
                 </div>
             </section>
-
-            {filtered.length === 0 && (
-                <div className="card-bb border-dashed p-12 text-center text-slate-500">
-                    No scholarships match your filters. Try broadening your search.
-                </div>
-            )}
         </div>
     )
 }
