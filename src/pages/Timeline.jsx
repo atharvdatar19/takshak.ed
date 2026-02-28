@@ -15,29 +15,6 @@ export default function Timeline() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
-<<<<<<< HEAD
-  useEffect(() => {
-    async function loadTimeline() {
-      try {
-        setLoading(true)
-        setError("")
-
-        const userProfile = await getCurrentUserProfile()
-        setProfile(userProfile)
-
-        const data = await getExamsTimeline({
-          stream: userProfile?.stream || "",
-          state: userProfile?.state || "",
-          targetExam: userProfile?.target_exam || "",
-        })
-
-        setTimeline(data || [])
-      } catch (err) {
-        setError(err.message || "Failed to load timeline")
-      } finally {
-        setLoading(false)
-      }
-=======
   const loadTimeline = useCallback(async () => {
     setLoading(true)
     setError("")
@@ -50,12 +27,11 @@ export default function Timeline() {
         state: userProfile?.state || "",
         targetExam: userProfile?.target_exam || "",
       })
-      setTimeline(data)
+      setTimeline(data || [])
     } catch (err) {
       setError(err.message || "Failed to load timeline")
     } finally {
       setLoading(false)
->>>>>>> fea72e3 (Updated UI components and fixes)
     }
   }, [])
 
@@ -83,19 +59,14 @@ export default function Timeline() {
     const recentlyAdded = [...timeline].slice(0, 5)
 
     return { upcoming, closingSoon, recentlyAdded }
-<<<<<<< HEAD
   }, [timeline])
-=======
-  }, [timeline, now])
->>>>>>> fea72e3 (Updated UI components and fixes)
 
   return (
     <div>
       <PageHeader
         title="Smart Academic Timeline"
-        description={`Filtered for ${profile?.stream || "all streams"}${
-          profile?.state ? ` in ${profile.state}` : ""
-        }.`}
+        description={`Filtered for ${profile?.stream || "all streams"}${profile?.state ? ` in ${profile.state}` : ""
+          }.`}
       />
 
       {loading ? (

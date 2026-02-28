@@ -96,28 +96,13 @@ export async function getExamsTimeline(params = {}) {
 }
 
 export async function getMentors(params = {}) {
-<<<<<<< HEAD
-  let query = supabase
-    .from("mentors")
-    .select("*")
-    .order("rating", { ascending: false })
-
-  if (params.stream) {
-    query = query.eq("stream", params.stream)
-  }
-
-=======
   if (!supabase) return []
 
   let query = supabase.from("mentors").select("*").order("rating", { ascending: false })
   if (params.stream) query = query.eq("stream", params.stream)
->>>>>>> fea72e3 (Updated UI components and fixes)
+
   const { data, error } = await query
 
   if (error) throw new Error(error.message)
-<<<<<<< HEAD
-
-=======
->>>>>>> fea72e3 (Updated UI components and fixes)
   return data || []
 }

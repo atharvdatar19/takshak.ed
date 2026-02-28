@@ -24,7 +24,6 @@ import { getColleges } from "../services/api"
 import { useRealtimeSync } from "../hooks/useRealtimeSync"
 
 const PAGE_SIZE = 8
-
 const FACILITY_ICONS = [Home, Monitor, Laptop, Wifi, GraduationCap]
 
 export default function CollegeDirectory() {
@@ -33,11 +32,7 @@ export default function CollegeDirectory() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [total, setTotal] = useState(0)
-<<<<<<< HEAD
-
-=======
   const [showFilters, setShowFilters] = useState(false)
->>>>>>> fea72e3 (Updated UI components and fixes)
   const [filters, setFilters] = useState({
     search: "",
     state: "",
@@ -49,57 +44,20 @@ export default function CollegeDirectory() {
 
   useEffect(() => {
     async function hydrate() {
-      try {
-        const userProfile = await getCurrentUserProfile()
-        setProfile(userProfile)
-        setFilters((prev) => ({
-          ...prev,
-          stream: userProfile?.stream || "",
-        }))
-      } catch (err) {
-        console.error(err)
-      }
+      const userProfile = await getCurrentUserProfile()
+      setProfile(userProfile)
+      setFilters(previous => ({ ...previous, stream: userProfile?.stream || "" }))
     }
-
     hydrate()
   }, [])
 
   useEffect(() => {
-<<<<<<< HEAD
-    async function loadColleges() {
-      try {
-        setLoading(true)
-        setError("")
-
-        const response = await getColleges({
-          ...filters,
-          pageSize: PAGE_SIZE,
-        })
-
-        setRecords(response?.records || [])
-        setTotal(response?.total || 0)
-      } catch (err) {
-        setError(err.message || "Failed to load colleges")
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadColleges()
-  }, [filters])
-
-  const totalPages = useMemo(
-    () => Math.max(1, Math.ceil(total / PAGE_SIZE)),
-    [total]
-  )
-=======
     loadColleges()
   }, [filters])
 
   const loadColleges = useCallback(async () => {
     setLoading(true)
     setError("")
-
     try {
       const response = await getColleges({ ...filters, pageSize: PAGE_SIZE })
       setRecords(response.records)
@@ -111,7 +69,6 @@ export default function CollegeDirectory() {
     }
   }, [filters])
 
-  // ── Realtime: auto-reload when colleges table changes ──
   useRealtimeSync("colleges", () => loadColleges())
 
   const totalPages = useMemo(() => Math.max(1, Math.ceil(total / PAGE_SIZE)), [total])
@@ -120,34 +77,8 @@ export default function CollegeDirectory() {
   function updateFilter(key, value) {
     setFilters(previous => ({ ...previous, [key]: value, page: 1 }))
   }
->>>>>>> fea72e3 (Updated UI components and fixes)
-
-  const states = useMemo(
-    () =>
-      [...new Set(records.map((item) => item.state).filter(Boolean))],
-    [records]
-  )
-
-  function updateFilter(key, value) {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value,
-      page: 1,
-    }))
-  }
 
   return (
-<<<<<<< HEAD
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <PageHeader
-        title="College Directory"
-        description={`Personalized for ${
-          profile?.stream || "All Streams"
-        } with intelligent filtering.`}
-      />
-
-      {/* Filters */}
-=======
     <div>
       {/* ── Purple Gradient Hero ── */}
       <motion.section
@@ -171,85 +102,12 @@ export default function CollegeDirectory() {
       </motion.section>
 
       {/* ── Search Bar ── */}
->>>>>>> fea72e3 (Updated UI components and fixes)
       <motion.section
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
         className="mb-5 space-y-3 rounded-3xl border border-slate-200/60 bg-white p-5 shadow-card"
       >
-<<<<<<< HEAD
-        <input
-          value={filters.search}
-          onChange={(e) => updateFilter("search", e.target.value)}
-          placeholder="Search college"
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        />
-
-        <select
-          value={filters.state}
-          onChange={(e) => updateFilter("state", e.target.value)}
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        >
-          <option value="">All states</option>
-          {states.map((state) => (
-            <option key={state} value={state}>
-              {state}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={filters.stream}
-          onChange={(e) => updateFilter("stream", e.target.value)}
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        >
-          <option value="">All streams</option>
-          <option value="PCM">PCM</option>
-          <option value="PCB">PCB</option>
-          <option value="Commerce">Commerce</option>
-          <option value="Arts">Arts</option>
-          <option value="Defence">Defence</option>
-        </select>
-
-        <select
-          value={filters.admissionMode}
-          onChange={(e) => updateFilter("admissionMode", e.target.value)}
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        >
-          <option value="">All modes</option>
-          <option value="JEE">JEE</option>
-          <option value="NEET">NEET</option>
-          <option value="CUET">CUET</option>
-          <option value="Lateral">Lateral</option>
-          <option value="Direct">Direct</option>
-        </select>
-
-        <select
-          value={filters.status}
-          onChange={(e) => updateFilter("status", e.target.value)}
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        >
-          <option value="open">Open</option>
-          <option value="closingSoon">Closing soon</option>
-          <option value="closed">Closed</option>
-        </select>
-      </motion.section>
-
-      {/* Data */}
-      {loading ? (
-        <LoadingSkeleton rows={6} />
-      ) : (
-        <DataState
-          loading={false}
-          error={error}
-          empty={records.length === 0}
-        >
-          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {records.map((college) => {
-              const daysLeft = getDaysLeft(college.application_end)
-
-=======
         <div className="grid gap-3 md:grid-cols-2">
           <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
             <Search size={16} className="text-slate-400" />
@@ -279,21 +137,11 @@ export default function CollegeDirectory() {
 
         {showFilters && (
           <div className="grid gap-3 pt-2 md:grid-cols-4">
-            <select
-              value={filters.state}
-              onChange={event => updateFilter("state", event.target.value)}
-              className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm"
-            >
+            <select value={filters.state} onChange={event => updateFilter("state", event.target.value)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
               <option value="">All states</option>
-              {states.map(state => (
-                <option key={state} value={state}>{state}</option>
-              ))}
+              {states.map(state => <option key={state} value={state}>{state}</option>)}
             </select>
-            <select
-              value={filters.stream}
-              onChange={event => updateFilter("stream", event.target.value)}
-              className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm"
-            >
+            <select value={filters.stream} onChange={event => updateFilter("stream", event.target.value)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
               <option value="">All streams</option>
               <option value="PCM">PCM</option>
               <option value="PCB">PCB</option>
@@ -301,11 +149,7 @@ export default function CollegeDirectory() {
               <option value="Arts">Arts</option>
               <option value="Defence">Defence</option>
             </select>
-            <select
-              value={filters.admissionMode}
-              onChange={event => updateFilter("admissionMode", event.target.value)}
-              className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm"
-            >
+            <select value={filters.admissionMode} onChange={event => updateFilter("admissionMode", event.target.value)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
               <option value="">All modes</option>
               <option value="JEE">JEE</option>
               <option value="NEET">NEET</option>
@@ -313,11 +157,7 @@ export default function CollegeDirectory() {
               <option value="Lateral">Lateral</option>
               <option value="Direct">Direct</option>
             </select>
-            <select
-              value={filters.status}
-              onChange={event => updateFilter("status", event.target.value)}
-              className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm"
-            >
+            <select value={filters.status} onChange={event => updateFilter("status", event.target.value)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
               <option value="open">Open</option>
               <option value="closingSoon">Closing soon</option>
               <option value="closed">Closed</option>
@@ -335,7 +175,6 @@ export default function CollegeDirectory() {
             {records.map((college, i) => {
               const daysLeft = getDaysLeft(college.application_end)
               const streams = college.streams_supported || []
->>>>>>> fea72e3 (Updated UI components and fixes)
               return (
                 <motion.article
                   key={college.id}
@@ -344,30 +183,6 @@ export default function CollegeDirectory() {
                   transition={{ delay: i * 0.04 }}
                   className="scroll-3d-card group overflow-hidden rounded-3xl border border-slate-200/60 bg-white shadow-card transition-all hover:shadow-card-hover hover:-translate-y-1"
                 >
-<<<<<<< HEAD
-                  <h3 className="text-base font-semibold text-slate-900">
-                    {college.name}
-                  </h3>
-
-                  <p className="text-sm text-slate-500">
-                    {college.city}, {college.state}
-                  </p>
-
-                  <p className="mt-2 text-sm text-slate-600">
-                    Mode: {college.admission_mode || "NA"}
-                  </p>
-
-                  <p className="text-sm text-slate-600">
-                    End: {formatDate(college.application_end)}
-                  </p>
-
-                  {daysLeft >= 0 && daysLeft <= 5 && (
-                    <p className="mt-3 rounded-lg bg-rose-100 px-2 py-1 text-xs font-semibold text-rose-700">
-                      Closing in {daysLeft} days
-                    </p>
-                  )}
-=======
-                  {/* Gradient Top */}
                   <div className="card-gradient-blue relative flex h-28 items-center justify-between px-5 py-4">
                     <span className="rounded-full border border-green-300 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
                       {college.type || "private"}
@@ -377,14 +192,12 @@ export default function CollegeDirectory() {
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="space-y-3 p-5">
                     <h3 className="text-lg font-bold text-slate-900">{college.name}</h3>
                     <p className="flex items-center gap-1.5 text-sm text-slate-500">
                       <MapPin size={13} /> {college.city}, {college.state}
                     </p>
 
-                    {/* Programs */}
                     {streams.length > 0 && (
                       <div>
                         <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
@@ -392,15 +205,12 @@ export default function CollegeDirectory() {
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {streams.map(s => (
-                            <span key={s} className="rounded-full border border-indigo-200 px-2.5 py-0.5 text-xs font-medium text-indigo-600">
-                              {s}
-                            </span>
+                            <span key={s} className="rounded-full border border-indigo-200 px-2.5 py-0.5 text-xs font-medium text-indigo-600">{s}</span>
                           ))}
                         </div>
                       </div>
                     )}
 
-                    {/* Facilities */}
                     <div>
                       <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
                         <Sparkles size={12} className="text-amber-500" /> Facilities
@@ -414,12 +224,10 @@ export default function CollegeDirectory() {
                       </div>
                     </div>
 
-                    {/* Est. Year */}
                     <p className="flex items-center gap-1.5 text-sm text-slate-500">
                       <Calendar size={13} /> Est. {college.established_year || "N/A"}
                     </p>
 
-                    {/* Actions */}
                     <div className="flex gap-2 pt-1">
                       <button type="button" className="flex items-center gap-1.5 rounded-xl border border-amber-300 px-3 py-2 text-xs font-medium text-amber-700 transition hover:bg-amber-50">
                         <Bookmark size={12} /> Track
@@ -428,16 +236,6 @@ export default function CollegeDirectory() {
                         <TrendingUp size={12} />
                       </button>
                     </div>
-
-                    {college.virtual_tour_url ? (
-                      <a href={college.virtual_tour_url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 rounded-xl border border-teal-300 px-3 py-2 text-xs font-medium text-teal-700 transition hover:bg-teal-50">
-                        <Video size={12} /> Virtual Tour
-                      </a>
-                    ) : (
-                      <p className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-400">
-                        <Video size={12} /> Virtual tour unavailable
-                      </p>
-                    )}
 
                     {college.website && (
                       <a
@@ -456,50 +254,26 @@ export default function CollegeDirectory() {
                       </p>
                     )}
                   </div>
->>>>>>> fea72e3 (Updated UI components and fixes)
                 </motion.article>
               )
             })}
           </section>
 
-          {/* Pagination */}
           <div className="mt-6 flex items-center justify-between">
             <button
+              type="button"
               disabled={filters.page <= 1}
-<<<<<<< HEAD
-              onClick={() =>
-                setFilters((prev) => ({
-                  ...prev,
-                  page: prev.page - 1,
-                }))
-              }
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm disabled:opacity-50"
-=======
               onClick={() => setFilters(previous => ({ ...previous, page: previous.page - 1 }))}
               className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium disabled:opacity-50"
->>>>>>> fea72e3 (Updated UI components and fixes)
             >
               Previous
             </button>
-
-            <p className="text-sm text-slate-600">
-              Page {filters.page} of {totalPages}
-            </p>
-
+            <p className="text-sm text-slate-600">Page {filters.page} of {totalPages}</p>
             <button
+              type="button"
               disabled={filters.page >= totalPages}
-<<<<<<< HEAD
-              onClick={() =>
-                setFilters((prev) => ({
-                  ...prev,
-                  page: prev.page + 1,
-                }))
-              }
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm disabled:opacity-50"
-=======
               onClick={() => setFilters(previous => ({ ...previous, page: previous.page + 1 }))}
               className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium disabled:opacity-50"
->>>>>>> fea72e3 (Updated UI components and fixes)
             >
               Next
             </button>
