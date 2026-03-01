@@ -15,7 +15,9 @@ import {
   Video,
   Wifi,
 } from "lucide-react"
+import { Link } from "react-router-dom"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { useToast } from "../components/Toast"
 import DataState from "../components/DataState"
 import LoadingSkeleton from "../components/LoadingSkeleton"
 import { formatDate, getDaysLeft } from "../lib/date"
@@ -41,6 +43,8 @@ export default function CollegeDirectory() {
     status: "open",
     page: 1,
   })
+
+  const { addToast } = useToast()
 
   useEffect(() => {
     async function hydrate() {
@@ -93,12 +97,12 @@ export default function CollegeDirectory() {
         <p className="mt-3 text-lg text-white/80">
           Discover {total || "60+"}  premier institutions across India
         </p>
-        <button
-          type="button"
+        <Link
+          to="/rank-reality"
           className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-3 font-semibold text-white shadow-lg transition hover:shadow-xl hover:-translate-y-0.5"
         >
           <Sparkles size={18} /> Get AI Recommendations <Sparkles size={14} />
-        </button>
+        </Link>
       </motion.section>
 
       {/* ── Search Bar ── */}
@@ -229,10 +233,18 @@ export default function CollegeDirectory() {
                     </p>
 
                     <div className="flex gap-2 pt-1">
-                      <button type="button" className="flex items-center gap-1.5 rounded-xl border border-amber-300 px-3 py-2 text-xs font-medium text-amber-700 transition hover:bg-amber-50">
+                      <button
+                        type="button"
+                        onClick={() => addToast("success", `Tracking established for ${college.name}`)}
+                        className="flex items-center gap-1.5 rounded-xl border border-amber-300 px-3 py-2 text-xs font-medium text-amber-700 transition hover:bg-amber-50"
+                      >
                         <Bookmark size={12} /> Track
                       </button>
-                      <button type="button" className="flex items-center gap-1.5 rounded-xl border border-amber-300 px-3 py-2 text-xs font-medium text-amber-700 transition hover:bg-amber-50">
+                      <button
+                        type="button"
+                        onClick={() => addToast("info", "Trending data will be available shortly")}
+                        className="flex items-center justify-center rounded-xl border border-amber-300 px-3 py-2 text-xs font-medium text-amber-700 transition hover:bg-amber-50"
+                      >
                         <TrendingUp size={12} />
                       </button>
                     </div>

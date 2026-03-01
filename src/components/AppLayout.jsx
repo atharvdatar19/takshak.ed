@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import { useAuth } from "../contexts/AuthContext"
 import {
+  ArrowLeft,
   ArrowLeftRight,
   Bell,
   BookOpen,
@@ -268,6 +269,14 @@ export default function AppLayout() {
       {/* ── Main Content ── */}
       <main className="perspective-scroll relative z-10 flex-1 overflow-y-auto p-5 pt-20 md:p-8 md:pt-8">
         <PageTransition>
+          {location.pathname !== "/" && (
+            <button
+              onClick={() => navigate(-1)}
+              className="mb-4 flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-600 transition focus:outline-none"
+            >
+              <ArrowLeft size={16} /> Back
+            </button>
+          )}
           <Outlet />
         </PageTransition>
       </main>

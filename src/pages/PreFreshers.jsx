@@ -1,27 +1,10 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Users, GraduationCap, Home, MessageSquare, MapPin, Search, Calendar, Heart, ShieldCheck, CheckCircle2, PackageCheck, Send, Info } from "lucide-react"
+import { getRoommateCandidates, getSeniorConnect, getCampusPosts, createCampusPost } from "../services/community"
 
 // --- DEMO DATA ---
 const currentUser = { name: "Arjun M.", college: "NIT Trichy", branch: "CSE", home: "Pune, MH" }
-
-const ROOMMATE_CANDIDATES = [
-    { id: 1, name: "Rahul Sharma", state: "Delhi", match: 92, habits: { sleep: "Early Bird 🌅", study: "Silent 🤫", clean: "Neat Freak ✨", social: "Introvert 📖" }, bio: "Looking for a quiet room to focus on coding. I don't smoke/drink." },
-    { id: 2, name: "Vikram Reddy", state: "Telangana", match: 85, habits: { sleep: "Night Owl 🦉", study: "Music 🎵", clean: "Neat ✨", social: "Ambivert 🤝" }, bio: "Usually up late studying or gaming. Easy going, looking to explore campus life." },
-    { id: 3, name: "Aarav Patel", state: "Gujarat", match: 65, habits: { sleep: "Night Owl 🦉", study: "Group 🗣️", clean: "Relaxed 😎", social: "Extrovert 🎉" }, bio: "Love organizing weekend trips. Open door policy!" },
-]
-
-const SENIOR_CONNECT = [
-    { id: 1, name: "Priya S.", year: "4th Year ECE", rating: 4.9, tags: ["Hostel Tips", "Placements", "Robotics Club"], avatar: "bg-blue-500" },
-    { id: 2, name: "Aditya V.", year: "3rd Year CSE", rating: 4.8, tags: ["Coding Culture", "Hackathons", "Mess Food"], avatar: "bg-emerald-500" },
-    { id: 3, name: "Karan T.", year: "2nd Year Mech", rating: 4.7, tags: ["Sports", "First Year survival", "Local Transport"], avatar: "bg-purple-500" },
-]
-
-const CAMPUS_POSTS = [
-    { id: 1, type: "announcement", author: "Admin", time: "2h ago", content: "Hostel allotment list will be published on 15th August. Keep your documents ready.", pinned: true },
-    { id: 2, type: "intro", author: "Neha Das (CSE)", time: "5h ago", content: "Hey everyone! Coming from Kolkata. Anyone on the Coromandel Express on the 18th? Let's travel together!", likes: 12, comments: 4 },
-    { id: 3, type: "question", author: "Varun K.", time: "1d ago", content: "Is it necessary to buy laptops before joining, or should we wait for college discounts?", likes: 5, comments: 8 },
-]
 
 const PACKING_LIST = [
     { category: "Documents", items: [{ name: "Original Admit Card", packed: false }, { name: "10th/12th Marksheets", packed: false }, { name: "Medical Certificate", packed: true }, { name: "20 Passport Photos", packed: false }] },
@@ -93,21 +76,41 @@ export default function PreFreshers() {
 }
 
 function CampusHubView() {
+    const [posts, setPosts] = useState([])
+    const [newPost, setNewPost] = useState("")
+
+    useEffect(() => {
+        getCampusPosts(currentUser.college).then(setPosts)
+    }, [])
+
+    const handlePost = async () => {
+        if (!newPost.trim()) return
+        await createCampusPost(currentUser.college, newPost)
+        setNewPost("")
+        getCampusPosts(currentUser.college).then(setPosts) // Refresh
+    }
+
     return (
         <div className="grid lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-4">
                 {/* Create Post */}
                 <div className="bg-white rounded-3xl p-4 border border-slate-200 shadow-sm flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 shrink-0 text-white font-bold flex items-center justify-center">A</div>
-                    <input type="text" placeholder={`Write a message to ${currentUser.college} batch of 2028...`} className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-4 py-2.5 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm" />
-                    <button className="bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-full transition shadow-md">
+                    <input
+                        type="text"
+                        value={newPost}
+                        onChange={e => setNewPost(e.target.value)}
+                        placeholder={`Write a message to ${currentUser.college} batch of 2028...`}
+                        className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-4 py-2.5 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm"
+                    />
+                    <button onClick={handlePost} className="bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-full transition shadow-md">
                         <Send size={18} />
                     </button>
                 </div>
 
                 {/* Posts Feed */}
                 <div className="space-y-4">
-                    {CAMPUS_POSTS.map(post => (
+                    {posts.map(post => (
                         <div key={post.id} className={`bg-white rounded-3xl p-5 border shadow-sm ${post.pinned ? "border-amber-200 bg-amber-50/30" : "border-slate-200"}`}>
                             <div className="flex items-start justify-between mb-3">
                                 <div className="flex items-center gap-3">
@@ -127,10 +130,10 @@ function CampusHubView() {
                             {!post.pinned && (
                                 <div className="flex items-center gap-4 border-t border-slate-100 pt-3">
                                     <button className="flex items-center gap-1.5 text-slate-500 hover:text-rose-500 transition text-sm font-medium">
-                                        <Heart size={16} /> {post.likes}
+                                        <Heart size={16} /> {post.likes || 0}
                                     </button>
                                     <button className="flex items-center gap-1.5 text-slate-500 hover:text-indigo-500 transition text-sm font-medium">
-                                        <MessageSquare size={16} /> {post.comments}
+                                        <MessageSquare size={16} /> {post.comments || 0}
                                     </button>
                                 </div>
                             )}
@@ -190,6 +193,18 @@ function CampusHubView() {
 }
 
 function RoommateFinderView() {
+    const [candidates, setCandidates] = useState([])
+    const [searchTerm, setSearchTerm] = useState("")
+
+    useEffect(() => {
+        getRoommateCandidates(currentUser.college).then(setCandidates)
+    }, [])
+
+    const filtered = candidates.filter(p => !searchTerm ||
+        p.state.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        Object.values(p.habits).some(v => typeof v === 'string' && v.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
@@ -206,7 +221,7 @@ function RoommateFinderView() {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {ROOMMATE_CANDIDATES.map(person => (
+                {filtered.map(person => (
                     <div key={person.id} className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">
                         <div className="p-5 border-b border-slate-100 flex items-start justify-between">
                             <div className="flex items-center gap-3">
@@ -228,7 +243,7 @@ function RoommateFinderView() {
                             <p className="text-sm text-slate-600 italic mb-4">"{person.bio}"</p>
 
                             <div className="grid grid-cols-2 gap-2 mt-auto mb-5">
-                                {Object.values(person.habits).map((habit, i) => (
+                                {person.habits && Object.values(person.habits).map((habit, i) => (
                                     <div key={i} className="bg-slate-50 border border-slate-100 px-2 py-1.5 rounded text-xs font-semibold text-slate-700 flex items-center justify-center">
                                         {habit}
                                     </div>
@@ -247,6 +262,12 @@ function RoommateFinderView() {
 }
 
 function SeniorConnectView() {
+    const [seniors, setSeniors] = useState([])
+
+    useEffect(() => {
+        getSeniorConnect(currentUser.college).then(setSeniors)
+    }, [])
+
     return (
         <div className="grid md:grid-cols-12 gap-6">
             <div className="md:col-span-8 space-y-4">
@@ -282,9 +303,9 @@ function SeniorConnectView() {
 
             <div className="md:col-span-4 space-y-4">
                 <h3 className="font-bold text-slate-400 uppercase tracking-wider text-xs pl-2">Top Contributors</h3>
-                {SENIOR_CONNECT.map(senior => (
+                {seniors.map(senior => (
                     <div key={senior.id} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 hover:border-indigo-300 transition cursor-pointer group">
-                        <div className={`w-12 h-12 rounded-full ${senior.avatar} flex items-center justify-center font-bold text-white text-lg`}>
+                        <div className={`w-12 h-12 rounded-full ${senior.avatar || 'bg-indigo-500'} flex items-center justify-center font-bold text-white text-lg`}>
                             {senior.name.charAt(0)}
                         </div>
                         <div>

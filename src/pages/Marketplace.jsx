@@ -1,72 +1,18 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ShoppingBag, Search, Filter, MessageSquare, MapPin, Tag, Star, ChevronDown, CheckCircle2 } from "lucide-react"
-
-// --- DEMO DATA ---
-const LISTINGS = [
-    {
-        id: 1,
-        title: "Allen JEE Main & Adv Complete Modules (2024)",
-        seller: "Rohan K.",
-        verified: true,
-        exam: "JEE",
-        type: "Modules",
-        price: 3500,
-        mrp: 12000,
-        condition: "Good",
-        location: "Kothrud, Pune",
-        image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=400&h=300",
-        description: "Complete set of 11th & 12th PCM modules. Minor highlights in Physics vol 1, rest are completely clean. Need to sell urgently."
-    },
-    {
-        id: 2,
-        title: "Cengage Mathematics series (Full 5 Books)",
-        seller: "Aditi S.",
-        verified: true,
-        exam: "JEE",
-        type: "Books",
-        price: 1800,
-        mrp: 4500,
-        condition: "Excellent",
-        location: "Viman Nagar, Pune",
-        image: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=400&h=300",
-        description: "Like new. Only Algebra book has some pencil marks. Remaining 4 books are untouched."
-    },
-    {
-        id: 3,
-        title: "Resonance NEET Rank Booster Notes",
-        seller: "Vikram R.",
-        verified: false,
-        exam: "NEET",
-        type: "Notes",
-        price: 800,
-        mrp: 2000,
-        condition: "Fair",
-        location: "Aundh, Pune",
-        image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=400&h=300",
-        description: "Handwritten toppers notes bundled with resonance short notes. Binding is slightly loose but pages are fine."
-    },
-    {
-        id: 4,
-        title: "HC Verma Vol 1 & 2 - Latest Edition",
-        seller: "Pooja M.",
-        verified: true,
-        exam: "JEE/NEET",
-        type: "Books",
-        price: 600,
-        mrp: 950,
-        condition: "Like New",
-        location: "Baner, Pune",
-        image: "https://images.unsplash.com/photo-1605371924599-2d0365da1ae0?auto=format&fit=crop&q=80&w=400&h=300",
-        description: "Just bought 3 months ago. Decided not to prepare for JEE."
-    }
-]
+import { getMarketplaceListings } from "../services/marketplace"
 
 export default function Marketplace() {
     const [selectedExam, setSelectedExam] = useState("All")
     const [searchQuery, setSearchQuery] = useState("")
+    const [listings, setListings] = useState([])
 
-    const filteredListings = LISTINGS.filter(item => {
+    useEffect(() => {
+        getMarketplaceListings().then(setListings)
+    }, [])
+
+    const filteredListings = listings.filter(item => {
         if (selectedExam !== "All" && !item.exam.includes(selectedExam)) return false
         if (searchQuery && !item.title.toLowerCase().includes(searchQuery.toLowerCase())) return false
         return true
@@ -116,8 +62,8 @@ export default function Marketplace() {
                             key={filter}
                             onClick={() => setSelectedExam(filter)}
                             className={`shrink-0 px-4 py-2 rounded-lg text-sm font-semibold transition ${selectedExam === filter
-                                    ? "bg-rose-500 text-white shadow-md shadow-rose-200"
-                                    : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                                ? "bg-rose-500 text-white shadow-md shadow-rose-200"
+                                : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
                                 }`}
                         >
                             {filter}
@@ -149,7 +95,7 @@ export default function Marketplace() {
                                     {item.exam}
                                 </div>
                                 <div className={`absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider shadow-sm ${item.condition === 'Excellent' || item.condition === 'Like New' ? 'bg-emerald-500 text-white' :
-                                        item.condition === 'Good' ? 'bg-blue-500 text-white' : 'bg-amber-500 text-white'
+                                    item.condition === 'Good' ? 'bg-blue-500 text-white' : 'bg-amber-500 text-white'
                                     }`}>
                                     {item.condition}
                                 </div>

@@ -2,6 +2,7 @@ import { motion } from "framer-motion"
 import { ShieldCheck } from "lucide-react"
 import { useEffect, useState } from "react"
 import DataState from "../components/DataState"
+import { useToast } from "../components/Toast"
 import LoadingSkeleton from "../components/LoadingSkeleton"
 import PageHeader from "../components/PageHeader"
 import { getMentors } from "../services/api"
@@ -13,6 +14,7 @@ export default function MentorMarketplace() {
   const [mentors, setMentors] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const { addToast } = useToast()
 
   useEffect(() => {
     async function hydrate() {
@@ -88,6 +90,7 @@ export default function MentorMarketplace() {
                 <p className="mt-2 text-sm font-medium text-indigo-700">⭐ {mentor.rating || "NA"} • ₹{mentor.price || "NA"}</p>
                 <button
                   type="button"
+                  onClick={() => addToast("success", `Booking request sent to ${mentor.name}!`)}
                   className="mt-4 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
                 >
                   Request Booking
