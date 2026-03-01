@@ -20,38 +20,66 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        if (!supabase) {
-            setLoading(false)
-            return
-        }
+        // Handle Demo Mode
+        import("../supabaseClient").then(({ isDemoMode }) => {
+            if (isDemoMode) {
+                const loadDemoUser = () => {
+                    const stored = localStorage.getItem("demo_user")
+                    if (stored) {
+                        try {
+                            const u = JSON.parse(stored)
+                            setUser(u)
+                            // Populate a basic profile so ProtectedRoutes don't block
+                            setProfile({ role: u.role || "student", full_name: u.full_name })
+                        } catch (e) {
+                            setUser(null)
+                            setProfile(null)
+                        }
+                    } else {
+                        setUser(null)
+                        setProfile(null)
+                    }
+                    setLoading(false)
+                }
 
-        async function loadProfile(authUser) {
-            if (!authUser) {
-                setUser(null)
-                setProfile(null)
+                loadDemoUser()
+                window.addEventListener("demo-auth-change", loadDemoUser)
+                return () => window.removeEventListener("demo-auth-change", loadDemoUser)
+            }
+
+            // Normal Supabase Flow
+            if (!supabase) {
                 setLoading(false)
                 return
             }
 
-            setUser(authUser)
+            async function loadProfile(authUser) {
+                if (!authUser) {
+                    setUser(null)
+                    setProfile(null)
+                    setLoading(false)
+                    return
+                }
 
-            const { data } = await supabase
-                .from("users")
-                .select("*")
-                .eq("id", authUser.id)
-                .single()
+                setUser(authUser)
+                const { data } = await supabase
+                    .from("users")
+                    .select("*")
+                    .eq("id", authUser.id)
+                    .single()
 
-            setProfile(data || null)
-            setLoading(false)
-        }
+                setProfile(data || null)
+                setLoading(false)
+            }
 
-        supabase.auth.getUser().then(({ data }) => loadProfile(data?.user || null))
+            supabase.auth.getUser().then(({ data }) => loadProfile(data?.user || null))
 
-        const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-            loadProfile(session?.user || null)
+            const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+                loadProfile(session?.user || null)
+            })
+
+            return () => listener?.subscription?.unsubscribe()
         })
-
-        return () => listener?.subscription?.unsubscribe()
     }, [])
 
     const isAdmin = useMemo(

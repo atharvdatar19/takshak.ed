@@ -22,6 +22,10 @@ import {
   Users,
   Video,
   X,
+  Map,
+  GitCompare,
+  ShoppingBag,
+  Gamepad2,
 } from "lucide-react"
 import ChatbotAssistant from "./chatbot/ChatbotAssistant"
 import CommandPalette from "./CommandPalette"
@@ -56,6 +60,7 @@ const NAV_SECTIONS = [
       { to: "/", label: "Dashboard", icon: Home },
       { to: "/colleges", label: "College Directory", icon: GraduationCap },
       { to: "/cutoff", label: "Cutoff Predictor", icon: Target },
+      { to: "/rank-reality", label: "Rank-vs-Reality", icon: Map },
       { to: "/applications", label: "Application Tracker", icon: ClipboardCheck },
       { to: "/scholarships", label: "Scholarships", icon: DollarSign },
       { to: "/timeline", label: "Timeline", icon: Calendar },
@@ -66,6 +71,8 @@ const NAV_SECTIONS = [
     title: "Tools",
     icon: BookOpen,
     links: [
+      { to: "/bridge", label: "Bridge Courses", icon: Gamepad2 },
+      { to: "/plan-b", label: "Drop Analyzer", icon: GitCompare },
       { to: "/planner", label: "Study Planner", icon: BookOpen },
       { to: "/documents", label: "Document Checklist", icon: ClipboardCheck },
       { to: "/compare", label: "College Compare", icon: ArrowLeftRight },
@@ -75,6 +82,8 @@ const NAV_SECTIONS = [
     title: "Community",
     icon: Users,
     links: [
+      { to: "/pre-freshers", label: "Pre-Freshers Net", icon: Users },
+      { to: "/marketplace", label: "P2P Marketplace", icon: ShoppingBag },
       { to: "/forum", label: "Doubt Forum", icon: MessageSquare },
       { to: "/sessions", label: "Mentor Sessions", icon: Video },
       { to: "/wellness", label: "Wellness Check-in", icon: Heart },
