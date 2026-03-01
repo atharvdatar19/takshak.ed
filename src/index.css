@@ -6,9 +6,31 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════
-   PREMIUM DESIGN SYSTEM — Purple/Indigo Palette
-   Inspired by BB Agency layout patterns
+   NEXT-LEVEL DESIGN SYSTEM — Purple/Indigo Glassmorphism
+   Inspired by Apple & Linear design patterns
    ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Semantic Glass Colors ── */
+  --bg-glass: rgba(255, 255, 255, 0.7);
+  --border-glass: rgba(255, 255, 255, 0.4);
+  --shadow-glass: rgba(0, 0, 0, 0.05);
+
+  /* ── Animation Easing ── */
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+
+  /* ── Accent Glows ── */
+  --accent-glow: rgba(99, 102, 241, 0.15);
+  --accent-glow-intense: rgba(124, 58, 237, 0.25);
+}
+
+html.dark {
+  --bg-glass: rgba(15, 15, 18, 0.6);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --shadow-glass: rgba(0, 0, 0, 0.4);
+}
 
 /* ── Global Defaults ── */
 html {
@@ -131,12 +153,55 @@ textarea {
   transform: translateY(-4px);
 }
 
-/* ══════════ GLASSMORPHISM SIDEBAR ══════════ */
+/* ══════════ NEXT-LEVEL GLASS SYSTEM ══════════ */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 8px 32px 0 var(--shadow-glass);
+  border-radius: 24px;
+}
+
+.glass-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 4px 20px 0 var(--shadow-glass);
+  transition: all 0.4s var(--ease-out-expo);
+}
+
+.glass-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 20px 40px -10px var(--accent-glow-intense);
+}
+
+.glass-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--accent-glow) 0%, transparent 80%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.glass-glow:hover::before {
+  opacity: 1;
+}
+
 .sidebar-glass {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-right: 1px solid rgba(228, 226, 241, 0.6);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-right: 1px solid var(--border-glass);
 }
 
 /* ══════════ HERO GRADIENTS ══════════ */
@@ -445,6 +510,45 @@ textarea {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: gradient-text-flow 4s ease infinite;
+}
+
+/* ══════════ NEXT-LEVEL REVEAL ANIMATIONS ══════════ */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal-up {
+  animation: reveal-up 0.8s var(--ease-out-expo) forwards;
+}
+
+.stagger-1 {
+  animation-delay: 0.1s;
+}
+
+.stagger-2 {
+  animation-delay: 0.2s;
+}
+
+.stagger-3 {
+  animation-delay: 0.3s;
+}
+
+.stagger-4 {
+  animation-delay: 0.4s;
+}
+
+/* Parallax Effect Classes */
+.parallax-gentle {
+  transform: translateY(var(--parallax-y, 0));
+  transition: transform 0.1s linear;
 }
 
 /* ═══════════════════════════════════════════════════════════

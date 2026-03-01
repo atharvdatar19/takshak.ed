@@ -124,7 +124,7 @@ export default function ChatbotAssistant() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.96 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="w-[calc(100vw-2rem)] max-w-sm sm:w-96 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl flex flex-col h-[600px] max-h-[85vh]"
+            className="w-[calc(100vw-2rem)] max-w-sm sm:w-96 overflow-hidden rounded-[32px] glass-panel shadow-2xl flex flex-col h-[600px] max-h-[85vh] reveal-up"
           >
             <header className="flex items-center justify-between bg-gradient-to-r from-slate-900 to-indigo-950 px-5 py-4 text-white shrink-0">
               <div className="flex items-center gap-3">
@@ -151,7 +151,7 @@ export default function ChatbotAssistant() {
               </button>
             </header>
 
-            <div className="flex-1 overflow-y-auto bg-slate-50/50 p-5 scrollbar-thin">
+            <div className="flex-1 overflow-y-auto bg-slate-50/30 p-5 scrollbar-thin">
               <div className="space-y-5">
                 {messages.map((message, index) => (
                   <div key={`${message.role}-${index}`} className="space-y-3">
@@ -161,8 +161,8 @@ export default function ChatbotAssistant() {
                       </div>
                       <div
                         className={`max-w-[80%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${message.role === "user"
-                            ? "bg-indigo-600 text-white rounded-tr-sm"
-                            : "border border-slate-200 bg-white text-slate-600 rounded-tl-sm"
+                          ? "bg-indigo-600 text-white rounded-tr-sm"
+                          : "border border-slate-200 bg-white text-slate-600 rounded-tl-sm"
                           }`}
                       >
                         {message.role === "user" ? message.content : renderMessageContent(message.content)}
@@ -202,7 +202,7 @@ export default function ChatbotAssistant() {
               </div>
             </div>
 
-            <footer className="shrink-0 border-t border-slate-200 bg-white p-4">
+            <footer className="shrink-0 border-t border-slate-200/50 bg-white/40 backdrop-blur-md p-4">
               <div className="flex items-end gap-2 bg-slate-50 border border-slate-200 rounded-2xl p-1.5 focus-within:border-indigo-400 focus-within:bg-white transition-colors shadow-sm">
                 <textarea
                   aria-label="Type your message"

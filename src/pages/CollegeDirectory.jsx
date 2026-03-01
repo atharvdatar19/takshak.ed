@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async"
 import { motion } from "framer-motion"
 import {
   Bookmark,
@@ -84,6 +85,12 @@ export default function CollegeDirectory() {
 
   return (
     <div>
+      {/* ── SEO Meta ── */}
+      <Helmet>
+        <title>College Directory 2024 | Find Top NITs, IITs & Universities | MentorBhaiyaaa</title>
+        <meta name="description" content="Explore India's premier educational institutions. Filter by state, stream, and admission mode to find your perfect college with MentorBhaiyaaa." />
+      </Helmet>
+
       {/* ── Purple Gradient Hero ── */}
       <motion.section
         initial={{ opacity: 0, y: 12 }}

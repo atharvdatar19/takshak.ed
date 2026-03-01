@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async"
 import { motion, AnimatePresence } from "framer-motion"
 import { BarChart3, Calculator, ChevronDown, GraduationCap, Info, Target, TrendingUp } from "lucide-react"
 import { useMemo, useState } from "react"
@@ -338,6 +339,12 @@ export default function CutoffPredictor() {
 
     return (
         <div className="space-y-8 md:space-y-10">
+            {/* ── SEO Meta ── */}
+            <Helmet>
+                <title>JEE & NEET Cutoff Predictor 2024 | MentorBhaiyaaa</title>
+                <meta name="description" content="Predict your JEE Main, NEET, and BITSAT ranks and college cutoffs using official NTA data and formulas. Real-time admission probability for top NITs and IITs." />
+            </Helmet>
+
             {/* ═══ HERO ═══ */}
             <motion.section {...fadeUp(0)} className="relative overflow-hidden rounded-[32px] hero-gradient px-8 py-10 text-white md:px-12 md:py-14">
                 <ParticleField count={30} color="rgba(255,255,255,0.5)" lineColor="rgba(255,255,255,0.1)" maxDist={90} />
@@ -367,8 +374,8 @@ export default function CutoffPredictor() {
                             type="button"
                             onClick={() => { setSelectedExam(e.key); setCalcResult(null); setCalcValues({}); setShowPredictions(false); setBranchFilter(""); setActiveView("calculator") }}
                             className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 px-4 py-4 text-sm font-semibold transition-all duration-300 ${selectedExam === e.key
-                                    ? "border-indigo-400 bg-indigo-50 text-indigo-700 shadow-lg shadow-indigo-100 scale-[1.03]"
-                                    : "border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:bg-indigo-50/50"
+                                ? "border-indigo-400 bg-indigo-50 text-indigo-700 shadow-lg shadow-indigo-100 scale-[1.03]"
+                                : "border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:bg-indigo-50/50"
                                 }`}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.97 }}
@@ -551,8 +558,8 @@ export default function CutoffPredictor() {
                                                             <p className="text-xs text-slate-500 mt-0.5">{r.branch} · {r.city}, {r.state}</p>
                                                         </div>
                                                         <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${r.chanceColor === "emerald" ? "bg-emerald-100 text-emerald-700 border border-emerald-200" :
-                                                                r.chanceColor === "amber" ? "bg-amber-100 text-amber-700 border border-amber-200" :
-                                                                    "bg-rose-100 text-rose-700 border border-rose-200"
+                                                            r.chanceColor === "amber" ? "bg-amber-100 text-amber-700 border border-amber-200" :
+                                                                "bg-rose-100 text-rose-700 border border-rose-200"
                                                             }`}>
                                                             {r.chance}
                                                         </span>
@@ -563,7 +570,7 @@ export default function CutoffPredictor() {
                                                         <div className="flex justify-between text-[10px] text-slate-400 mb-1">
                                                             <span>Admission probability</span>
                                                             <span className={`font-bold ${r.chanceColor === "emerald" ? "text-emerald-600" :
-                                                                    r.chanceColor === "amber" ? "text-amber-600" : "text-rose-600"
+                                                                r.chanceColor === "amber" ? "text-amber-600" : "text-rose-600"
                                                                 }`}>{r.chancePercent}%</span>
                                                         </div>
                                                         <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
@@ -572,8 +579,8 @@ export default function CutoffPredictor() {
                                                                 animate={{ width: `${r.chancePercent}%` }}
                                                                 transition={{ duration: 1, delay: i * 0.05, ease: "easeOut" }}
                                                                 className={`h-full rounded-full bg-gradient-to-r ${r.chanceColor === "emerald" ? "from-emerald-400 to-emerald-600" :
-                                                                        r.chanceColor === "amber" ? "from-amber-400 to-amber-600" :
-                                                                            "from-rose-400 to-rose-600"
+                                                                    r.chanceColor === "amber" ? "from-amber-400 to-amber-600" :
+                                                                        "from-rose-400 to-rose-600"
                                                                     }`}
                                                             />
                                                         </div>
@@ -599,9 +606,9 @@ export default function CutoffPredictor() {
 
                                                     <div className="mt-2 pt-2 border-t border-slate-100">
                                                         <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${r.type === "IIT" || r.type === "AIIMS" ? "bg-purple-100 text-purple-700" :
-                                                                r.type === "NIT" || r.type === "GMC" ? "bg-blue-100 text-blue-700" :
-                                                                    r.type === "IIIT" || r.type === "BITS" ? "bg-teal-100 text-teal-700" :
-                                                                        "bg-slate-100 text-slate-600"
+                                                            r.type === "NIT" || r.type === "GMC" ? "bg-blue-100 text-blue-700" :
+                                                                r.type === "IIIT" || r.type === "BITS" ? "bg-teal-100 text-teal-700" :
+                                                                    "bg-slate-100 text-slate-600"
                                                             }`}>{r.type}</span>
                                                     </div>
                                                 </div>
@@ -631,14 +638,14 @@ function ChanceBadge({ label, count, color, emoji }) {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             className={`flex items-center gap-2 rounded-2xl border px-4 py-2.5 ${color === "emerald" ? "bg-emerald-50 border-emerald-200" :
-                    color === "amber" ? "bg-amber-50 border-amber-200" :
-                        "bg-rose-50 border-rose-200"
+                color === "amber" ? "bg-amber-50 border-amber-200" :
+                    "bg-rose-50 border-rose-200"
                 }`}
         >
             <span className="text-lg">{emoji}</span>
             <div>
                 <p className={`text-lg font-bold ${color === "emerald" ? "text-emerald-700" :
-                        color === "amber" ? "text-amber-700" : "text-rose-700"
+                    color === "amber" ? "text-amber-700" : "text-rose-700"
                     }`}>
                     <AnimatedCounter value={count} duration={0.8} />
                 </p>

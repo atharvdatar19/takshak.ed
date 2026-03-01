@@ -201,6 +201,7 @@ function SidebarContent({ onNavigate }) {
 export default function AppLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
 
   return (
     <div className="relative flex min-h-screen bg-app">
@@ -278,6 +279,18 @@ export default function AppLayout() {
             </button>
           )}
           <Outlet />
+
+          {/* ── Global Footer ── */}
+          <footer className="mt-20 border-t border-slate-200/60 pt-8 pb-12">
+            <div className="flex flex-col items-center justify-center gap-2">
+              <p className="text-sm font-medium text-slate-500">
+                Made with ❤️ by <span className="font-bold text-indigo-600">Team MB</span>
+              </p>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400 font-bold">
+                MentorBhaiyaaa — Empowering Students since 2024
+              </p>
+            </div>
+          </footer>
         </PageTransition>
       </main>
 

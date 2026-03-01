@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async"
 import {
   Award,
   Bell,
@@ -95,6 +96,12 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 md:space-y-12">
 
+      {/* ── SEO Meta ── */}
+      <Helmet>
+        <title>Dashboard | MentorBhaiyaaa — Track your College Admissions</title>
+        <meta name="description" content="View your college admission progress, track study sessions, and access personalized mentoring on the MentorBhaiyaaa dashboard." />
+      </Helmet>
+
       {/* ═══ HERO — Particles + Text Reveal + Typewriter ═══ */}
       <motion.section
         initial={{ opacity: 0, scale: 0.96 }}
@@ -115,13 +122,14 @@ export default function Dashboard() {
             </SlideIn>
 
             {/* Character-by-character reveal */}
-            <TextReveal
-              text={`Welcome back, ${bundle?.profile?.full_name || "Student"}`}
-              mode="word"
-              stagger={0.08}
-              delay={0.3}
-              className="text-display text-3xl md:text-5xl lg:text-6xl mt-3"
-            />
+            <h1 className="text-display text-3xl md:text-5xl lg:text-6xl mt-3">
+              <TextReveal
+                text={`Welcome back, ${bundle?.profile?.full_name || "Student"}`}
+                mode="word"
+                stagger={0.08}
+                delay={0.3}
+              />
+            </h1>
 
             {/* Typewriter motivational quote */}
             <div className="mt-4 h-12">
@@ -139,10 +147,10 @@ export default function Dashboard() {
             <div className="flex flex-col items-end gap-3 shrink-0">
               <NotificationBell unreadCount={computed.unreadCount + computed.deadlineAlerts.length} />
               <PulseGlow color="rgba(129, 140, 248, 0.3)" className="rounded-2xl">
-                <div className="rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 px-6 py-4 text-center">
-                  <p className="text-xs text-indigo-200 uppercase tracking-widest">XP / Level</p>
-                  <p className="stat-number text-3xl mt-1">
-                    <AnimatedCounter value={computed.xp} className="text-white" /> <span className="text-lg text-indigo-200">· L{computed.level}</span>
+                <div className="rounded-2xl glass-panel px-6 py-4 text-center ring-1 ring-white/20">
+                  <p className="text-xs text-indigo-900/60 dark:text-indigo-200 uppercase tracking-widest font-bold">XP / Level</p>
+                  <p className="stat-number text-3xl mt-1 text-indigo-950 dark:text-white">
+                    <AnimatedCounter value={computed.xp} /> <span className="text-lg text-indigo-800 dark:text-indigo-200">· L{computed.level}</span>
                   </p>
                 </div>
               </PulseGlow>
@@ -221,15 +229,15 @@ export default function Dashboard() {
         <div className="divider-gradient mb-8" />
         <StaggerContainer stagger={0.12} className="grid gap-5 xl:grid-cols-2">
           <StaggerItem>
-            <div className="gradient-border">
-              <div className="card-bb p-5 md:p-7 bg-white rounded-[24px]">
+            <div className="gradient-border reveal-up">
+              <div className="glass-card p-5 md:p-7 rounded-[24px]">
                 <WeeklyTrendChart title="Weekly Study Minutes" data={computed.weeklyStudyData} color="indigo" />
               </div>
             </div>
           </StaggerItem>
           <StaggerItem>
-            <div className="gradient-border">
-              <div className="card-bb p-5 md:p-7 bg-white rounded-[24px]">
+            <div className="gradient-border reveal-up">
+              <div className="glass-card p-5 md:p-7 rounded-[24px]">
                 <WeeklyTrendChart title="Weekly Avg Score" data={computed.weeklyScoreData} color="emerald" />
               </div>
             </div>
@@ -286,7 +294,7 @@ function StatCard({ icon: Icon, label, value, sub, color = "indigo" }) {
 
   return (
     <MagneticCard intensity={0.03} className="h-full">
-      <div className={`card-bb ${bgMap[color]} p-5 md:p-6 h-full shimmer-hover`}>
+      <div className={`glass-card ${bgMap[color]} p-5 md:p-6 h-full glass-glow reveal-up`}>
         <FloatingElement amplitude={2} duration={4}>
           <div className={`mb-3 inline-flex rounded-xl p-2.5 ${iconBg[color]}`}>
             <Icon size={20} />

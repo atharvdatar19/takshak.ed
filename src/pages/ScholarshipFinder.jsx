@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async"
 import { motion, AnimatePresence } from "framer-motion"
 import {
     Award,
@@ -44,6 +45,12 @@ export default function ScholarshipFinder() {
 
     return (
         <div className="space-y-8 md:space-y-12">
+            {/* ── SEO Meta ── */}
+            <Helmet>
+                <title>Scholarship Finder 2024 | MentorBhaiyaaa</title>
+                <meta name="description" content="Find the latest scholarships for Indian students across PCM, PCB, Commerce, and Arts. Filter by category, state, and income limit to discover money for your education." />
+            </Helmet>
+
             {/* ═══ HERO ═══ */}
             <motion.section {...fadeUp(0)} className="relative overflow-hidden rounded-[32px] card-gradient-orange px-8 py-10 text-white md:px-12 md:py-16">
                 <div className="orb orb-purple w-40 h-40 -top-10 right-10" />

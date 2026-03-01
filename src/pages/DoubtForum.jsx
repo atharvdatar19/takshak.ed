@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async"
 import { motion, AnimatePresence } from "framer-motion"
 import {
     ChevronDown,
@@ -66,6 +67,12 @@ export default function DoubtForum() {
 
     return (
         <div className="space-y-10 md:space-y-16">
+            {/* ── SEO Meta ── */}
+            <Helmet>
+                <title>Anonymous Doubt Forum | MentorBhaiyaaa — IIT/NEET Peer Support</title>
+                <meta name="description" content="Ask your exam preparation doubts anonymously on the MentorBhaiyaaa forum. Get answers from top rankers and mentors across PCM, PCB, and other streams." />
+            </Helmet>
+
             {/* ═══ HERO ═══ */}
             <section className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-violet-600 to-indigo-600 px-8 py-12 text-white md:px-14 md:py-20">
                 <div className="orb orb-purple w-44 h-44 -top-12 right-8" />
