@@ -15,6 +15,7 @@ export default function Timeline() {
   const [timeline, setTimeline] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [selectedType, setSelectedType] = useState("All")
 
   const loadTimeline = useCallback(async () => {
     setLoading(true)
@@ -69,7 +70,11 @@ export default function Timeline() {
   const now = new Date()
 
   const grouped = useMemo(() => {
-    const upcoming = timeline.filter(
+    const filteredTimeline = selectedType === "All"
+      ? timeline
+      : timeline.filter(item => item.event_type === selectedType)
+
+    const upcoming = filteredTimeline.filter(
       (item) =>
         new Date(item.start_date || item.exam_date) >= now
     )
@@ -80,10 +85,10 @@ export default function Timeline() {
       return days >= 0 && days <= 15 // Extended closing soon threshold to capture more events
     })
 
-    const recentlyAdded = [...timeline].slice(0, 8) // Show more recent items
+    const recentlyAdded = [...filteredTimeline].slice(0, 8) // Show more recent items
 
     return { upcoming, closingSoon, recentlyAdded }
-  }, [timeline])
+  }, [timeline, selectedType])
 
   return (
     <div>
@@ -101,6 +106,21 @@ export default function Timeline() {
           error={error}
           empty={timeline.length === 0}
         >
+          <div className="mb-6 flex flex-wrap gap-2">
+            {["All", "Exam", "Hackathon", "Internship", "Scholarship"].map(type => (
+              <button
+                key={type}
+                onClick={() => setSelectedType(type)}
+                className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition shadow-sm ${selectedType === type
+                    ? "bg-indigo-600 text-white shadow-indigo-200"
+                    : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                  }`}
+              >
+                {type === "All" ? "All Targets" : type + "s"}
+              </button>
+            ))}
+          </div>
+
           <div className="grid gap-5 xl:grid-cols-3">
             <TimelineColumn
               title="Upcoming Opportunities"

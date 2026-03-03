@@ -63,7 +63,7 @@ export default function SplashScreen({ children }) {
                         {/* Logo rocket — bounces in with rotation */}
                         <motion.img
                             src="/logo.png"
-                            alt="MentorBhaiyaaa"
+                            alt="Guidora × Edura AI"
                             className="w-28 h-28 md:w-36 md:h-36 object-contain drop-shadow-2xl"
                             initial={{ opacity: 0, scale: 0, rotate: -180 }}
                             animate={{ opacity: 1, scale: 1, rotate: 0 }}

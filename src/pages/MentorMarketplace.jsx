@@ -72,10 +72,14 @@ export default function MentorMarketplace() {
   }, [stream])
 
   const filteredMentors = mentors.filter(m => {
-    if (stream && m.stream !== stream && stream !== "All streams") {
-      // Very basic filtering for demo: if stream doesn't match and it's not a generic provider
-      if (!['PhysicsWallah', 'Unacademy', "Byju's", 'Made Easy', 'Ace Academy'].includes(m.stream)) {
-        return false;
+    if (stream && stream !== "All streams") {
+      const isAcademicProvider = ['PhysicsWallah', 'Unacademy', "Byju's", 'Made Easy', 'Ace Academy'].includes(m.stream);
+      const isTechProvider = ['100xDevs', 'TakeUForward'].includes(m.stream);
+
+      if (stream === 'Hackathons' || stream === 'Internships') {
+        if (!m.tags?.includes(stream) && !isTechProvider && m.subject !== stream) return false;
+      } else {
+        if (m.stream !== stream && !isAcademicProvider) return false;
       }
     }
     if (selectedLevel && m.level && m.level !== selectedLevel) return false;
@@ -105,11 +109,13 @@ export default function MentorMarketplace() {
             onChange={event => setStream(event.target.value)}
             className="flex-1 min-w-[140px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 font-medium text-slate-700"
           >
-            <option value="">All Streams & Providers</option>
+            <option value="">All Domains & Streams</option>
             <option value="PCM">PCM</option>
             <option value="PCB">PCB</option>
             <option value="Commerce">Commerce</option>
             <option value="Arts">Arts</option>
+            <option value="Hackathons">Hackathons & Open Source</option>
+            <option value="Internships">Internships & Placements</option>
           </select>
 
           <select

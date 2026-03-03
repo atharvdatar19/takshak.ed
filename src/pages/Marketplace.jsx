@@ -5,8 +5,9 @@ import { getMarketplaceListings } from "../services/marketplace"
 import { eduraCourses } from "../data/eduraData"
 
 export default function Marketplace() {
-    const [selectedCategory, setSelectedCategory] = useState("All")
-    const [selectedMode, setSelectedMode] = useState("All")
+    const [selectedExam, setSelectedExam] = useState("All Exams")
+    const [selectedCategory, setSelectedCategory] = useState("All Materials")
+    const [selectedMode, setSelectedMode] = useState("All Modes")
     const [searchQuery, setSearchQuery] = useState("")
     const [listings, setListings] = useState([])
 
@@ -41,8 +42,9 @@ export default function Marketplace() {
     }, [])
 
     const filteredListings = listings.filter(item => {
-        if (selectedCategory !== "All" && !(item.exam && item.exam.includes(selectedCategory)) && item.type !== selectedCategory) return false
-        if (selectedMode !== "All" && item.mode !== selectedMode) return false
+        if (selectedCategory !== "All Materials" && item.type !== selectedCategory) return false
+        if (selectedExam !== "All Exams" && !(item.exam && item.exam.includes(selectedExam))) return false
+        if (selectedMode !== "All Modes" && item.mode !== selectedMode) return false
         if (searchQuery && !item.title.toLowerCase().includes(searchQuery.toLowerCase()) && !item.provider?.toLowerCase().includes(searchQuery.toLowerCase())) return false
         return true
     })
@@ -86,9 +88,22 @@ export default function Marketplace() {
                 </div>
 
                 <div className="flex items-center gap-2 w-full overflow-x-auto pb-1 md:pb-0 scrollbar-hide">
-                    {["All", "Course", "Books", "Modules", "JEE", "UPSC", "GATE"].map(filter => (
+                    {["All Exams", "JEE", "GATE", "UPSC", "CAT"].map(filter => (
                         <button
-                            key={filter}
+                            key={'exam-' + filter}
+                            onClick={() => setSelectedExam(filter)}
+                            className={`shrink-0 px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 ${selectedExam === filter
+                                ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
+                                : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                                }`}
+                        >
+                            {filter}
+                        </button>
+                    ))}
+                    <div className="h-8 w-px bg-slate-200 mx-2 shrink-0"></div>
+                    {["All Materials", "Course", "Books", "Modules"].map(filter => (
+                        <button
+                            key={'cat-' + filter}
                             onClick={() => setSelectedCategory(filter)}
                             className={`shrink-0 px-4 py-2 rounded-lg text-sm font-semibold transition ${selectedCategory === filter
                                 ? "bg-rose-500 text-white shadow-md shadow-rose-200"
@@ -101,18 +116,18 @@ export default function Marketplace() {
 
                     <div className="h-8 w-px bg-slate-200 mx-2 shrink-0"></div>
 
-                    {["All", "Live", "Recorded", "Hybrid"].map(filter => (
+                    {["All Modes", "Live", "Recorded", "Hybrid"].map(filter => (
                         <button
                             key={'mode-' + filter}
                             onClick={() => setSelectedMode(filter)}
                             className={`shrink-0 px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 ${selectedMode === filter
-                                ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
+                                ? "bg-teal-600 text-white shadow-md shadow-teal-200"
                                 : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
                                 }`}
                         >
                             {filter === "Live" && <PlayCircle size={14} />}
-                            {filter === "All" && <Filter size={14} />}
-                            {filter === "All" ? "All Modes" : filter}
+                            {filter === "All Modes" && <Filter size={14} />}
+                            {filter}
                         </button>
                     ))}
                 </div>

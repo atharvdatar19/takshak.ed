@@ -100,7 +100,8 @@ function SidebarContent({ onNavigate }) {
     <>
       {/* Brand */}
       <div className="flex items-center gap-3 px-5 py-5">
-        <img src="/logo.png" alt="MentorBhaiyaaa" className="h-10 w-auto rounded-xl" />
+        <img src="/logo.png" alt="Guidora × Edura AI" className="h-10 w-auto rounded-xl" />
+        <span className="font-bold text-slate-800 text-sm hidden md:block">Guidora × Edura <span className="text-indigo-600">AI</span></span>
       </div>
 
       {/* Nav Sections */}
@@ -219,7 +220,10 @@ export default function AppLayout() {
 
       {/* ── Mobile Top Bar ── */}
       <div className="fixed inset-x-0 top-0 z-30 flex items-center justify-between border-b border-slate-200/60 bg-white/90 px-4 py-3 backdrop-blur-xl md:hidden">
-        <img src="/logo.png" alt="MentorBhaiyaaa" className="h-8 w-auto rounded-lg" />
+        <div className="flex items-center gap-2">
+          <img src="/logo.png" alt="Guidora × Edura AI" className="h-8 w-auto rounded-lg" />
+          <span className="font-bold text-slate-800 text-sm">Guidora × Edura AI</span>
+        </div>
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
@@ -284,10 +288,10 @@ export default function AppLayout() {
           <footer className="mt-20 border-t border-slate-200/60 pt-8 pb-12">
             <div className="flex flex-col items-center justify-center gap-2">
               <p className="text-sm font-medium text-slate-500">
-                Made with ❤️ by <span className="font-bold text-indigo-600">Team MB</span>
+                Made with ❤️ by <span className="font-bold text-indigo-600">Guidora × Edura AI Team</span>
               </p>
               <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400 font-bold">
-                MentorBhaiyaaa — Empowering Students since 2024
+                Guidora × Edura AI — Empowering Students since 2024
               </p>
             </div>
           </footer>

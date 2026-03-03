@@ -58,6 +58,28 @@ export const eduraEducators = [
         rating: 4.7,
         reach: '2M+',
         tags: ['GATE', 'CS/IT', 'In-depth']
+    },
+    {
+        id: 'edu_5',
+        name: 'Harkirat Singh',
+        provider: '100xDevs',
+        subject: 'Hackathons',
+        level: 'Advanced',
+        teachingStyle: 'Problem Solving',
+        rating: 4.9,
+        reach: '500K+',
+        tags: ['Open Source', 'Web3', 'Hackathons']
+    },
+    {
+        id: 'edu_6',
+        name: 'Striver (Raj Vikramaditya)',
+        provider: 'TakeUForward',
+        subject: 'Internships',
+        level: 'Comprehensive',
+        teachingStyle: 'Exam Focused',
+        rating: 5.0,
+        reach: '1M+',
+        tags: ['DSA', 'FAANG', 'Placements', 'Internships']
     }
 ];
 

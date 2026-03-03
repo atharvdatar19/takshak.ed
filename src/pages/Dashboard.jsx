@@ -113,8 +113,8 @@ export default function Dashboard() {
 
       {/* ── SEO Meta ── */}
       <Helmet>
-        <title>Dashboard | MentorBhaiyaaa — Track your College Admissions</title>
-        <meta name="description" content="View your college admission progress, track study sessions, and access personalized mentoring on the MentorBhaiyaaa dashboard." />
+        <title>Dashboard | Guidora × Edura AI — Track your College Admissions</title>
+        <meta name="description" content="View your college admission progress, track study sessions, and access personalized mentoring on the Guidora × Edura AI dashboard." />
       </Helmet>
 
       {/* ═══ HERO — Particles + Text Reveal + Typewriter ═══ */}
