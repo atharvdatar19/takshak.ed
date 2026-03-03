@@ -59,7 +59,7 @@ export default function App() {
                 <Route path="/documents" element={<ProtectedRoute><DocumentChecklist /></ProtectedRoute>} />
                 <Route path="/compare" element={<ProtectedRoute><CollegeCompare /></ProtectedRoute>} />
                 <Route path="/sessions" element={<ProtectedRoute><MeetingScheduler /></ProtectedRoute>} />
-                <Route path="/mentors" element={<ProtectedRoute><MentorMarketplace /></ProtectedRoute>} />
+                <Route path="/mentor-marketplace" element={<ProtectedRoute><MentorMarketplace /></ProtectedRoute>} />
                 <Route path="/alerts" element={<ProtectedRoute><Alerts /></ProtectedRoute>} />
                 <Route path="/pre-freshers" element={<ProtectedRoute><PreFreshers /></ProtectedRoute>} />
                 <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />

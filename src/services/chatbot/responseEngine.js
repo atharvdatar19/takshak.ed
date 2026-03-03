@@ -1,4 +1,5 @@
 import { CHATBOT_CONFIG } from "../../lib/chatbotConfig"
+import { eduraExams, eduraCourses } from "../../data/eduraData"
 
 // Simulated conversational state
 let conversationState = {
@@ -12,12 +13,12 @@ const KNOWLEDGE_BASE = {
   planB: ["drop", "drop year", "join", "roi", "plan b", "worth taking drop"],
   community: ["roommate", "seniors", "connect", "network", "pre", "fresher"],
   marketplace: ["buy", "sell", "books", "material", "modules", "allen", "fiitjee", "second hand"],
-  courses: ["bridge", "learn", "python", "skills", "excel", "c++", "course"],
+  courses: ["bridge", "learn", "python", "skills", "excel", "c++", "course", "upsc", "gate", "jee", "cat", "educator", "educators", "unacademy", "physicswallah"],
 }
 
 function hasAnyKeyword(message, category) {
   const norm = message.toLowerCase();
-  return KNOWLEDGE_BASE[category].some(kw => norm.includes(kw));
+  return KNOWLEDGE_BASE[category]?.some(kw => norm.includes(kw));
 }
 
 export async function getAssistantResponse(userMessage, messageHistory = []) {
@@ -25,6 +26,44 @@ export async function getAssistantResponse(userMessage, messageHistory = []) {
   await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 500));
 
   const text = userMessage.toLowerCase();
+
+  // Edura Specific Intents
+  if (userMessage === "gate_info" || text.includes("what is gate")) {
+    const gateInfo = eduraExams.find(e => e.id === "gate");
+    return {
+      content: `**${gateInfo.fullName} (${gateInfo.name})** is a premier examination for Engineering students in India. It tests your comprehensive understanding of undergraduate engineering subjects and is used for admissions into M.Tech programs and PSU recruitments.`,
+      quickReplies: [
+        { label: "Find GATE Courses", path: "/marketplace" },
+        { label: "Check Deadlines", path: "/timeline" }
+      ]
+    }
+  }
+
+  if (userMessage === "compare_exams" || (text.includes("compare") && text.includes("jee") && text.includes("gate"))) {
+    return {
+      content: "**JEE vs GATE**:\n- **JEE** is an undergraduate entrance exam for B.Tech programs at IITs/NITs, focusing on foundational physics, chemistry, and mathematics.\n- **GATE** is a postgraduate engineering exam focusing on specialized core engineering subjects.\n\nWhile JEE gets you into college, GATE helps you advance to higher education or secure PSU jobs!",
+      quickReplies: [
+        { label: "Explore Educators", path: "/mentors" },
+        { label: "Predict College (JEE)", path: "/rank-reality" }
+      ]
+    }
+  }
+
+  if (userMessage === "upsc_courses" || text.includes("best courses for upsc")) {
+    const upscCourses = eduraCourses.filter(c => c.exam === 'UPSC');
+    let msg = "Here are the top-rated UPSC courses on our blended Marketplace:\n";
+    upscCourses.forEach(c => {
+      msg += `- **${c.title}** by ${c.provider} (Rating: ${c.rating} ⭐) [Mode: ${c.mode}]\n`;
+    });
+    return {
+      content: msg,
+      quickReplies: [
+        { label: "View on Marketplace", path: "/marketplace" },
+        { label: "Back to Main Menu", action: "greetings" }
+      ]
+    }
+  }
+
 
   // 1. Direct clear intents based on new features
   if (hasAnyKeyword(text, "counseling")) {
@@ -60,17 +99,18 @@ export async function getAssistantResponse(userMessage, messageHistory = []) {
     return {
       content: "Don't pay full price for books! You can buy (or sell) used exam modules directly from verified seniors in your city at steep discounts.",
       quickReplies: [
-        { label: "Browse Marketplace", path: "/marketplace" },
-        { label: "Sell my modules", path: "/marketplace" }
+        { label: "Browse Books Marketplace", path: "/marketplace" },
+        { label: "Find Course Educators", path: "/mentors" }
       ]
     }
   }
 
   if (hasAnyKeyword(text, "courses")) {
     return {
-      content: "The 3 months before college are crucial. We offer **Bridge Courses** in Python, C++, Excel, and Communication to get you ready for Day 1.",
+      content: "Looking for competitive exam courses or bridge skills? We consolidate courses from PhysicsWallah, Unacademy, and more!",
       quickReplies: [
-        { label: "View Bridge Courses", path: "/bridge" }
+        { label: "Browse Marketplace", path: "/marketplace" },
+        { label: "Explore Mentors & Educators", path: "/mentors" }
       ]
     }
   }
@@ -88,20 +128,20 @@ export async function getAssistantResponse(userMessage, messageHistory = []) {
   // 3. Greeting / Generic Fallback
   if (hasAnyKeyword(text, "greetings")) {
     return {
-      content: "Hi there! 👋 I am Medha, your AI mentor. I can help you with predicting colleges, deciding on a drop year, finding roommates, or getting study materials. What do you need help with?",
+      content: "Hi there! 👋 I am Medha, your AI mentor. I can help you with discovering courses, comparing educators, predicting colleges, or finding deadlines. What do you need help with?",
       quickReplies: [
         { label: "Predict my colleges", action: "counseling" },
-        { label: "Drop vs Join?", action: "planB" },
-        { label: "Buy/Sell Books", action: "marketplace" },
+        { label: "What is GATE exam?", action: "gate_info" },
+        { label: "Find Courses", action: "courses" },
       ]
     }
   }
 
   // Default Smart Fallback with context awareness
   return {
-    content: `I understand you're asking about "${userMessage}". While I'm still learning about that specific topic, I'm fully equipped to help you with college counseling, financial ROI analysis for drop years, and connecting with seniors!`,
+    content: `I understand you're asking about "${userMessage}". While I'm still learning about that specific topic, I'm fully equipped to help you discover courses, compare educators, track deadlines, and handle college counseling!`,
     quickReplies: [
-      { label: "Contact Human Support", action: "support" },
+      { label: "Explore Edura Exam Tools", path: "/timeline" },
       { label: "Back to Main Menu", action: "greetings" }
     ]
   }
@@ -109,12 +149,12 @@ export async function getAssistantResponse(userMessage, messageHistory = []) {
 
 export function getWelcomeMessage() {
   return {
-    content: "Hi! I'm **Medha**, MentorBhaiyaaa's smart assistant. 🎓\n\nI can help you explore our advanced tools like the *Rank-vs-Reality Engine*, *Drop Analyzer*, or directly connect you with the *Senior Marketplace*.\n\nWhat are you looking for today?",
+    content: "Hi! I'm **Medha**, MentorBhaiyaaa & Edura's smart assistant. 🎓\n\nI can help you explore competitive exams, compare top educators, track crucial deadlines, or guide your college counseling.\n\nWhat are you looking for today?",
     quickReplies: [
-      { label: "Predict Colleges", action: "predict" },
-      { label: "Drop Year Analyzer", action: "drop" },
-      { label: "Find a Roommate", action: "roommate" },
-      { label: "Buy Used Modules", action: "buy" }
+      { label: "What is GATE exam?", action: "gate_info" },
+      { label: "Compare JEE vs GATE", action: "compare_exams" },
+      { label: "Best courses for UPSC", action: "upsc_courses" },
+      { label: "Predict Colleges", action: "predict" }
     ]
   }
 }

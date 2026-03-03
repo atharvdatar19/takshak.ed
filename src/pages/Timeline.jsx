@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { BellRing, Clock3 } from "lucide-react"
+import { BellRing, Clock3, ExternalLink } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import DataState from "../components/DataState"
 import LoadingSkeleton from "../components/LoadingSkeleton"
@@ -8,6 +8,7 @@ import { formatDate, getDaysLeft } from "../lib/date"
 import { getExamsTimeline } from "../services/api"
 import { getCurrentUserProfile } from "../services/superapp"
 import { useRealtimeSync } from "../hooks/useRealtimeSync"
+import { eduraDeadlines } from "../data/eduraData"
 
 export default function Timeline() {
   const [profile, setProfile] = useState(null)
@@ -20,14 +21,37 @@ export default function Timeline() {
     setError("")
 
     try {
-      const userProfile = await getCurrentUserProfile()
-      setProfile(userProfile)
-      const data = await getExamsTimeline({
-        stream: userProfile?.stream || "",
-        state: userProfile?.state || "",
-        targetExam: userProfile?.target_exam || "",
-      })
-      setTimeline(data || [])
+      let userProfile = null
+      let data = []
+      try {
+        userProfile = await getCurrentUserProfile()
+        setProfile(userProfile)
+        data = await getExamsTimeline({
+          stream: userProfile?.stream || "",
+          state: userProfile?.state || "",
+          targetExam: userProfile?.target_exam || "",
+        })
+      } catch (apiErr) {
+        console.error("Timeline API Error:", apiErr)
+      }
+
+      // Merge Edura Data
+      const eduraMapped = eduraDeadlines.map(d => ({
+        id: d.id,
+        title: d.title,
+        exam_name: d.title,
+        event_type: d.type,
+        stream: "All Streams",
+        start_date: d.date,
+        exam_date: d.date,
+        end_date: d.date,
+        organizingBody: d.organizingBody,
+        prizeOrStipend: d.prizeOrStipend,
+        link: d.link,
+        description: d.description
+      }))
+
+      setTimeline([...(data || []), ...eduraMapped])
     } catch (err) {
       setError(err.message || "Failed to load timeline")
     } finally {
@@ -53,10 +77,10 @@ export default function Timeline() {
     const closingSoon = upcoming.filter((item) => {
       const end = item.end_date || item.exam_date
       const days = getDaysLeft(end)
-      return days >= 0 && days <= 5
+      return days >= 0 && days <= 15 // Extended closing soon threshold to capture more events
     })
 
-    const recentlyAdded = [...timeline].slice(0, 5)
+    const recentlyAdded = [...timeline].slice(0, 8) // Show more recent items
 
     return { upcoming, closingSoon, recentlyAdded }
   }, [timeline])
@@ -66,7 +90,7 @@ export default function Timeline() {
       <PageHeader
         title="Smart Academic Timeline"
         description={`Filtered for ${profile?.stream || "all streams"}${profile?.state ? ` in ${profile.state}` : ""
-          }.`}
+          }. Includes Hackathons & Internships.`}
       />
 
       {loading ? (
@@ -79,7 +103,7 @@ export default function Timeline() {
         >
           <div className="grid gap-5 xl:grid-cols-3">
             <TimelineColumn
-              title="Upcoming"
+              title="Upcoming Opportunities"
               items={grouped.upcoming}
               tone="indigo"
             />
@@ -107,6 +131,9 @@ function TimelineColumn({ title, items, tone }) {
     emerald: "bg-emerald-100 text-emerald-700",
   }
 
+  // Deduplicate items based on ID to avoid duplicate keys
+  const uniqueItems = Array.from(new Map(items.map(item => [item.id, item])).values());
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 10 }}
@@ -117,51 +144,61 @@ function TimelineColumn({ title, items, tone }) {
         {title}
       </h3>
 
-      {items.length === 0 ? (
+      {uniqueItems.length === 0 ? (
         <p className="rounded-lg bg-slate-50 p-4 text-sm text-slate-500">
           No records available.
         </p>
       ) : (
         <ul className="space-y-3">
-          {items.map((item) => {
+          {uniqueItems.map((item) => {
             const endDate = item.end_date || item.exam_date
             const daysLeft = getDaysLeft(endDate)
 
             return (
               <li
                 key={item.id}
-                className="rounded-lg border border-slate-100 bg-slate-50 p-3"
+                className="rounded-lg border border-slate-100 bg-slate-50 p-4 hover:shadow-md transition-shadow relative overflow-hidden group"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-medium text-slate-900">
+                <div className="flex items-start justify-between gap-3 relative z-10">
+                  <div className="flex-1">
+                    <p className="font-bold text-slate-900 leading-tight">
                       {item.title || item.exam_name}
                     </p>
 
-                    <p className="text-xs text-slate-500">
-                      {item.event_type || "exam"} •{" "}
-                      {item.stream || "General"}
+                    {item.organizingBody && (
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-100 inline-block px-1.5 py-0.5 rounded mt-1.5 mb-1.5 label-tag">
+                        By {item.organizingBody}
+                      </p>
+                    )}
+
+                    <p className="text-xs text-slate-600 mb-1.5 leading-relaxed">
+                      {item.description || `${item.event_type || "Exam"} • ${item.stream || "General"}`}
                     </p>
 
-                    <p className="mt-1 text-xs text-slate-500">
-                      {formatDate(
-                        item.start_date || item.exam_date
-                      )}{" "}
-                      → {formatDate(endDate)}
+                    {item.prizeOrStipend && item.prizeOrStipend !== 'N/A' && (
+                      <div className="flex items-center gap-1 text-xs text-emerald-700 font-bold bg-emerald-50 px-2 py-1 rounded inline-flex mb-2">
+                        <span>💰</span> {item.prizeOrStipend}
+                      </div>
+                    )}
+
+                    <p className="mt-1 text-xs font-medium text-slate-600">
+                      📅 {formatDate(item.start_date || item.exam_date)}{" "}
+                      {endDate && endDate !== (item.start_date || item.exam_date) ? `→ ${formatDate(endDate)}` : ""}
                     </p>
+
+                    {item.link && (
+                      <a href={item.link} target="_blank" rel="noreferrer" className="mt-3 flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors w-max">
+                        Learn More <ExternalLink size={12} />
+                      </a>
+                    )}
                   </div>
 
                   <span
-                    className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold ${toneClasses[tone]}`}
+                    className={`shrink-0 inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-[11px] font-extrabold ${toneClasses[tone]} shadow-sm`}
                   >
                     <BellRing size={12} />
                     {daysLeft}d
                   </span>
-                </div>
-
-                <div className="mt-2 inline-flex items-center gap-1 text-[11px] text-slate-500">
-                  <Clock3 size={12} />
-                  Reminder enabled
                 </div>
               </li>
             )

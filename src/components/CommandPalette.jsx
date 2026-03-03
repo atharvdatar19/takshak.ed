@@ -6,9 +6,11 @@ import { useNavigate } from "react-router-dom"
 const COMMANDS = [
     { id: "dashboard", label: "Go to Dashboard", path: "/dashboard", keywords: "home overview metrics" },
     { id: "colleges", label: "Go to College Directory", path: "/", keywords: "college university admission" },
-    { id: "timeline", label: "Go to Timeline", path: "/timeline", keywords: "exams schedule dates" },
+    { id: "timeline", label: "Go to Timeline", path: "/timeline", keywords: "exams schedule dates deadlines" },
     { id: "alerts", label: "Go to Alerts", path: "/alerts", keywords: "deadline urgent closing" },
-    { id: "mentors", label: "Go to Mentor Marketplace", path: "/mentors", keywords: "mentor booking guide" },
+    { id: "mentors", label: "Go to Mentor Marketplace", path: "/mentor-marketplace", keywords: "mentor booking guide educator tutor" },
+    { id: "edura-courses", label: "Search Official Courses (Edura)", path: "/marketplace", keywords: "course live recorded physicswallah unacademy learn study" },
+    { id: "edura-opportunities", label: "Track Internships & Hackathons", path: "/applications", keywords: "internship hackathon scholarship opportunity tracker" },
     { id: "admin", label: "Go to Admin Control", path: "/admin", keywords: "admin manage control panel" },
     { id: "admin-colleges", label: "Admin → Manage Colleges", path: "/admin", keywords: "add edit college crud" },
     { id: "admin-exams", label: "Admin → Manage Exams", path: "/admin", keywords: "add edit exam timeline" },
@@ -123,8 +125,8 @@ export default function CommandPalette() {
                                             type="button"
                                             onClick={() => runCommand(cmd)}
                                             className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${i === selected
-                                                    ? "bg-indigo-600 text-white"
-                                                    : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                                                ? "bg-indigo-600 text-white"
+                                                : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                                                 }`}
                                         >
                                             <Command size={14} className={i === selected ? "text-white/70" : "text-slate-400"} />

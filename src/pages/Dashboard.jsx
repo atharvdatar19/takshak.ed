@@ -22,6 +22,8 @@ import NotificationBell from "../components/NotificationBell"
 import WeeklyTrendChart from "../components/WeeklyTrendChart"
 import { formatDate, getDaysLeft, isWithinRange } from "../lib/date"
 import { getDashboardBundle } from "../services/superapp"
+import { eduraCourses, eduraEducators, eduraDeadlines } from "../data/eduraData"
+import { Bookmark, ShieldCheck, PlayCircle } from "lucide-react"
 
 // 🚀 Animation imports
 import AnimatedCounter from "../components/animations/AnimatedCounter"
@@ -53,9 +55,22 @@ export default function Dashboard() {
   useEffect(() => {
     async function loadBundle() {
       setLoading(true)
-      const payload = await getDashboardBundle()
-      setBundle(payload)
-      setLoading(false)
+      try {
+        const payload = await getDashboardBundle()
+        setBundle(payload)
+      } catch (err) {
+        console.error("Dashboard API Error:", err)
+        setBundle({
+          profile: { full_name: "Student" },
+          studySessions: [],
+          quizAttempts: [],
+          bookings: [],
+          colleges: [],
+          notifications: []
+        })
+      } finally {
+        setLoading(false)
+      }
     }
     loadBundle()
   }, [])
@@ -243,6 +258,70 @@ export default function Dashboard() {
             </div>
           </StaggerItem>
         </StaggerContainer>
+      </section>
+
+      {/* ═══ SAVED & TRACKED ═══ */}
+      <section className="grid gap-6 lg:grid-cols-2">
+        {/* Saved Courses & Mentors */}
+        <SlideIn direction="up" delay={0.2}>
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm h-full">
+            <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900">
+              <Bookmark size={20} className="text-indigo-600" /> Saved Mentors & Courses
+            </h3>
+            <div className="space-y-3">
+              {eduraCourses.slice(0, 2).map((course) => (
+                <div key={course.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 hover:bg-slate-100 transition">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600">
+                    <PlayCircle size={20} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-slate-900">{course.title}</p>
+                    <p className="text-xs text-slate-500">{course.provider} • {course.mode}</p>
+                  </div>
+                  <Link to="/marketplace" className="text-xs font-semibold text-indigo-600 hover:text-indigo-800">View</Link>
+                </div>
+              ))}
+              {eduraEducators.slice(0, 1).map((mentor) => (
+                <div key={mentor.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 hover:bg-slate-100 transition">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+                    <ShieldCheck size={20} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-slate-900">{mentor.name}</p>
+                    <p className="text-xs text-slate-500">{mentor.subject} • ⭐ {mentor.rating}</p>
+                  </div>
+                  <Link to="/mentor-marketplace" className="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Book</Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </SlideIn>
+
+        {/* Tracked Deadlines */}
+        <SlideIn direction="up" delay={0.3}>
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm h-full">
+            <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900">
+              <CalendarDays size={20} className="text-rose-600" /> Tracked Opportunities
+            </h3>
+            <div className="space-y-3">
+              {eduraDeadlines.slice(0, 3).map((deadline) => (
+                <div key={deadline.id} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 hover:bg-slate-100 transition">
+                  <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-rose-100 text-rose-600">
+                    <span className="text-xs font-black">{new Date(deadline.date).getDate()}</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-slate-900">{deadline.title}</p>
+                    <p className="text-xs text-slate-500 line-clamp-1">{deadline.description}</p>
+                    <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-rose-600">
+                      {formatDate(deadline.date)} • {getDaysLeft(deadline.date)}d left
+                    </p>
+                  </div>
+                  <Link to="/applications" className="mt-2 text-xs font-semibold text-rose-600 hover:text-rose-800">Track</Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </SlideIn>
       </section>
 
       {/* ═══ DEADLINE ALERTS ═══ */}

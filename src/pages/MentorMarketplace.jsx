@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { ShieldCheck } from "lucide-react"
+import { ShieldCheck, Filter } from "lucide-react"
 import { useEffect, useState } from "react"
 import DataState from "../components/DataState"
 import { useToast } from "../components/Toast"
@@ -7,10 +7,13 @@ import LoadingSkeleton from "../components/LoadingSkeleton"
 import PageHeader from "../components/PageHeader"
 import { getMentors } from "../services/api"
 import { getCurrentUserProfile } from "../services/superapp"
+import { eduraEducators, eduraFilters } from "../data/eduraData"
 
 export default function MentorMarketplace() {
   const [profile, setProfile] = useState(null)
   const [stream, setStream] = useState("")
+  const [selectedLevel, setSelectedLevel] = useState("")
+  const [selectedStyle, setSelectedStyle] = useState("")
   const [mentors, setMentors] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -18,9 +21,13 @@ export default function MentorMarketplace() {
 
   useEffect(() => {
     async function hydrate() {
-      const userProfile = await getCurrentUserProfile()
-      setProfile(userProfile)
-      setStream(userProfile?.stream || "")
+      try {
+        const userProfile = await getCurrentUserProfile()
+        setProfile(userProfile)
+        setStream(userProfile?.stream || "")
+      } catch (err) {
+        console.error("Error fetching user profile:", err)
+      }
     }
     hydrate()
   }, [])
@@ -30,8 +37,30 @@ export default function MentorMarketplace() {
       setLoading(true)
       setError("")
       try {
-        const data = await getMentors({ stream })
-        setMentors(data)
+        let data = []
+        try {
+          data = await getMentors({ stream })
+        } catch (apiErr) {
+          console.error("Supabase API error for mentors:", apiErr)
+        }
+
+        // Merge Edura Educators
+        const eduraMapped = eduraEducators.map(e => ({
+          id: e.id,
+          name: e.name,
+          is_verified: true,
+          specialization: e.subject,
+          stream: e.provider,
+          experience_years: 5 + Math.floor(Math.random() * 10),
+          rating: e.rating,
+          price: 999,
+          level: e.level,
+          teachingStyle: e.teachingStyle,
+          reach: e.reach,
+          tags: e.tags
+        }))
+
+        setMentors([...(data || []), ...eduraMapped])
       } catch (err) {
         setError(err.message || "Failed to load mentors")
       } finally {
@@ -42,59 +71,135 @@ export default function MentorMarketplace() {
     loadMentors()
   }, [stream])
 
+  const filteredMentors = mentors.filter(m => {
+    if (stream && m.stream !== stream && stream !== "All streams") {
+      // Very basic filtering for demo: if stream doesn't match and it's not a generic provider
+      if (!['PhysicsWallah', 'Unacademy', "Byju's", 'Made Easy', 'Ace Academy'].includes(m.stream)) {
+        return false;
+      }
+    }
+    if (selectedLevel && m.level && m.level !== selectedLevel) return false;
+    if (selectedStyle && m.teachingStyle && m.teachingStyle !== selectedStyle) return false;
+    return true;
+  })
+
+  // Deduplicate by ID
+  const uniqueMentors = Array.from(new Map(filteredMentors.map(m => [m.id, m])).values());
+
   return (
     <div>
       <PageHeader
-        title="Mentor Marketplace"
-        description={`Discover verified mentors${profile?.stream ? ` for ${profile.stream}` : ""}.`}
+        title="Mentor & Educator Marketplace"
+        description={`Discover verified mentors and top educators${profile?.stream ? ` for ${profile.stream}` : ""}.`}
       />
 
-      <div className="mb-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <select
-          value={stream}
-          onChange={event => setStream(event.target.value)}
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        >
-          <option value="">All streams</option>
-          <option value="PCM">PCM</option>
-          <option value="PCB">PCB</option>
-          <option value="Commerce">Commerce</option>
-          <option value="Arts">Arts</option>
-          <option value="Defence">Defence</option>
-        </select>
+      <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between sticky top-4 z-10 transition-all">
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <Filter size={18} className="text-slate-400 shrink-0" />
+          <span className="text-sm font-bold text-slate-700 shrink-0">Filters:</span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 w-full">
+          <select
+            value={stream}
+            onChange={event => setStream(event.target.value)}
+            className="flex-1 min-w-[140px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 font-medium text-slate-700"
+          >
+            <option value="">All Streams & Providers</option>
+            <option value="PCM">PCM</option>
+            <option value="PCB">PCB</option>
+            <option value="Commerce">Commerce</option>
+            <option value="Arts">Arts</option>
+          </select>
+
+          <select
+            value={selectedLevel}
+            onChange={event => setSelectedLevel(event.target.value)}
+            className="flex-1 min-w-[140px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 font-medium text-slate-700"
+          >
+            <option value="">All Levels</option>
+            {eduraFilters.levels.map(l => <option key={l} value={l}>{l} Level</option>)}
+          </select>
+
+          <select
+            value={selectedStyle}
+            onChange={event => setSelectedStyle(event.target.value)}
+            className="flex-1 min-w-[140px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 font-medium text-slate-700"
+          >
+            <option value="">All Teaching Styles</option>
+            {eduraFilters.teachingStyles.map(s => <option key={s} value={s}>{s} Style</option>)}
+          </select>
+        </div>
       </div>
 
       {loading ? (
         <LoadingSkeleton rows={6} />
       ) : (
-        <DataState loading={false} error={error} empty={mentors.length === 0}>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {mentors.map(mentor => (
+        <DataState loading={false} error={error} empty={uniqueMentors.length === 0}>
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {uniqueMentors.map(mentor => (
               <motion.article
                 key={mentor.id}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 whileHover={{ y: -4 }}
-                className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+                className="group rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden"
               >
-                <div className="mb-2 flex items-center justify-between">
-                  <h3 className="text-base font-semibold text-slate-900">{mentor.name}</h3>
-                  {mentor.is_verified && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-semibold text-emerald-700">
-                      <ShieldCheck size={12} /> Verified
-                    </span>
-                  )}
+                <div className="p-5 flex-1">
+                  <div className="mb-3 flex items-start justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900 leading-tight">{mentor.name}</h3>
+                      <p className="text-sm font-semibold text-indigo-600 mt-0.5">{mentor.stream}</p>
+                    </div>
+                    {mentor.is_verified && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 shadow-sm">
+                        <ShieldCheck size={12} /> Verified
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-sm font-medium text-slate-600 mb-2">{mentor.specialization}</p>
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {mentor.level && (
+                      <span className="px-2 py-1 bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-wider rounded">
+                        {mentor.level}
+                      </span>
+                    )}
+                    {mentor.teachingStyle && (
+                      <span className="px-2 py-1 bg-purple-50 text-purple-700 text-[10px] font-bold uppercase tracking-wider rounded">
+                        {mentor.teachingStyle}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between text-sm text-slate-500 bg-slate-50 rounded-lg p-3 border border-slate-100 mb-4">
+                    <div className="text-center">
+                      <p className="font-bold text-slate-900">{mentor.rating || "New"}</p>
+                      <p className="text-[10px] uppercase">Rating ⭐</p>
+                    </div>
+                    <div className="w-px h-8 bg-slate-200"></div>
+                    <div className="text-center">
+                      <p className="font-bold text-slate-900">{mentor.reach || `${mentor.experience_years}+ yrs`}</p>
+                      <p className="text-[10px] uppercase">Experience</p>
+                    </div>
+                    <div className="w-px h-8 bg-slate-200"></div>
+                    <div className="text-center">
+                      <p className="font-bold text-emerald-600">₹{mentor.price || "NA"}</p>
+                      <p className="text-[10px] uppercase">Session</p>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-sm text-slate-600">{mentor.specialization || mentor.stream}</p>
-                <p className="mt-1 text-sm text-slate-500">{mentor.experience_years || 0}+ years experience</p>
-                <p className="mt-2 text-sm font-medium text-indigo-700">⭐ {mentor.rating || "NA"} • ₹{mentor.price || "NA"}</p>
-                <button
-                  type="button"
-                  onClick={() => addToast("success", `Booking request sent to ${mentor.name}!`)}
-                  className="mt-4 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
-                >
-                  Request Booking
-                </button>
+
+                <div className="p-4 bg-slate-50 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => addToast("success", `Booking request sent to ${mentor.name}!`)}
+                    className="w-full rounded-xl bg-slate-900 px-3 py-3 text-sm font-bold text-white transition hover:bg-slate-800 shadow-md active:scale-95 flex justify-center items-center gap-2"
+                  >
+                    Request Session
+                  </button>
+                </div>
               </motion.article>
             ))}
           </div>

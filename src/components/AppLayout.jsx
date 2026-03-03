@@ -62,14 +62,14 @@ const NAV_SECTIONS = [
       { to: "/colleges", label: "College Directory", icon: GraduationCap },
       { to: "/cutoff", label: "Cutoff Predictor", icon: Target },
       { to: "/rank-reality", label: "Rank-vs-Reality", icon: Map },
-      { to: "/applications", label: "Application Tracker", icon: ClipboardCheck },
+      { to: "/applications", label: "Opportunity Tracker", icon: ClipboardCheck },
       { to: "/scholarships", label: "Scholarships", icon: DollarSign },
       { to: "/timeline", label: "Timeline", icon: Calendar },
       { to: "/alerts", label: "Alerts", icon: Bell },
     ],
   },
   {
-    title: "Tools",
+    title: "Tools & Prep",
     icon: BookOpen,
     links: [
       { to: "/bridge", label: "Bridge Courses", icon: Gamepad2 },
@@ -80,13 +80,13 @@ const NAV_SECTIONS = [
     ],
   },
   {
-    title: "Community",
+    title: "Community & Mentorship",
     icon: Users,
     links: [
       { to: "/pre-freshers", label: "Pre-Freshers Net", icon: Users },
-      { to: "/marketplace", label: "P2P Marketplace", icon: ShoppingBag },
+      { to: "/marketplace", label: "Unified Marketplace", icon: ShoppingBag },
       { to: "/forum", label: "Doubt Forum", icon: MessageSquare },
-      { to: "/sessions", label: "Mentor Sessions", icon: Video },
+      { to: "/mentor-marketplace", label: "Verified Educators & Mentors", icon: Video },
       { to: "/wellness", label: "Wellness Check-in", icon: Heart },
     ],
   },
