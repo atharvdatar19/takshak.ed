@@ -14,9 +14,11 @@ import {
   GraduationCap,
   Heart,
   Home,
+  Lightbulb,
   LogIn,
   Menu,
   MessageSquare,
+  Shield,
   ShieldCheck,
   Target,
   User,
@@ -55,39 +57,40 @@ class SafeBoundary extends Component {
 
 const NAV_SECTIONS = [
   {
-    title: "Navigation",
+    title: "Home",
     icon: Compass,
     links: [
       { to: "/", label: "Dashboard", icon: Home },
-      { to: "/colleges", label: "College Directory", icon: GraduationCap },
-      { to: "/cutoff", label: "Cutoff Predictor", icon: Target },
-      { to: "/rank-reality", label: "Rank-vs-Reality", icon: Map },
+      { to: "/colleges", label: "Explore Colleges", icon: GraduationCap },
       { to: "/applications", label: "Opportunity Tracker", icon: ClipboardCheck },
-      { to: "/scholarships", label: "Scholarships", icon: DollarSign },
-      { to: "/timeline", label: "Timeline", icon: Calendar },
-      { to: "/alerts", label: "Alerts", icon: Bell },
+    ],
+  },
+  {
+    title: "Mentorship & Guidance",
+    icon: Users,
+    links: [
+      { to: "/sessions", label: "1:1 Mentor Sessions", icon: Video },
+      { to: "/defence", label: "Defence Aspirants", icon: Shield },
+      { to: "/mentor-marketplace", label: "Educators & Courses", icon: GraduationCap },
     ],
   },
   {
     title: "Tools & Prep",
     icon: BookOpen,
     links: [
-      { to: "/bridge", label: "Bridge Courses", icon: Gamepad2 },
-      { to: "/plan-b", label: "Drop Analyzer", icon: GitCompare },
+      { to: "/skill-matcher", label: "AI Skill Matcher", icon: Lightbulb },
       { to: "/planner", label: "Study Planner", icon: BookOpen },
       { to: "/documents", label: "Document Checklist", icon: ClipboardCheck },
-      { to: "/compare", label: "College Compare", icon: ArrowLeftRight },
+      { to: "/cutoff", label: "Cutoff Predictor", icon: Target },
     ],
   },
   {
-    title: "Community & Mentorship",
-    icon: Users,
+    title: "Community",
+    icon: MessageSquare,
     links: [
-      { to: "/pre-freshers", label: "Pre-Freshers Net", icon: Users },
-      { to: "/marketplace", label: "Unified Marketplace", icon: ShoppingBag },
+      { to: "/pre-freshers", label: "Campus Connect", icon: Users },
+      { to: "/marketplace", label: "Marketplace", icon: ShoppingBag },
       { to: "/forum", label: "Doubt Forum", icon: MessageSquare },
-      { to: "/mentor-marketplace", label: "Verified Educators & Mentors", icon: Video },
-      { to: "/wellness", label: "Wellness Check-in", icon: Heart },
     ],
   },
 ]
@@ -100,8 +103,8 @@ function SidebarContent({ onNavigate }) {
     <>
       {/* Brand */}
       <div className="flex items-center gap-3 px-5 py-5">
-        <img src="/logo.png" alt="Guidora × Edura AI" className="h-10 w-auto rounded-xl" />
-        <span className="font-bold text-slate-800 text-sm hidden md:block">Guidora × Edura <span className="text-indigo-600">AI</span></span>
+        <img src="/logo.png" alt="NetraX" className="h-10 w-auto rounded-xl" />
+        <span className="font-bold text-slate-800 text-sm hidden md:block">NetraX</span>
       </div>
 
       {/* Nav Sections */}
@@ -221,8 +224,8 @@ export default function AppLayout() {
       {/* ── Mobile Top Bar ── */}
       <div className="fixed inset-x-0 top-0 z-30 flex items-center justify-between border-b border-slate-200/60 bg-white/90 px-4 py-3 backdrop-blur-xl md:hidden">
         <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="Guidora × Edura AI" className="h-8 w-auto rounded-lg" />
-          <span className="font-bold text-slate-800 text-sm">Guidora × Edura AI</span>
+          <img src="/logo.png" alt="NetraX" className="h-8 w-auto rounded-lg" />
+          <span className="font-bold text-slate-800 text-sm">NetraX</span>
         </div>
         <button
           type="button"
@@ -288,10 +291,10 @@ export default function AppLayout() {
           <footer className="mt-20 border-t border-slate-200/60 pt-8 pb-12">
             <div className="flex flex-col items-center justify-center gap-2">
               <p className="text-sm font-medium text-slate-500">
-                Made with ❤️ by <span className="font-bold text-indigo-600">Guidora × Edura AI Team</span>
+                Made with ❤️ by <span className="font-bold text-indigo-600">NetraX</span>
               </p>
               <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400 font-bold">
-                Guidora × Edura AI — Empowering Students since 2024
+                NetraX — Empowering Students since 2024
               </p>
             </div>
           </footer>

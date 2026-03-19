@@ -341,7 +341,7 @@ export default function CutoffPredictor() {
         <div className="space-y-8 md:space-y-10">
             {/* ── SEO Meta ── */}
             <Helmet>
-                <title>JEE & NEET Cutoff Predictor 2024 | Guidora × Edura AI</title>
+                <title>JEE & NEET Cutoff Predictor 2024 | NetraX</title>
                 <meta name="description" content="Predict your JEE Main, NEET, and BITSAT ranks and college cutoffs using official NTA data and formulas. Real-time admission probability for top NITs and IITs." />
             </Helmet>
 

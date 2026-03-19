@@ -154,7 +154,7 @@ export default function AuthPage({ defaultTab = "signup" }) {
                 <div className="relative z-10 max-w-md text-white">
                     <motion.img
                         src="/logo.png"
-                        alt="Guidora × Edura AI"
+                        alt="NetraX"
                         className="w-16 h-16 object-contain mb-8 drop-shadow-xl rounded-2xl"
                         initial={{ scale: 0, rotate: -180 }}
                         animate={{ scale: 1, rotate: 0 }}
@@ -177,7 +177,7 @@ export default function AuthPage({ defaultTab = "signup" }) {
                         transition={{ delay: 0.5 }}
                         className="mt-4 text-indigo-100/80 text-[15px] leading-relaxed"
                     >
-                        Join thousands of students who trust Guidora × Edura AI for exam preparation,
+                        Join thousands of students who trust NetraX for exam preparation,
                         cutoff predictions, and 1:1 guidance from top rankers.
                     </motion.p>
 
@@ -207,8 +207,8 @@ export default function AuthPage({ defaultTab = "signup" }) {
                 <div className="w-full max-w-md">
                     {/* Mobile brand */}
                     <div className="flex items-center gap-3 mb-8 lg:hidden">
-                        <img src="/logo.png" alt="Guidora × Edura AI" className="w-10 h-10 object-contain rounded-xl" />
-                        <span className="text-xl font-bold text-slate-900">Guidora × <span className="text-indigo-600">Edura AI</span></span>
+                        <img src="/logo.png" alt="NetraX" className="w-10 h-10 object-contain rounded-xl" />
+                        <span className="text-xl font-bold text-slate-900">NetraX</span>
                     </div>
 
                     {/* Tab toggle — pill style */}

@@ -14,6 +14,8 @@ const KNOWLEDGE_BASE = {
   community: ["roommate", "seniors", "connect", "network", "pre", "fresher"],
   marketplace: ["buy", "sell", "books", "material", "modules", "allen", "fiitjee", "second hand"],
   courses: ["bridge", "learn", "python", "skills", "excel", "c++", "course", "upsc", "gate", "jee", "cat", "educator", "educators", "unacademy", "physicswallah"],
+  skillMatcher: ["skill", "income", "earn", "business", "career", "freelance", "side hustle", "money", "startup", "self employed", "job"],
+  defence: ["nda", "defence", "defense", "cds", "afcat", "ssb", "military", "army", "navy", "air force", "soldier", "officer"],
 }
 
 function hasAnyKeyword(message, category) {
@@ -115,6 +117,26 @@ export async function getAssistantResponse(userMessage, messageHistory = []) {
     }
   }
 
+  if (hasAnyKeyword(text, "skillMatcher")) {
+    return {
+      content: "Looking for ways to earn? Our **AI Skill Matcher** analyzes your skills and interests to suggest realistic income paths and businesses you can start — from freelancing to startups!",
+      quickReplies: [
+        { label: "Try AI Skill Matcher", path: "/skill-matcher" },
+        { label: "Browse Bridge Courses", path: "/bridge" }
+      ]
+    }
+  }
+
+  if (hasAnyKeyword(text, "defence")) {
+    return {
+      content: "Want to serve the nation? Our **Defence Exam Command Center** covers NDA, CDS, AFCAT & SSB Interview prep with expert mentors — including an **AIR 371 NDA** holder! First session is **FREE**.",
+      quickReplies: [
+        { label: "Defence Exam Hub", path: "/defence" },
+        { label: "Book 1:1 Session", path: "/sessions" }
+      ]
+    }
+  }
+
   // 2. Interactive explicit actions (from quick replies)
   if (userMessage === "explain_counseling") {
     return {
@@ -153,7 +175,7 @@ export function getWelcomeMessage() {
     quickReplies: [
       { label: "What is GATE exam?", action: "gate_info" },
       { label: "Compare JEE vs GATE", action: "compare_exams" },
-      { label: "Best courses for UPSC", action: "upsc_courses" },
+      { label: "Find Income Paths", path: "/skill-matcher" },
       { label: "Predict Colleges", action: "predict" }
     ]
   }

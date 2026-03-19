@@ -12,8 +12,8 @@ import { useState } from "react"
 import { useAutoReveal } from "../hooks/useScrollReveal"
 
 const DEMO_MENTORS = [
-    { id: "m1", name: "Raghav Mishra", field: "JEE / IIT Preparation", rating: 4.9, sessions: 120, bio: "IIT Bombay alum. Cracked JEE Advanced with AIR 204. 3 years of mentoring experience.", avatar: "RM", slots: ["10:00 AM", "2:00 PM", "6:00 PM"] },
-    { id: "m2", name: "Hemant Singh Bhadoriya", field: "NDA / Defence", rating: 4.8, sessions: 85, bio: "Ex-NDA cadet. Cleared SSB in first attempt. Specializes in defence exam strategy.", avatar: "HS", slots: ["9:00 AM", "11:00 AM", "4:00 PM"] },
+    { id: "m1", name: "Raghav Mishra", field: "NDA Written & SSB Coach", rating: 5.0, sessions: 120, bio: "NDA Written Exam & SSB Interview Coach with 3 years of mentoring experience. Specializes in breaking down complex mathematical concepts and preparing candidates for psychological and GKT portions of SSB. Kendriya Vidyalaya alumni.", avatar: "RM", slots: ["10:00 AM", "2:00 PM", "6:00 PM"] },
+    { id: "m2", name: "Hemant Singh Bhadoriya", field: "NDA Written + SSB Interview", rating: 5.0, sessions: 85, bio: "AIR 371 NDA. Cleared NDA written exam 5 times. Mentored 50+ students for NDA written, conducted 30+ SSB mock interviews. Army Public School, Patiala. Provides roadmap for SSB & NDA prep.", avatar: "HS", slots: ["9:00 AM", "11:00 AM", "4:00 PM"] },
     { id: "m3", name: "Priya Sharma", field: "NEET / MBBS Admission", rating: 4.9, sessions: 200, bio: "AIIMS Delhi MBBS student. NEET AIR 312. Expert in biology strategy and counselling.", avatar: "PS", slots: ["8:00 AM", "1:00 PM", "7:00 PM"] },
     { id: "m4", name: "Arjun Mehta", field: "CUET / DU Admissions", rating: 4.7, sessions: 60, bio: "DU student (St. Stephens). CUET top scorer. Helps with DU college selection & forms.", avatar: "AM", slots: ["12:00 PM", "3:00 PM", "8:00 PM"] },
     { id: "m5", name: "Sneha Kapoor", field: "Career Guidance / Stream Selection", rating: 4.8, sessions: 150, bio: "Counsellor with 5+ years helping Class 10-12 students choose the right stream & career.", avatar: "SK", slots: ["10:00 AM", "12:00 PM", "5:00 PM"] },

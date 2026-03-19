@@ -13,13 +13,14 @@ import {
   TrendingUp,
   Users,
   Zap,
+  Shield,
 } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import LoadingSkeleton from "../components/LoadingSkeleton"
 import NotificationBell from "../components/NotificationBell"
-import WeeklyTrendChart from "../components/WeeklyTrendChart"
+
 import { formatDate, getDaysLeft, isWithinRange } from "../lib/date"
 import { getDashboardBundle } from "../services/superapp"
 import { eduraCourses, eduraEducators, eduraDeadlines } from "../data/eduraData"
@@ -43,7 +44,7 @@ const MOTIVATIONAL_QUOTES = [
 
 const QUICK_ACTIONS = [
   { title: "Find a Mentor", description: "Get 1:1 expert guidance from top rankers", icon: Users, gradient: "card-gradient-blue", tag: "RECOMMENDED", link: "/sessions" },
-  { title: "Study Planner", description: "Auto-generate revision timetable", icon: BookOpen, gradient: "card-gradient-teal", link: "/planner" },
+  { title: "Defence Prep", description: "NDA, CDS, SSB prep — first session FREE", icon: Shield, gradient: "card-gradient-teal", tag: "NEW", link: "/defence" },
   { title: "Ask Doubts", description: "Ask anonymously, learn together", icon: MessageSquare, gradient: "card-gradient-purple", link: "/forum" },
   { title: "Predict Cutoff", description: "Check your chances at top colleges", icon: Target, gradient: "card-gradient-orange", link: "/cutoff" },
 ]
@@ -113,8 +114,8 @@ export default function Dashboard() {
 
       {/* ── SEO Meta ── */}
       <Helmet>
-        <title>Dashboard | Guidora × Edura AI — Track your College Admissions</title>
-        <meta name="description" content="View your college admission progress, track study sessions, and access personalized mentoring on the Guidora × Edura AI dashboard." />
+        <title>Dashboard | NetraX — Track your College Admissions</title>
+        <meta name="description" content="View your college admission progress, track study sessions, and access personalized mentoring on the NetraX dashboard." />
       </Helmet>
 
       {/* ═══ HERO — Particles + Text Reveal + Typewriter ═══ */}
@@ -239,89 +240,75 @@ export default function Dashboard() {
         </StaggerContainer>
       </section>
 
-      {/* ═══ WEEKLY TRENDS — Gradient border ═══ */}
+      {/* ═══ SAVED & TRACKED ═══ */}
       <section>
         <div className="divider-gradient mb-8" />
-        <StaggerContainer stagger={0.12} className="grid gap-5 xl:grid-cols-2">
-          <StaggerItem>
-            <div className="gradient-border reveal-up">
-              <div className="glass-card p-5 md:p-7 rounded-[24px]">
-                <WeeklyTrendChart title="Weekly Study Minutes" data={computed.weeklyStudyData} color="indigo" />
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Saved Courses & Mentors */}
+          <SlideIn direction="up" delay={0.2} className="h-full">
+            <div className="gradient-border h-full">
+              <div className="glass-card p-6 rounded-[24px] h-full flex flex-col">
+                <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900 z-10 relative">
+                  <Bookmark size={20} className="text-indigo-600" /> Saved Mentors & Courses
+                </h3>
+                <div className="space-y-3 z-10 relative flex-1">
+                  {eduraCourses.slice(0, 2).map((course) => (
+                    <div key={course.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 hover:bg-slate-100 transition">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600">
+                        <PlayCircle size={20} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-bold text-slate-900">{course.title}</p>
+                        <p className="text-xs text-slate-500">{course.provider} • {course.mode}</p>
+                      </div>
+                      <Link to="/marketplace" className="text-xs font-semibold text-indigo-600 hover:text-indigo-800">View</Link>
+                    </div>
+                  ))}
+                  {eduraEducators.slice(0, 1).map((mentor) => (
+                    <div key={mentor.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 hover:bg-slate-100 transition">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+                        <ShieldCheck size={20} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-bold text-slate-900">{mentor.name}</p>
+                        <p className="text-xs text-slate-500">{mentor.subject} • ⭐ {mentor.rating}</p>
+                      </div>
+                      <Link to="/mentor-marketplace" className="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Book</Link>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </StaggerItem>
-          <StaggerItem>
-            <div className="gradient-border reveal-up">
-              <div className="glass-card p-5 md:p-7 rounded-[24px]">
-                <WeeklyTrendChart title="Weekly Avg Score" data={computed.weeklyScoreData} color="emerald" />
+          </SlideIn>
+
+          {/* Tracked Deadlines */}
+          <SlideIn direction="up" delay={0.3} className="h-full">
+            <div className="gradient-border h-full">
+              <div className="glass-card p-6 rounded-[24px] h-full flex flex-col">
+                <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900 z-10 relative">
+                  <CalendarDays size={20} className="text-rose-600" /> Tracked Opportunities
+                </h3>
+                <div className="space-y-3 z-10 relative flex-1">
+                  {eduraDeadlines.slice(0, 3).map((deadline) => (
+                    <div key={deadline.id} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 hover:bg-slate-100 transition">
+                      <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-rose-100 text-rose-600">
+                        <span className="text-xs font-black">{new Date(deadline.date).getDate()}</span>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-bold text-slate-900">{deadline.title}</p>
+                        <p className="text-xs text-slate-500 line-clamp-1">{deadline.description}</p>
+                        <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-rose-600">
+                          {formatDate(deadline.date)} • {getDaysLeft(deadline.date)}d left
+                        </p>
+                      </div>
+                      <Link to="/applications" className="mt-2 text-xs font-semibold text-rose-600 hover:text-rose-800">Track</Link>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </StaggerItem>
-        </StaggerContainer>
-      </section>
-
-      {/* ═══ SAVED & TRACKED ═══ */}
-      <section className="grid gap-6 lg:grid-cols-2">
-        {/* Saved Courses & Mentors */}
-        <SlideIn direction="up" delay={0.2}>
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm h-full">
-            <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900">
-              <Bookmark size={20} className="text-indigo-600" /> Saved Mentors & Courses
-            </h3>
-            <div className="space-y-3">
-              {eduraCourses.slice(0, 2).map((course) => (
-                <div key={course.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 hover:bg-slate-100 transition">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600">
-                    <PlayCircle size={20} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-bold text-slate-900">{course.title}</p>
-                    <p className="text-xs text-slate-500">{course.provider} • {course.mode}</p>
-                  </div>
-                  <Link to="/marketplace" className="text-xs font-semibold text-indigo-600 hover:text-indigo-800">View</Link>
-                </div>
-              ))}
-              {eduraEducators.slice(0, 1).map((mentor) => (
-                <div key={mentor.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 hover:bg-slate-100 transition">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
-                    <ShieldCheck size={20} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-bold text-slate-900">{mentor.name}</p>
-                    <p className="text-xs text-slate-500">{mentor.subject} • ⭐ {mentor.rating}</p>
-                  </div>
-                  <Link to="/mentor-marketplace" className="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Book</Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        </SlideIn>
-
-        {/* Tracked Deadlines */}
-        <SlideIn direction="up" delay={0.3}>
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm h-full">
-            <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900">
-              <CalendarDays size={20} className="text-rose-600" /> Tracked Opportunities
-            </h3>
-            <div className="space-y-3">
-              {eduraDeadlines.slice(0, 3).map((deadline) => (
-                <div key={deadline.id} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 hover:bg-slate-100 transition">
-                  <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-rose-100 text-rose-600">
-                    <span className="text-xs font-black">{new Date(deadline.date).getDate()}</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-bold text-slate-900">{deadline.title}</p>
-                    <p className="text-xs text-slate-500 line-clamp-1">{deadline.description}</p>
-                    <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-rose-600">
-                      {formatDate(deadline.date)} • {getDaysLeft(deadline.date)}d left
-                    </p>
-                  </div>
-                  <Link to="/applications" className="mt-2 text-xs font-semibold text-rose-600 hover:text-rose-800">Track</Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        </SlideIn>
+          </SlideIn>
+        </div>
       </section>
 
       {/* ═══ DEADLINE ALERTS ═══ */}

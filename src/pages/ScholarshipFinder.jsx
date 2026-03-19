@@ -47,7 +47,7 @@ export default function ScholarshipFinder() {
         <div className="space-y-8 md:space-y-12">
             {/* ── SEO Meta ── */}
             <Helmet>
-                <title>Scholarship Finder 2024 | Guidora × Edura AI</title>
+                <title>Scholarship Finder 2024 | NetraX</title>
                 <meta name="description" content="Find the latest scholarships for Indian students across PCM, PCB, Commerce, and Arts. Filter by category, state, and income limit to discover money for your education." />
             </Helmet>
 

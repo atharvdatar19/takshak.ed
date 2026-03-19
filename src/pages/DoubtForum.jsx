@@ -69,8 +69,8 @@ export default function DoubtForum() {
         <div className="space-y-10 md:space-y-16">
             {/* ── SEO Meta ── */}
             <Helmet>
-                <title>Anonymous Doubt Forum | Guidora × Edura AI — IIT/NEET Peer Support</title>
-                <meta name="description" content="Ask your exam preparation doubts anonymously on the Guidora × Edura AI forum. Get answers from top rankers and mentors across PCM, PCB, and other streams." />
+                <title>Anonymous Doubt Forum | NetraX — IIT/NEET Peer Support</title>
+                <meta name="description" content="Ask your exam preparation doubts anonymously on the NetraX forum. Get answers from top rankers and mentors across PCM, PCB, and other streams." />
             </Helmet>
 
             {/* ═══ HERO ═══ */}
