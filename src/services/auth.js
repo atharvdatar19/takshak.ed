@@ -26,13 +26,6 @@ export async function signUpWithEmail({ email, password, fullName, stream, state
 
     if (authError) return { data: null, error: authError }
 
-    if (authData?.user) {
-        const { error: profileError } = await supabase.from("users").upsert({
-            id: authData.user.id, email, full_name: fullName, stream: stream || null, state: state || null, role, is_premium: false,
-        }, { onConflict: "id" })
-        if (profileError) console.warn("Profile insert error:", profileError.message)
-    }
-
     return { data: authData, error: null }
 }
 
@@ -77,5 +70,28 @@ export async function resetPassword(email) {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/login`,
     })
+    return { data, error }
+}
+
+export async function signInWithOtp(phone) {
+    if (isDemoMode) {
+        await new Promise(r => setTimeout(r, 1000))
+        return { data: "success", error: null }
+    }
+    if (!supabase) return { data: null, error: { message: "Supabase not configured" } }
+    // Clean phone number (assume +91 is added by UI or handle it explicitly here)
+    const formattedPhone = phone.startsWith("+91") ? phone : `+91${phone}`
+    const { data, error } = await supabase.auth.signInWithOtp({ phone: formattedPhone })
+    return { data, error }
+}
+
+export async function verifyOtp(phone, token) {
+    if (isDemoMode) {
+        await new Promise(r => setTimeout(r, 1000))
+        return mockAuthSuccess(phone + "@demo.com", "Demo User")
+    }
+    if (!supabase) return { data: null, error: { message: "Supabase not configured" } }
+    const formattedPhone = phone.startsWith("+91") ? phone : `+91${phone}`
+    const { data, error } = await supabase.auth.verifyOtp({ phone: formattedPhone, token, type: 'sms' })
     return { data, error }
 }

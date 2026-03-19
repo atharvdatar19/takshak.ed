@@ -17,7 +17,10 @@ const Dashboard = lazy(() => import("./pages/Dashboard"))
 const DocumentChecklist = lazy(() => import("./pages/DocumentChecklist"))
 const DoubtForum = lazy(() => import("./pages/DoubtForum"))
 const MeetingScheduler = lazy(() => import("./pages/MeetingScheduler"))
-const MentorMarketplace = lazy(() => import("./pages/MentorMarketplace"))
+const Mentors = lazy(() => import("./pages/Mentors"))
+const MentorDetail = lazy(() => import("./pages/MentorDetail"))
+const MentorDashboard = lazy(() => import("./pages/MentorDashboard"))
+const ResourceHub = lazy(() => import("./pages/ResourceHub"))
 const ScholarshipFinder = lazy(() => import("./pages/ScholarshipFinder"))
 const StressCheckin = lazy(() => import("./pages/StressCheckin"))
 const StudyPlanner = lazy(() => import("./pages/StudyPlanner"))
@@ -30,6 +33,20 @@ const BridgeCourses = lazy(() => import("./pages/BridgeCourses"))
 const SkillMatcher = lazy(() => import("./pages/SkillMatcher"))
 const DefenceAspirants = lazy(() => import("./pages/DefenceAspirants"))
 const AdminControl = lazy(() => import("./pages/admin/AdminControl"))
+
+// ── New Admin Panel ──
+const AdminShell = lazy(() => import("./admin/AdminShell"))
+const AdminGuard = lazy(() => import("./admin/AdminGuard"))
+const NewAdminDashboard = lazy(() => import("./admin/pages/AdminDashboard"))
+const AdminMentorApps = lazy(() => import("./admin/pages/AdminMentorApps"))
+const AdminSessions = lazy(() => import("./admin/pages/AdminSessions"))
+const AdminPayouts = lazy(() => import("./admin/pages/AdminPayouts"))
+const AdminReports = lazy(() => import("./admin/pages/AdminReports"))
+const AdminEducators = lazy(() => import("./admin/pages/AdminEducators"))
+const AdminColleges = lazy(() => import("./admin/pages/AdminColleges"))
+const AdminExams = lazy(() => import("./admin/pages/AdminExams"))
+const AdminUsers = lazy(() => import("./admin/pages/AdminUsers"))
+const AdminTeamAccess = lazy(() => import("./admin/pages/AdminTeamAccess"))
 
 /* ── Loading fallback ── */
 function PageLoader() {
@@ -99,16 +116,21 @@ export default function App() {
 
                   {/* ── App Pages (with layout) ── */}
                   <Route element={<AppLayout />}>
-                    {/* Public routes */}
+                    {/* Dashboard IS home */}
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/dashboard" element={<Navigate to="/" replace />} />
+
+                    {/* Public routes */}
                     <Route path="/colleges" element={<CollegeDirectory />} />
                     <Route path="/cutoff" element={<CutoffPredictor />} />
+                    <Route path="/resources" element={<ResourceHub />} />
                     <Route path="/rank-reality" element={<RankReality />} />
                     <Route path="/plan-b" element={<PlanBAnalyzer />} />
                     <Route path="/scholarships" element={<ScholarshipFinder />} />
                     <Route path="/timeline" element={<Timeline />} />
                     <Route path="/defence" element={<DefenceAspirants />} />
+                    <Route path="/mentors" element={<Mentors />} />
+                    <Route path="/mentors/:id" element={<MentorDetail />} />
 
                     {/* Student+ routes (require login) */}
                     <Route path="/planner" element={<ProtectedRoute><StudyPlanner /></ProtectedRoute>} />
@@ -118,16 +140,39 @@ export default function App() {
                     <Route path="/documents" element={<ProtectedRoute><DocumentChecklist /></ProtectedRoute>} />
                     <Route path="/compare" element={<ProtectedRoute><CollegeCompare /></ProtectedRoute>} />
                     <Route path="/sessions" element={<ProtectedRoute><MeetingScheduler /></ProtectedRoute>} />
-                    <Route path="/mentor-marketplace" element={<ProtectedRoute><MentorMarketplace /></ProtectedRoute>} />
                     <Route path="/alerts" element={<ProtectedRoute><Alerts /></ProtectedRoute>} />
                     <Route path="/pre-freshers" element={<ProtectedRoute><PreFreshers /></ProtectedRoute>} />
                     <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
                     <Route path="/bridge" element={<ProtectedRoute><BridgeCourses /></ProtectedRoute>} />
                     <Route path="/skill-matcher" element={<ProtectedRoute><SkillMatcher /></ProtectedRoute>} />
+                    <Route path="/mentor/dashboard" element={<ProtectedRoute><MentorDashboard /></ProtectedRoute>} />
 
-                    {/* Admin only */}
-                    <Route path="/admin" element={<ProtectedRoute roles={["admin"]}><AdminControl /></ProtectedRoute>} />
+                    {/* Old Admin (legacy) */}
+                    <Route path="/admin-legacy" element={<ProtectedRoute roles={["admin"]}><AdminControl /></ProtectedRoute>} />
                   </Route>
+
+                  {/* ── New Admin Panel (separate layout) ── */}
+                  <Route path="/admin" element={
+                    <Suspense fallback={<PageLoader />}>
+                      <AdminGuard>
+                        <AdminShell />
+                      </AdminGuard>
+                    </Suspense>
+                  }>
+                    <Route index element={<NewAdminDashboard />} />
+                    <Route path="mentor-apps" element={<AdminMentorApps />} />
+                    <Route path="sessions" element={<AdminSessions />} />
+                    <Route path="payouts" element={<AdminPayouts />} />
+                    <Route path="reports" element={<AdminReports />} />
+                    <Route path="educators" element={<AdminEducators />} />
+                    <Route path="colleges" element={<AdminColleges />} />
+                    <Route path="exams" element={<AdminExams />} />
+                    <Route path="users" element={<AdminUsers />} />
+                    <Route path="team" element={<AdminTeamAccess />} />
+                  </Route>
+
+                  {/* Catch-all */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </Suspense>
             </AppErrorBoundary>

@@ -6,6 +6,7 @@ const ADMIN_EMAILS = ["mentorbhaiyaaa.notifications@gmail.com"]
 
 const AuthContext = createContext({
     user: null,
+    session: null,
     profile: null,
     isAdmin: false,
     isMentor: false,
@@ -16,6 +17,7 @@ const AuthContext = createContext({
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null)
+    const [session, setSession] = useState(null)
     const [profile, setProfile] = useState(null)
     const [loading, setLoading] = useState(true)
 
@@ -29,14 +31,17 @@ export function AuthProvider({ children }) {
                         try {
                             const u = JSON.parse(stored)
                             setUser(u)
+                            setSession({ user: u, access_token: "demo" })
                             // Populate a basic profile so ProtectedRoutes don't block
                             setProfile({ role: u.role || "student", full_name: u.full_name })
                         } catch (e) {
                             setUser(null)
+                            setSession(null)
                             setProfile(null)
                         }
                     } else {
                         setUser(null)
+                        setSession(null)
                         setProfile(null)
                     }
                     setLoading(false)
@@ -53,7 +58,10 @@ export function AuthProvider({ children }) {
                 return
             }
 
-            async function loadProfile(authUser) {
+            async function loadProfile(authSession) {
+                const authUser = authSession?.user || null
+                setSession(authSession)
+
                 if (!authUser) {
                     setUser(null)
                     setProfile(null)
@@ -72,10 +80,10 @@ export function AuthProvider({ children }) {
                 setLoading(false)
             }
 
-            supabase.auth.getUser().then(({ data }) => loadProfile(data?.user || null))
+            supabase.auth.getSession().then(({ data }) => loadProfile(data?.session || null))
 
             const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-                loadProfile(session?.user || null)
+                loadProfile(session)
             })
 
             return () => listener?.subscription?.unsubscribe()
@@ -97,12 +105,13 @@ export function AuthProvider({ children }) {
     async function handleSignOut() {
         await authSignOut()
         setUser(null)
+        setSession(null)
         setProfile(null)
     }
 
     const value = useMemo(
-        () => ({ user, profile, isAdmin, isMentor, role, loading, signOut: handleSignOut }),
-        [user, profile, isAdmin, isMentor, role, loading],
+        () => ({ user, session, profile, isAdmin, isMentor, role, loading, signOut: handleSignOut }),
+        [user, session, profile, isAdmin, isMentor, role, loading],
     )
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -1,8 +1,7 @@
-import { motion, AnimatePresence } from "framer-motion"
-import { Eye, EyeOff, LogIn, Mail, User, Lock, ChevronDown, ChevronRight, Sparkles, ArrowRight } from "lucide-react"
+import { Eye, EyeOff, LogIn, Mail, User, Lock, ChevronDown, ChevronRight, Sparkles, ArrowRight, Smartphone } from "lucide-react"
 import { useState, useRef } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
-import { signUpWithEmail, signInWithEmail, signInWithGoogle, resetPassword } from "../services/auth"
+import { signUpWithEmail, signInWithEmail, signInWithGoogle, resetPassword, signInWithOtp, verifyOtp } from "../services/auth"
 
 const INDIAN_STATES = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana",
@@ -49,6 +48,12 @@ export default function AuthPage({ defaultTab = "signup" }) {
     const [state, setState] = useState("")
     const [role, setRole] = useState("student")
 
+    // Login fields
+    const [loginMethod, setLoginMethod] = useState("email")
+    const [phone, setPhone] = useState("")
+    const [otp, setOtp] = useState("")
+    const [otpSent, setOtpSent] = useState(false)
+
     // Signup step (Brilliant-style multi-step)
     const [signupStep, setSignupStep] = useState(0)
 
@@ -59,6 +64,7 @@ export default function AuthPage({ defaultTab = "signup" }) {
         setSuccess("")
         setShowForgot(false)
         setSignupStep(0)
+        setOtpSent(false)
     }
 
     async function handleSignUp(e) {
@@ -80,10 +86,25 @@ export default function AuthPage({ defaultTab = "signup" }) {
         e.preventDefault()
         setError("")
         setLoading(true)
-        const { error: err } = await signInWithEmail(email, password)
-        setLoading(false)
-        if (err) { setError(err.message); return }
-        navigate(from, { replace: true })
+        if (loginMethod === "email") {
+            const { error: err } = await signInWithEmail(email, password)
+            setLoading(false)
+            if (err) { setError(err.message); return }
+            navigate(from, { replace: true })
+        } else {
+            if (!otpSent) {
+                const { error: err } = await signInWithOtp(phone)
+                setLoading(false)
+                if (err) { setError(err.message); return }
+                setOtpSent(true)
+                setSuccess("OTP sent to your phone!")
+            } else {
+                const { error: err } = await verifyOtp(phone, otp)
+                setLoading(false)
+                if (err) { setError(err.message); return }
+                navigate(from, { replace: true })
+            }
+        }
     }
 
     async function handleGoogleAuth() {
@@ -405,21 +426,39 @@ export default function AuthPage({ defaultTab = "signup" }) {
                                             <h2 className="text-xl font-bold text-slate-900">Welcome back</h2>
                                             <p className="text-sm text-slate-500 mt-1">Log in to continue where you left off</p>
                                         </div>
-                                        <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} autoComplete="email" />
-                                        <div className="relative">
-                                            <InputField icon={Lock} type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={setPassword} autoComplete="current-password" />
-                                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10">
-                                                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                                            </button>
+
+                                        <div className="flex rounded-xl border border-slate-200 p-1 gap-1">
+                                            <button type="button" onClick={() => { setLoginMethod("email"); setOtpSent(false); }} className={`flex-1 rounded-lg py-2.5 text-xs font-semibold transition ${loginMethod === "email" ? "bg-indigo-100 text-indigo-700 shadow-sm" : "text-slate-500 hover:bg-slate-50"}`}>Email</button>
+                                            <button type="button" onClick={() => { setLoginMethod("phone"); setOtpSent(false); }} className={`flex-1 rounded-lg py-2.5 text-xs font-semibold transition ${loginMethod === "phone" ? "bg-indigo-100 text-indigo-700 shadow-sm" : "text-slate-500 hover:bg-slate-50"}`}>Phone (OTP)</button>
                                         </div>
-                                        <div className="flex justify-end">
-                                            <button type="button" onClick={() => { setDirection(1); setShowForgot(true) }} className="text-xs text-indigo-600 hover:underline">
-                                                Forgot password?
-                                            </button>
-                                        </div>
+
+                                        {loginMethod === "email" ? (
+                                            <>
+                                                <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} autoComplete="email" />
+                                                <div className="relative">
+                                                    <InputField icon={Lock} type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={setPassword} autoComplete="current-password" />
+                                                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10">
+                                                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                                    </button>
+                                                </div>
+                                                <div className="flex justify-end">
+                                                    <button type="button" onClick={() => { setDirection(1); setShowForgot(true) }} className="text-xs text-indigo-600 hover:underline">
+                                                        Forgot password?
+                                                    </button>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <InputField icon={Smartphone} type="tel" placeholder="Phone Number (e.g. 9876543210)" value={phone} onChange={setPhone} autoComplete="tel" />
+                                                {otpSent && (
+                                                    <InputField icon={Lock} type="text" placeholder="Enter OTP" value={otp} onChange={setOtp} autoComplete="one-time-code" />
+                                                )}
+                                            </>
+                                        )}
+
                                         <button type="submit" disabled={loading}
                                             className="btn-ripple w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition disabled:opacity-50">
-                                            {loading ? <Spinner /> : "Log In"}
+                                            {loading ? <Spinner /> : (loginMethod === "phone" && !otpSent ? "Send OTP" : "Log In")}
                                         </button>
                                         <Divider />
                                         <GoogleButton onClick={handleGoogleAuth} label="Continue with Google" />
