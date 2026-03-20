@@ -1,4 +1,5 @@
 import { motion } from "framer-motion"
+import { Helmet } from "react-helmet-async"
 import { BellRing, Clock3, ExternalLink } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import DataState from "../components/DataState"
@@ -92,6 +93,13 @@ export default function Timeline() {
 
   return (
     <div>
+      <Helmet>
+        <title>Academic Timeline & Deadlines | NetraX</title>
+        <meta name="description" content="Never miss an application deadline! Track JEE, NEET, CUET, hackathons, and scholarship timelines." />
+        <meta property="og:title" content="Academic Timeline & Deadlines | NetraX" />
+        <meta property="og:description" content="Never miss an application deadline! Track JEE, NEET, CUET, hackathons, and scholarship timelines." />
+      </Helmet>
+
       <PageHeader
         title="Smart Academic Timeline"
         description={`Filtered for ${profile?.stream || "all streams"}${profile?.state ? ` in ${profile.state}` : ""

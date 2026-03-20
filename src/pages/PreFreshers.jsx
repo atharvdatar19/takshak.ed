@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { Helmet } from "react-helmet-async"
 import { Users, GraduationCap, Home, MessageSquare, MapPin, Search, Calendar, Heart, ShieldCheck, CheckCircle2, PackageCheck, Send, Info } from "lucide-react"
 import { getRoommateCandidates, getSeniorConnect, getCampusPosts, createCampusPost } from "../services/community"
 
@@ -16,6 +17,13 @@ export default function PreFreshers() {
 
     return (
         <div className="mx-auto max-w-6xl animate-fade-in space-y-6">
+            <Helmet>
+                <title>Pre-Freshers Network | NetraX</title>
+                <meta name="description" content="Connect with seniors, find compatible roommates, and prepare for campus life before Day 1." />
+                <meta property="og:title" content="Pre-Freshers Network | NetraX" />
+                <meta property="og:description" content="Connect with seniors, find compatible roommates, and prepare for campus life before Day 1." />
+            </Helmet>
+
             {/* ── HEADER ── */}
             <div className="rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 p-8 text-white shadow-xl relative overflow-hidden">
                 <div className="absolute right-0 top-0 w-64 h-64 bg-white/5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2" />

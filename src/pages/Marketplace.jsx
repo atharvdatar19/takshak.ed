@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { Helmet } from "react-helmet-async"
 import { ShoppingBag, Search, Filter, MessageSquare, MapPin, Tag, Star, ChevronDown, CheckCircle2, PlayCircle, BookOpen } from "lucide-react"
 import { getMarketplaceListings } from "../services/marketplace"
 import { eduraCourses } from "../data/eduraData"
@@ -76,6 +77,13 @@ export default function Marketplace() {
 
     return (
         <div className="mx-auto max-w-7xl animate-fade-in space-y-8">
+            <Helmet>
+                <title>Marketplace | NetraX</title>
+                <meta name="description" content="Buy and sell second-hand study materials, P2P notes, and discover official Live/Recorded courses." />
+                <meta property="og:title" content="Marketplace | NetraX Courses & Materials" />
+                <meta property="og:description" content="Buy and sell second-hand study materials, P2P notes, and discover official Live/Recorded courses." />
+            </Helmet>
+
             {/* ── HEADER ── */}
             <div className="flex flex-col md:flex-row justify-between md:items-end gap-4">
                 <div>

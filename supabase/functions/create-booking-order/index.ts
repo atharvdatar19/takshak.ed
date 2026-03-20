@@ -91,6 +91,20 @@ serve(async (req) => {
             .select()
             .single()
 
+        // 6. Insert pending transaction to link order_id with session_id
+        await supabase
+            .from("transactions")
+            .insert({
+                type: "session_payment",
+                payer_id: user.id,
+                payee_id: mentor_id,
+                session_id: session.id,
+                amount_inr: Math.round(rate * 1.02), // including 2% gateway fee
+                razorpay_order_id: order.id,
+                idempotency_key: `order_init_${order.id}`,
+                status: "pending"
+            })
+
         return new Response(JSON.stringify({
             razorpay_order_id: order.id,
             session_id: session.id,

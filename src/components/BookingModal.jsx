@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useState } from "react"
 import { X, Clock, CalendarDays, CreditCard, CheckCircle, Loader, ExternalLink, Calendar } from "lucide-react"
 import { useToast } from "./Toast"
+import supabase from "../supabaseClient"
 
 const STEPS = ["slot", "topic", "payment", "processing", "confirmed", "failed"]
 
@@ -21,14 +22,49 @@ export default function BookingModal({ isOpen, onClose, mentor, selectedSlot }) 
 
     const slotToUse = pickedSlot || selectedSlot
 
-    const handlePayNow = () => {
+    const handlePayNow = async () => {
         setStep("processing")
-        // In production: call create-booking-order Edge Function → open Razorpay checkout
-        // For demo: simulate success after 2s
-        setTimeout(() => {
-            setStep("confirmed")
-            addToast("success", "Session booked successfully!")
-        }, 2000)
+        try {
+            // 1. Call Edge Function to create Razorpay Order
+            const { data, error } = await supabase.functions.invoke('create-booking-order', {
+                body: { 
+                    slot_id: slotToUse.id, 
+                    mentor_id: mentor.id, 
+                    duration_minutes: duration, 
+                    topic 
+                }
+            })
+
+            if (error || !data) throw error || new Error("Failed to create order")
+
+            // 2. Open Razorpay Checkout (Frontend UI)
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_your_key_id", // Fallback to test key if env not set
+                amount: Math.round(data.amount_inr * 100), // paise
+                currency: "INR",
+                name: "NetraX Session",
+                description: `1-on-1 Mentorship with ${name}`,
+                order_id: data.razorpay_order_id,
+                handler: function (response) {
+                    // Payment successful! Webhook handles the DB update in the background.
+                    setStep("confirmed")
+                    addToast("success", "Payment successful! Session confirmed.")
+                },
+                theme: { color: "#4f46e5" }
+            }
+
+            const rzp = new window.Razorpay(options)
+            rzp.on('payment.failed', function (response) {
+                setStep("failed")
+                addToast("error", "Payment failed or was cancelled.")
+            })
+            rzp.open()
+
+        } catch (err) {
+            console.error("Booking Error:", err)
+            setStep("failed")
+            addToast("error", err.message || "Failed to initiate payment")
+        }
     }
 
     const handleClose = () => {
