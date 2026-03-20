@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react"
 import supabase from "../supabaseClient"
 import { signOut as authSignOut } from "../services/auth"
 
-const ADMIN_EMAILS = ["mentorbhaiyaaa.notifications@gmail.com"]
+const ADMIN_EMAILS = ["mentorbhaiyaaa.notifications@gmail.com", "atharvd10166@gmail.com"]
 
 const AuthContext = createContext({
     user: null,

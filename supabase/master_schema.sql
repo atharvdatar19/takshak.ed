@@ -188,6 +188,38 @@ CREATE TABLE IF NOT EXISTS public.exams_timeline (
 );
 
 -- ============================================================
+-- 9.5 MARKETPLACE, CAMPUS POSTS, REPORTS (Admin Dependencies)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.marketplace_listings (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  seller_id UUID REFERENCES auth.users(id) NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  price_inr NUMERIC NOT NULL,
+  status TEXT DEFAULT 'available' CHECK (status IN ('available', 'sold', 'hidden')),
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.campus_posts (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  author_id UUID REFERENCES auth.users(id) NOT NULL,
+  college_id UUID REFERENCES public.colleges(id),
+  content TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.reports (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  reporter_id UUID REFERENCES auth.users(id) NOT NULL,
+  type TEXT NOT NULL CHECK (type IN ('marketplace_listing', 'campus_post', 'review', 'user')),
+  target_id TEXT NOT NULL,
+  title TEXT NOT NULL,
+  reason TEXT NOT NULL,
+  status TEXT DEFAULT 'open' CHECK (status IN ('open', 'dismissed', 'hidden', 'banned')),
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ============================================================
 -- 10. ADMIN AUDIT LOG (IMMUTABLE)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS public.admin_audit_log (
@@ -306,6 +338,19 @@ ALTER TABLE public.exams_timeline ENABLE ROW LEVEL SECURITY;
 DO $$ BEGIN
   CREATE POLICY "Public read exams" ON public.exams_timeline FOR SELECT USING (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- MARKETPLACE, CAMPUS POSTS, REPORTS
+ALTER TABLE public.marketplace_listings ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  CREATE POLICY "Public read available listings" ON public.marketplace_listings FOR SELECT USING (status = 'available');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+ALTER TABLE public.campus_posts ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  CREATE POLICY "Public read campus posts" ON public.campus_posts FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+ALTER TABLE public.reports ENABLE ROW LEVEL SECURITY;
 
 -- AUDIT LOG
 ALTER TABLE public.admin_audit_log ENABLE ROW LEVEL SECURITY;
