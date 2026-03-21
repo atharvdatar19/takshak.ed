@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import { motion } from "framer-motion"
 import { Crown } from "lucide-react"
 import { adminGetUsers, adminTogglePremium } from "../../services/admin"
 
@@ -96,9 +97,20 @@ export default function UserManager() {
                             <th className="px-4 py-3 text-center">Premium</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <motion.tbody
+                        initial="hidden"
+                        animate="visible"
+                        variants={{ visible: { transition: { staggerChildren: 0.04 } } }}
+                    >
                         {filtered.map(user => (
-                            <tr key={user.id} className="border-b border-slate-100 hover:bg-slate-50">
+                            <motion.tr 
+                                key={user.id} 
+                                variants={{
+                                    hidden: { opacity: 0, y: 10 },
+                                    visible: { opacity: 1, y: 0 }
+                                }}
+                                className="border-b border-slate-100 hover:bg-slate-50"
+                            >
                                 <td className="px-4 py-3 font-medium text-slate-900">{user.full_name || "—"}</td>
                                 <td className="px-4 py-3 text-slate-600">{user.email || "—"}</td>
                                 <td className="px-4 py-3 text-slate-600">{user.stream || "—"}</td>
@@ -117,14 +129,14 @@ export default function UserManager() {
                                         {user.is_premium ? "Premium" : "Free"}
                                     </button>
                                 </td>
-                            </tr>
+                            </motion.tr>
                         ))}
                         {filtered.length === 0 && (
                             <tr>
                                 <td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-400">No users found.</td>
                             </tr>
                         )}
-                    </tbody>
+                    </motion.tbody>
                 </table>
             </div>
         </div>

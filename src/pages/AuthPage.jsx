@@ -2,6 +2,7 @@ import { Eye, EyeOff, LogIn, Mail, User, Lock, ChevronDown, ChevronRight, Sparkl
 import { useState, useRef } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { signUpWithEmail, signInWithEmail, signInWithGoogle, resetPassword, signInWithOtp, verifyOtp } from "../services/auth"
+import { StaggerContainer, StaggerItem, PulseGlow } from "../components/animations/AnimationUtils"
 
 const INDIAN_STATES = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana",
@@ -295,87 +296,120 @@ export default function AuthPage({ defaultTab = "signup" }) {
                                     className="p-6 md:p-8"
                                 >
                                     {signupStep === 0 && (
-                                        <div className="space-y-4">
-                                            <div>
+                                        <StaggerContainer stagger={0.08} className="space-y-4">
+                                            <StaggerItem>
                                                 <h2 className="text-xl font-bold text-slate-900">Create your account</h2>
                                                 <p className="text-sm text-slate-500 mt-1">Step 1 of 3 — Your details</p>
-                                            </div>
-                                            <StepDots current={0} total={3} />
-                                            <InputField icon={User} placeholder="Full Name" value={fullName} onChange={setFullName} autoComplete="name" />
-                                            <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} autoComplete="email" />
-                                            <div className="flex rounded-xl border border-slate-200 p-1 gap-1">
-                                                {[{ key: "student", emoji: "🎓", label: "Student" }, { key: "mentor", emoji: "👨‍🏫", label: "Mentor" }].map(r => (
-                                                    <button key={r.key} type="button" onClick={() => setRole(r.key)}
-                                                        className={`flex-1 rounded-lg py-2.5 text-xs font-semibold transition ${role === r.key ? "bg-indigo-100 text-indigo-700 shadow-sm" : "text-slate-500 hover:bg-slate-50"}`}>
-                                                        {r.emoji} {r.label}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                            <button type="button" onClick={nextStep}
-                                                className="btn-ripple w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition">
-                                                Continue <ArrowRight size={16} />
-                                            </button>
-                                            <Divider />
-                                            <GoogleButton onClick={handleGoogleAuth} label="Sign up with Google" />
-                                        </div>
+                                            </StaggerItem>
+                                            <StaggerItem><StepDots current={0} total={3} /></StaggerItem>
+                                            
+                                            <StaggerItem>
+                                                <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
+                                                    <InputField icon={User} placeholder="Full Name" value={fullName} onChange={setFullName} autoComplete="name" />
+                                                </PulseGlow>
+                                            </StaggerItem>
+                                            
+                                            <StaggerItem>
+                                                <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
+                                                    <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} autoComplete="email" />
+                                                </PulseGlow>
+                                            </StaggerItem>
+
+                                            <StaggerItem>
+                                                <div className="flex rounded-xl border border-slate-200 p-1 gap-1">
+                                                    {[{ key: "student", emoji: "🎓", label: "Student" }, { key: "mentor", emoji: "👨‍🏫", label: "Mentor" }].map(r => (
+                                                        <button key={r.key} type="button" onClick={() => setRole(r.key)}
+                                                            className={`flex-1 rounded-lg py-2.5 text-xs font-semibold transition ${role === r.key ? "bg-indigo-100 text-indigo-700 shadow-sm" : "text-slate-500 hover:bg-slate-50"}`}>
+                                                            {r.emoji} {r.label}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </StaggerItem>
+
+                                            <StaggerItem>
+                                                <button type="button" onClick={nextStep}
+                                                    className="btn-ripple w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition">
+                                                    Continue <ArrowRight size={16} />
+                                                </button>
+                                            </StaggerItem>
+
+                                            <StaggerItem><Divider /></StaggerItem>
+                                            <StaggerItem><GoogleButton onClick={handleGoogleAuth} label="Sign up with Google" /></StaggerItem>
+                                        </StaggerContainer>
                                     )}
 
                                     {signupStep === 1 && (
-                                        <div className="space-y-4">
-                                            <div>
+                                        <StaggerContainer stagger={0.08} className="space-y-4">
+                                            <StaggerItem>
                                                 <h2 className="text-xl font-bold text-slate-900">Almost there!</h2>
                                                 <p className="text-sm text-slate-500 mt-1">Step 2 of 3 — Your preferences</p>
-                                            </div>
-                                            <StepDots current={1} total={3} />
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <SelectField label="Stream" value={stream} onChange={setStream} options={["PCM", "PCB", "Commerce", "Arts"]} />
-                                                <SelectField label="State" value={state} onChange={setState} options={INDIAN_STATES} />
-                                            </div>
-                                            <div className="rounded-2xl bg-indigo-50 border border-indigo-100 p-4">
-                                                <p className="text-xs text-indigo-700 font-medium flex items-center gap-1.5">
-                                                    <Sparkles size={14} /> We personalize your experience based on stream & state
-                                                </p>
-                                            </div>
-                                            <div className="flex gap-3">
-                                                <button type="button" onClick={prevStep}
-                                                    className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition">
-                                                    Back
-                                                </button>
-                                                <button type="button" onClick={nextStep}
-                                                    className="btn-ripple flex-[2] flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition">
-                                                    Continue <ArrowRight size={16} />
-                                                </button>
-                                            </div>
-                                        </div>
+                                            </StaggerItem>
+                                            <StaggerItem><StepDots current={1} total={3} /></StaggerItem>
+                                            <StaggerItem>
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <SelectField label="Stream" value={stream} onChange={setStream} options={["PCM", "PCB", "Commerce", "Arts"]} />
+                                                    <SelectField label="State" value={state} onChange={setState} options={INDIAN_STATES} />
+                                                </div>
+                                            </StaggerItem>
+                                            <StaggerItem>
+                                                <div className="rounded-2xl bg-indigo-50 border border-indigo-100 p-4">
+                                                    <p className="text-xs text-indigo-700 font-medium flex items-center gap-1.5">
+                                                        <Sparkles size={14} /> We personalize your experience based on stream & state
+                                                    </p>
+                                                </div>
+                                            </StaggerItem>
+                                            <StaggerItem>
+                                                <div className="flex gap-3">
+                                                    <button type="button" onClick={prevStep}
+                                                        className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition">
+                                                        Back
+                                                    </button>
+                                                    <button type="button" onClick={nextStep}
+                                                        className="btn-ripple flex-[2] flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition">
+                                                        Continue <ArrowRight size={16} />
+                                                    </button>
+                                                </div>
+                                            </StaggerItem>
+                                        </StaggerContainer>
                                     )}
 
                                     {signupStep === 2 && (
-                                        <form onSubmit={handleSignUp} className="space-y-4">
-                                            <div>
-                                                <h2 className="text-xl font-bold text-slate-900">Set your password</h2>
-                                                <p className="text-sm text-slate-500 mt-1">Step 3 of 3 — Secure your account</p>
-                                            </div>
-                                            <StepDots current={2} total={3} />
-                                            <div className="relative">
-                                                <InputField icon={Lock} type={showPassword ? "text" : "password"} placeholder="Password (min. 6 chars)" value={password} onChange={setPassword} autoComplete="new-password" />
-                                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10">
-                                                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                                                </button>
-                                            </div>
-                                            <InputField icon={Lock} type="password" placeholder="Confirm Password" value={confirmPassword} onChange={setConfirmPassword} autoComplete="new-password" />
-                                            {password && (
-                                                <PasswordStrength password={password} />
-                                            )}
-                                            <div className="flex gap-3">
-                                                <button type="button" onClick={prevStep}
-                                                    className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition">
-                                                    Back
-                                                </button>
-                                                <button type="submit" disabled={loading}
-                                                    className="btn-ripple flex-[2] flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition disabled:opacity-50">
-                                                    {loading ? <Spinner /> : "Create Account"}
-                                                </button>
-                                            </div>
+                                        <form onSubmit={handleSignUp}>
+                                            <StaggerContainer stagger={0.08} className="space-y-4">
+                                                <StaggerItem>
+                                                    <h2 className="text-xl font-bold text-slate-900">Set your password</h2>
+                                                    <p className="text-sm text-slate-500 mt-1">Step 3 of 3 — Secure your account</p>
+                                                </StaggerItem>
+                                                <StaggerItem><StepDots current={2} total={3} /></StaggerItem>
+                                                <StaggerItem>
+                                                    <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover className="relative">
+                                                        <InputField icon={Lock} type={showPassword ? "text" : "password"} placeholder="Password (min. 6 chars)" value={password} onChange={setPassword} autoComplete="new-password" />
+                                                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10">
+                                                            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                                        </button>
+                                                    </PulseGlow>
+                                                </StaggerItem>
+                                                <StaggerItem>
+                                                    <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
+                                                        <InputField icon={Lock} type="password" placeholder="Confirm Password" value={confirmPassword} onChange={setConfirmPassword} autoComplete="new-password" />
+                                                    </PulseGlow>
+                                                </StaggerItem>
+                                                {password && (
+                                                    <StaggerItem><PasswordStrength password={password} /></StaggerItem>
+                                                )}
+                                                <StaggerItem>
+                                                    <div className="flex gap-3">
+                                                        <button type="button" onClick={prevStep}
+                                                            className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition">
+                                                            Back
+                                                        </button>
+                                                        <button type="submit" disabled={loading}
+                                                            className="btn-ripple flex-[2] flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition disabled:opacity-50">
+                                                            {loading ? <Spinner /> : "Create Account"}
+                                                        </button>
+                                                    </div>
+                                                </StaggerItem>
+                                            </StaggerContainer>
                                         </form>
                                     )}
                                 </motion.div>
@@ -392,20 +426,30 @@ export default function AuthPage({ defaultTab = "signup" }) {
                                     transition={slideTransition}
                                     className="p-6 md:p-8"
                                 >
-                                    <form onSubmit={handleForgotPassword} className="space-y-4">
-                                        <div>
-                                            <h2 className="text-xl font-bold text-slate-900">Reset password</h2>
-                                            <p className="text-sm text-slate-500 mt-1">We'll send a reset link to your email</p>
-                                        </div>
-                                        <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} />
-                                        <button type="submit" disabled={loading}
-                                            className="btn-ripple w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50">
-                                            {loading ? <Spinner /> : "Send Reset Link"}
-                                        </button>
-                                        <button type="button" onClick={() => { setDirection(-1); setShowForgot(false) }}
-                                            className="w-full text-center text-sm text-indigo-600 hover:underline">
-                                            ← Back to login
-                                        </button>
+                                    <form onSubmit={handleForgotPassword}>
+                                        <StaggerContainer stagger={0.08} className="space-y-4">
+                                            <StaggerItem>
+                                                <h2 className="text-xl font-bold text-slate-900">Reset password</h2>
+                                                <p className="text-sm text-slate-500 mt-1">We'll send a reset link to your email</p>
+                                            </StaggerItem>
+                                            <StaggerItem>
+                                                <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
+                                                    <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} />
+                                                </PulseGlow>
+                                            </StaggerItem>
+                                            <StaggerItem>
+                                                <button type="submit" disabled={loading}
+                                                    className="btn-ripple w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50 transition">
+                                                    {loading ? <Spinner /> : "Send Reset Link"}
+                                                </button>
+                                            </StaggerItem>
+                                            <StaggerItem>
+                                                <button type="button" onClick={() => { setDirection(-1); setShowForgot(false) }}
+                                                    className="w-full text-center text-sm text-indigo-600 hover:underline">
+                                                    ← Back to login
+                                                </button>
+                                            </StaggerItem>
+                                        </StaggerContainer>
                                     </form>
                                 </motion.div>
 
@@ -421,47 +465,69 @@ export default function AuthPage({ defaultTab = "signup" }) {
                                     transition={slideTransition}
                                     className="p-6 md:p-8"
                                 >
-                                    <form onSubmit={handleLogin} className="space-y-4">
-                                        <div>
-                                            <h2 className="text-xl font-bold text-slate-900">Welcome back</h2>
-                                            <p className="text-sm text-slate-500 mt-1">Log in to continue where you left off</p>
-                                        </div>
+                                    <form onSubmit={handleLogin}>
+                                        <StaggerContainer stagger={0.08} className="space-y-4">
+                                            <StaggerItem>
+                                                <h2 className="text-xl font-bold text-slate-900">Welcome back</h2>
+                                                <p className="text-sm text-slate-500 mt-1">Log in to continue where you left off</p>
+                                            </StaggerItem>
 
-                                        <div className="flex rounded-xl border border-slate-200 p-1 gap-1">
-                                            <button type="button" onClick={() => { setLoginMethod("email"); setOtpSent(false); }} className={`flex-1 rounded-lg py-2.5 text-xs font-semibold transition ${loginMethod === "email" ? "bg-indigo-100 text-indigo-700 shadow-sm" : "text-slate-500 hover:bg-slate-50"}`}>Email</button>
-                                            <button type="button" onClick={() => { setLoginMethod("phone"); setOtpSent(false); }} className={`flex-1 rounded-lg py-2.5 text-xs font-semibold transition ${loginMethod === "phone" ? "bg-indigo-100 text-indigo-700 shadow-sm" : "text-slate-500 hover:bg-slate-50"}`}>Phone (OTP)</button>
-                                        </div>
-
-                                        {loginMethod === "email" ? (
-                                            <>
-                                                <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} autoComplete="email" />
-                                                <div className="relative">
-                                                    <InputField icon={Lock} type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={setPassword} autoComplete="current-password" />
-                                                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10">
-                                                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                                                    </button>
+                                            <StaggerItem>
+                                                <div className="flex rounded-xl border border-slate-200 p-1 gap-1">
+                                                    <button type="button" onClick={() => { setLoginMethod("email"); setOtpSent(false); }} className={`flex-1 rounded-lg py-2.5 text-xs font-semibold transition ${loginMethod === "email" ? "bg-indigo-100 text-indigo-700 shadow-sm" : "text-slate-500 hover:bg-slate-50"}`}>Email</button>
+                                                    <button type="button" onClick={() => { setLoginMethod("phone"); setOtpSent(false); }} className={`flex-1 rounded-lg py-2.5 text-xs font-semibold transition ${loginMethod === "phone" ? "bg-indigo-100 text-indigo-700 shadow-sm" : "text-slate-500 hover:bg-slate-50"}`}>Phone (OTP)</button>
                                                 </div>
-                                                <div className="flex justify-end">
-                                                    <button type="button" onClick={() => { setDirection(1); setShowForgot(true) }} className="text-xs text-indigo-600 hover:underline">
-                                                        Forgot password?
-                                                    </button>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <InputField icon={Smartphone} type="tel" placeholder="Phone Number (e.g. 9876543210)" value={phone} onChange={setPhone} autoComplete="tel" />
-                                                {otpSent && (
-                                                    <InputField icon={Lock} type="text" placeholder="Enter OTP" value={otp} onChange={setOtp} autoComplete="one-time-code" />
-                                                )}
-                                            </>
-                                        )}
+                                            </StaggerItem>
 
-                                        <button type="submit" disabled={loading}
-                                            className="btn-ripple w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition disabled:opacity-50">
-                                            {loading ? <Spinner /> : (loginMethod === "phone" && !otpSent ? "Send OTP" : "Log In")}
-                                        </button>
-                                        <Divider />
-                                        <GoogleButton onClick={handleGoogleAuth} label="Continue with Google" />
+                                            {loginMethod === "email" ? (
+                                                <>
+                                                    <StaggerItem>
+                                                        <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
+                                                            <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} autoComplete="email" />
+                                                        </PulseGlow>
+                                                    </StaggerItem>
+                                                    <StaggerItem>
+                                                        <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover className="relative">
+                                                            <InputField icon={Lock} type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={setPassword} autoComplete="current-password" />
+                                                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10">
+                                                                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                                            </button>
+                                                        </PulseGlow>
+                                                    </StaggerItem>
+                                                    <StaggerItem>
+                                                        <div className="flex justify-end">
+                                                            <button type="button" onClick={() => { setDirection(1); setShowForgot(true) }} className="text-xs text-indigo-600 hover:underline">
+                                                                Forgot password?
+                                                            </button>
+                                                        </div>
+                                                    </StaggerItem>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <StaggerItem>
+                                                        <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
+                                                            <InputField icon={Smartphone} type="tel" placeholder="Phone Number (e.g. 9876543210)" value={phone} onChange={setPhone} autoComplete="tel" />
+                                                        </PulseGlow>
+                                                    </StaggerItem>
+                                                    {otpSent && (
+                                                        <StaggerItem>
+                                                            <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
+                                                                <InputField icon={Lock} type="text" placeholder="Enter OTP" value={otp} onChange={setOtp} autoComplete="one-time-code" />
+                                                            </PulseGlow>
+                                                        </StaggerItem>
+                                                    )}
+                                                </>
+                                            )}
+
+                                            <StaggerItem>
+                                                <button type="submit" disabled={loading}
+                                                    className="btn-ripple w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition disabled:opacity-50">
+                                                    {loading ? <Spinner /> : (loginMethod === "phone" && !otpSent ? "Send OTP" : "Log In")}
+                                                </button>
+                                            </StaggerItem>
+                                            <StaggerItem><Divider /></StaggerItem>
+                                            <StaggerItem><GoogleButton onClick={handleGoogleAuth} label="Continue with Google" /></StaggerItem>
+                                        </StaggerContainer>
                                     </form>
                                 </motion.div>
                             )}

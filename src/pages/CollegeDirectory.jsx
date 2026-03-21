@@ -16,11 +16,12 @@ import {
   Video,
   Wifi,
 } from "lucide-react"
-import { Link } from "react-router-dom"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { Link } from "react-router-dom"
 import { useToast } from "../components/Toast"
 import DataState from "../components/DataState"
 import LoadingSkeleton from "../components/LoadingSkeleton"
+import { StaggerContainer, StaggerItem, MagneticCard } from "../components/animations/AnimationUtils"
 import { formatDate, getDaysLeft } from "../lib/date"
 import { getCurrentUserProfile } from "../services/superapp"
 import { getColleges } from "../services/api"
@@ -182,22 +183,18 @@ export default function CollegeDirectory() {
         <LoadingSkeleton rows={6} />
       ) : (
         <DataState loading={false} error={error} empty={records.length === 0}>
-          <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <StaggerContainer stagger={0.05} className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {records.map((college, i) => {
               const daysLeft = getDaysLeft(college.application_end)
               const streams = college.streams_supported || []
               return (
-                <motion.article
-                  key={college.id}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.04 }}
-                  className="scroll-3d-card group overflow-hidden rounded-3xl border border-slate-200/60 bg-white shadow-card transition-all hover:shadow-card-hover hover:-translate-y-1"
-                >
-                  <div className="card-gradient-blue relative flex h-28 items-center justify-between px-5 py-4">
-                    <span className="rounded-full border border-green-300 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
-                      {college.type || "private"}
-                    </span>
+                <StaggerItem key={college.id} className="h-full">
+                  <MagneticCard intensity={0.05} className="h-full">
+                    <article className="scroll-3d-card group h-full overflow-hidden rounded-3xl border border-slate-200/60 bg-white shadow-card transition-all hover:shadow-card-hover">
+                      <div className="card-gradient-blue relative flex h-28 items-center justify-between px-5 py-4">
+                        <span className="rounded-full border border-green-300 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+                          {college.type || "private"}
+                        </span>
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
                       <GraduationCap size={20} className="text-white" />
                     </div>
@@ -273,10 +270,12 @@ export default function CollegeDirectory() {
                       </p>
                     )}
                   </div>
-                </motion.article>
+                </article>
+              </MagneticCard>
+            </StaggerItem>
               )
             })}
-          </section>
+          </StaggerContainer>
 
           <div className="mt-6 flex items-center justify-between">
             <button
