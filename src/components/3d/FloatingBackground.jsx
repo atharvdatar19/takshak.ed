@@ -1,6 +1,6 @@
 import { useRef, useMemo } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
-import { Float, MeshDistortMaterial } from "@react-three/drei"
+import { Float } from "@react-three/drei"
 import * as THREE from "three"
 
 function FloatingShape({ position, color, speed, distort, scale }) {
@@ -16,12 +16,10 @@ function FloatingShape({ position, color, speed, distort, scale }) {
         <Float speed={speed * 0.8} rotationIntensity={0.4} floatIntensity={0.6}>
             <mesh ref={meshRef} position={position} scale={scale}>
                 <icosahedronGeometry args={[1, 1]} />
-                <MeshDistortMaterial
+                <meshStandardMaterial
                     color={color}
                     transparent
                     opacity={0.15}
-                    distort={distort}
-                    speed={speed * 0.5}
                     roughness={0.4}
                 />
             </mesh>
@@ -42,12 +40,10 @@ function TorusShape({ position, color, speed, scale }) {
         <Float speed={speed * 0.6} rotationIntensity={0.3} floatIntensity={0.5}>
             <mesh ref={meshRef} position={position} scale={scale}>
                 <torusKnotGeometry args={[0.8, 0.25, 64, 16]} />
-                <MeshDistortMaterial
+                <meshStandardMaterial
                     color={color}
                     transparent
                     opacity={0.1}
-                    distort={0.2}
-                    speed={speed * 0.3}
                     roughness={0.6}
                 />
             </mesh>
