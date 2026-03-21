@@ -7,7 +7,7 @@ import LoadingSkeleton from "../components/LoadingSkeleton"
 import PageHeader from "../components/PageHeader"
 import { getMentors } from "../services/api"
 import { getCurrentUserProfile } from "../services/superapp"
-import { eduraEducators, eduraFilters } from "../data/eduraData"
+import { takshakEducators, takshakFilters } from "../data/takshakData"
 
 export default function MentorMarketplace() {
   const [profile, setProfile] = useState(null)
@@ -45,7 +45,7 @@ export default function MentorMarketplace() {
         }
 
         // Merge Edura Educators
-        const eduraMapped = eduraEducators.map(e => ({
+        const eduraMapped = takshakEducators.map(e => ({
           id: e.id,
           name: e.name,
           is_verified: true,
@@ -124,7 +124,7 @@ export default function MentorMarketplace() {
             className="flex-1 min-w-[140px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 font-medium text-slate-700"
           >
             <option value="">All Levels</option>
-            {eduraFilters.levels.map(l => <option key={l} value={l}>{l} Level</option>)}
+            {takshakFilters.levels.map(l => <option key={l} value={l}>{l} Level</option>)}
           </select>
 
           <select
@@ -133,7 +133,7 @@ export default function MentorMarketplace() {
             className="flex-1 min-w-[140px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 font-medium text-slate-700"
           >
             <option value="">All Teaching Styles</option>
-            {eduraFilters.teachingStyles.map(s => <option key={s} value={s}>{s} Style</option>)}
+            {takshakFilters.teachingStyles.map(s => <option key={s} value={s}>{s} Style</option>)}
           </select>
         </div>
       </div>

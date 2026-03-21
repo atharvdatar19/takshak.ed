@@ -1,5 +1,5 @@
 import { CHATBOT_CONFIG } from "../../lib/chatbotConfig"
-import { eduraExams, eduraCourses } from "../../data/eduraData"
+import { takshakExams, takshakCourses } from "../../data/takshakData"
 
 // Simulated conversational state
 let conversationState = {
@@ -29,9 +29,9 @@ export async function getAssistantResponse(userMessage, messageHistory = []) {
 
   const text = userMessage.toLowerCase();
 
-  // Edura Specific Intents
+  // TAKSHAK Specific Intents
   if (userMessage === "gate_info" || text.includes("what is gate")) {
-    const gateInfo = eduraExams.find(e => e.id === "gate");
+    const gateInfo = takshakExams.find(e => e.id === "gate");
     return {
       content: `**${gateInfo.fullName} (${gateInfo.name})** is a premier examination for Engineering students in India. It tests your comprehensive understanding of undergraduate engineering subjects and is used for admissions into M.Tech programs and PSU recruitments.`,
       quickReplies: [
@@ -52,7 +52,7 @@ export async function getAssistantResponse(userMessage, messageHistory = []) {
   }
 
   if (userMessage === "upsc_courses" || text.includes("best courses for upsc")) {
-    const upscCourses = eduraCourses.filter(c => c.exam === 'UPSC');
+    const upscCourses = takshakCourses.filter(c => c.exam === 'UPSC');
     let msg = "Here are the top-rated UPSC courses on our blended Marketplace:\n";
     upscCourses.forEach(c => {
       msg += `- **${c.title}** by ${c.provider} (Rating: ${c.rating} ⭐) [Mode: ${c.mode}]\n`;
@@ -163,7 +163,7 @@ export async function getAssistantResponse(userMessage, messageHistory = []) {
   return {
     content: `I understand you're asking about "${userMessage}". While I'm still learning about that specific topic, I'm fully equipped to help you discover courses, compare educators, track deadlines, and handle college counseling!`,
     quickReplies: [
-      { label: "Explore Edura Exam Tools", path: "/timeline" },
+      { label: "Explore TAKSHAK Exam Tools", path: "/timeline" },
       { label: "Back to Main Menu", action: "greetings" }
     ]
   }
@@ -171,7 +171,7 @@ export async function getAssistantResponse(userMessage, messageHistory = []) {
 
 export function getWelcomeMessage() {
   return {
-    content: "Hi! I'm **Medha**, MentorBhaiyaaa & Edura's smart assistant. 🎓\n\nI can help you explore competitive exams, compare top educators, track crucial deadlines, or guide your college counseling.\n\nWhat are you looking for today?",
+    content: "Hi! I'm **Medha**, TAKSHAK's smart assistant. 🎓\n\nI can help you explore competitive exams, compare top educators, track crucial deadlines, or guide your college counseling.\n\nWhat are you looking for today?",
     quickReplies: [
       { label: "What is GATE exam?", action: "gate_info" },
       { label: "Compare JEE vs GATE", action: "compare_exams" },

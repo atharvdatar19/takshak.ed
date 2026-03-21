@@ -18,9 +18,9 @@ export default function PreFreshers() {
     return (
         <div className="mx-auto max-w-6xl animate-fade-in space-y-6">
             <Helmet>
-                <title>Pre-Freshers Network | NetraX</title>
-                <meta name="description" content="Connect with seniors, find compatible roommates, and prepare for campus life before Day 1." />
-                <meta property="og:title" content="Pre-Freshers Network | NetraX" />
+                <title>Pre-Freshers Network | TAKSHAK</title>
+                <meta name="description" content="Connect with verified seniors, find future roommates, and view college packing lists." />
+                <meta property="og:title" content="Pre-Freshers Network | TAKSHAK" />
                 <meta property="og:description" content="Connect with seniors, find compatible roommates, and prepare for campus life before Day 1." />
             </Helmet>
 

@@ -1,4 +1,4 @@
-const fallbackSupportEmail = "mentorbhaiyaaa.notifications@gmail.com"
+const fallbackSupportEmail = "takshak.notifications@gmail.com"
 
 export const CHATBOT_CONFIG = {
   supportEmail: import.meta.env.VITE_SUPPORT_EMAIL || fallbackSupportEmail,

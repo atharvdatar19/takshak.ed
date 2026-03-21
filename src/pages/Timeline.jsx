@@ -9,7 +9,7 @@ import { formatDate, getDaysLeft } from "../lib/date"
 import { getExamsTimeline } from "../services/api"
 import { getCurrentUserProfile } from "../services/superapp"
 import { useRealtimeSync } from "../hooks/useRealtimeSync"
-import { eduraDeadlines } from "../data/eduraData"
+import { takshakDeadlines } from "../data/takshakData"
 
 export default function Timeline() {
   const [profile, setProfile] = useState(null)
@@ -38,7 +38,7 @@ export default function Timeline() {
       }
 
       // Merge Edura Data
-      const eduraMapped = eduraDeadlines.map(d => ({
+      const eduraMapped = takshakDeadlines.map(d => ({
         id: d.id,
         title: d.title,
         exam_name: d.title,
@@ -94,9 +94,9 @@ export default function Timeline() {
   return (
     <div>
       <Helmet>
-        <title>Academic Timeline & Deadlines | NetraX</title>
+        <title>Academic Timeline & Deadlines | TAKSHAK</title>
         <meta name="description" content="Never miss an application deadline! Track JEE, NEET, CUET, hackathons, and scholarship timelines." />
-        <meta property="og:title" content="Academic Timeline & Deadlines | NetraX" />
+        <meta property="og:title" content="Academic Timeline & Deadlines | TAKSHAK" />
         <meta property="og:description" content="Never miss an application deadline! Track JEE, NEET, CUET, hackathons, and scholarship timelines." />
       </Helmet>
 

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Helmet } from "react-helmet-async"
 import { ShoppingBag, Search, Filter, MessageSquare, MapPin, Tag, Star, ChevronDown, CheckCircle2, PlayCircle, BookOpen } from "lucide-react"
 import { getMarketplaceListings } from "../services/marketplace"
-import { eduraCourses } from "../data/eduraData"
+import { takshakCourses } from "../data/takshakData"
 import { useToast } from "../components/Toast"
 
 export default function Marketplace() {
@@ -46,7 +46,7 @@ export default function Marketplace() {
                 console.error("Supabase API error for marketplace:", err)
             }
 
-            const courseListings = eduraCourses.map(c => ({
+            const courseListings = takshakCourses.map(c => ({
                 id: c.id,
                 title: c.title,
                 exam: c.exam,
@@ -78,9 +78,9 @@ export default function Marketplace() {
     return (
         <div className="mx-auto max-w-7xl animate-fade-in space-y-8">
             <Helmet>
-                <title>Marketplace | NetraX</title>
+                <title>Marketplace | TAKSHAK</title>
                 <meta name="description" content="Buy and sell second-hand study materials, P2P notes, and discover official Live/Recorded courses." />
-                <meta property="og:title" content="Marketplace | NetraX Courses & Materials" />
+                <meta property="og:title" content="Marketplace | TAKSHAK Courses & Materials" />
                 <meta property="og:description" content="Buy and sell second-hand study materials, P2P notes, and discover official Live/Recorded courses." />
             </Helmet>
 

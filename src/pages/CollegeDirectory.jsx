@@ -88,8 +88,8 @@ export default function CollegeDirectory() {
     <div>
       {/* ── SEO Meta ── */}
       <Helmet>
-        <title>College Directory 2024 | Find Top NITs, IITs & Universities | NetraX</title>
-        <meta name="description" content="Explore India's premier educational institutions. Filter by state, stream, and admission mode to find your perfect college with NetraX." />
+        <title>College Directory 2024 | Find Top NITs, IITs & Universities | TAKSHAK</title>
+        <meta name="description" content="Explore India's premier educational institutions. Filter by state, stream, and admission mode to find your perfect college with TAKSHAK." />
       </Helmet>
 
       {/* ── Purple Gradient Hero ── */}

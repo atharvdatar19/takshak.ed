@@ -62,8 +62,8 @@ export default function SplashScreen({ children }) {
 
                         {/* Logo rocket — bounces in with rotation */}
                         <motion.img
-                            src="/logo.png"
-                            alt="NetraX"
+                            src="/takshak_logo.jpg"
+                            alt="TAKSHAK"
                             className="w-28 h-28 md:w-36 md:h-36 object-contain drop-shadow-2xl"
                             initial={{ opacity: 0, scale: 0, rotate: -180 }}
                             animate={{ opacity: 1, scale: 1, rotate: 0 }}
@@ -83,8 +83,7 @@ export default function SplashScreen({ children }) {
                             transition={{ delay: 0.8, duration: 0.5 }}
                         >
                             <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-                                mentor{" "}
-                                <span className="text-gradient-animated">bhaiyaaa</span>
+                                <span className="text-gradient-animated">TAKSHAK</span>
                             </h1>
                             <motion.p
                                 className="text-indigo-200 text-sm mt-2"

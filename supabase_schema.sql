@@ -1,4 +1,4 @@
--- MentorBhaiyaaa Next-Gen Features Schema
+-- TAKSHAK Next-Gen Features Schema
 
 -- ============================================================================
 -- 1. PRE-FRESHERS NETWORK TABLES

@@ -21,9 +21,9 @@ import { Link } from "react-router-dom"
 import LoadingSkeleton from "../components/LoadingSkeleton"
 import NotificationBell from "../components/NotificationBell"
 
-import { formatDate, getDaysLeft, isWithinRange } from "../lib/date"
 import { getDashboardBundle } from "../services/superapp"
-import { eduraCourses, eduraEducators, eduraDeadlines } from "../data/eduraData"
+import { formatDate, getDaysLeft, isWithinRange } from "../lib/date"
+import { takshakCourses, takshakEducators, takshakDeadlines } from "../data/takshakData"
 import { Bookmark, ShieldCheck, PlayCircle } from "lucide-react"
 
 // 🚀 Animation imports
@@ -114,8 +114,8 @@ export default function Dashboard() {
 
       {/* ── SEO Meta ── */}
       <Helmet>
-        <title>Dashboard | NetraX — Track your College Admissions</title>
-        <meta name="description" content="View your college admission progress, track study sessions, and access personalized mentoring on the NetraX dashboard." />
+        <title>Dashboard | TAKSHAK — Track your College Admissions</title>
+        <meta name="description" content="View your college admission progress, track study sessions, and access personalized mentoring on the TAKSHAK dashboard." />
       </Helmet>
 
       {/* ═══ HERO — Particles + Text Reveal + Typewriter ═══ */}
@@ -252,7 +252,7 @@ export default function Dashboard() {
                   <Bookmark size={20} className="text-indigo-600" /> Saved Mentors & Courses
                 </h3>
                 <div className="space-y-3 z-10 relative flex-1">
-                  {eduraCourses.slice(0, 2).map((course) => (
+                  {takshakCourses.slice(0, 2).map((course) => (
                     <div key={course.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 hover:bg-slate-100 transition">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600">
                         <PlayCircle size={20} />
@@ -264,7 +264,7 @@ export default function Dashboard() {
                       <Link to="/marketplace" className="text-xs font-semibold text-indigo-600 hover:text-indigo-800">View</Link>
                     </div>
                   ))}
-                  {eduraEducators.slice(0, 1).map((mentor) => (
+                  {takshakEducators.slice(0, 1).map((mentor) => (
                     <div key={mentor.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 hover:bg-slate-100 transition">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
                         <ShieldCheck size={20} />
@@ -289,7 +289,7 @@ export default function Dashboard() {
                   <CalendarDays size={20} className="text-rose-600" /> Tracked Opportunities
                 </h3>
                 <div className="space-y-3 z-10 relative flex-1">
-                  {eduraDeadlines.slice(0, 3).map((deadline) => (
+                  {takshakDeadlines.slice(0, 3).map((deadline) => (
                     <div key={deadline.id} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 hover:bg-slate-100 transition">
                       <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-rose-100 text-rose-600">
                         <span className="text-xs font-black">{new Date(deadline.date).getDate()}</span>

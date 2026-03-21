@@ -16,8 +16,8 @@ const TABS = [
 
 // Demo data for mentor dashboard
 const DEMO_UPCOMING = [
-    { id: "s2", student_name: "Varun K.", topic: "Mock Test Analysis", duration_minutes: 30, agreed_rate_inr: 299, meet_link: "https://meet.jit.si/netrax-s2", status: "confirmed", created_at: new Date(Date.now() + 86400000).toISOString() },
-    { id: "s3", student_name: "Priya S.", topic: "JEE Physics Strategy", duration_minutes: 60, agreed_rate_inr: 499, meet_link: "https://meet.jit.si/netrax-s3", status: "confirmed", created_at: new Date(Date.now() + 86400000 * 3).toISOString() },
+    { id: "s2", student_name: "Varun K.", topic: "Mock Test Analysis", duration_minutes: 30, agreed_rate_inr: 299, meet_link: "https://meet.jit.si/takshak-s2", status: "confirmed", created_at: new Date(Date.now() + 86400000).toISOString() },
+    { id: "s3", student_name: "Priya S.", topic: "JEE Physics Strategy", duration_minutes: 60, agreed_rate_inr: 499, meet_link: "https://meet.jit.si/takshak-s3", status: "confirmed", created_at: new Date(Date.now() + 86400000 * 3).toISOString() },
 ]
 
 const DEMO_EARNINGS = {
@@ -57,7 +57,7 @@ export default function MentorDashboard() {
     return (
         <div className="space-y-8 pb-12 max-w-5xl mx-auto">
             <Helmet>
-                <title>Mentor Dashboard | NetraX</title>
+                <title>Mentor Dashboard | TAKSHAK</title>
             </Helmet>
 
             {/* Header */}

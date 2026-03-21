@@ -347,8 +347,8 @@ const DEMO_REVIEWS = [
 ]
 
 const DEMO_SESSIONS = [
-  { id: "s1", student_id: "u2", mentor_id: "m1", duration_minutes: 60, agreed_rate_inr: 499, meet_link: "https://meet.jit.si/netrax-s1", topic: "JEE Maths Strategy", status: "completed", created_at: "2026-03-10T09:00:00Z", completed_at: "2026-03-10T10:00:00Z", student_name: "Neha D.", mentor_name: "Arjun Mehta" },
-  { id: "s2", student_id: "u3", mentor_id: "m1", duration_minutes: 30, agreed_rate_inr: 299, meet_link: "https://meet.jit.si/netrax-s2", topic: "Mock Test Analysis", status: "confirmed", created_at: new Date(Date.now() + 86400000).toISOString(), student_name: "Varun K.", mentor_name: "Arjun Mehta" },
+  { id: "s1", student_id: "u2", mentor_id: "m1", duration_minutes: 60, agreed_rate_inr: 499, meet_link: "https://meet.jit.si/takshak-s1", topic: "JEE Maths Strategy", status: "completed", created_at: "2026-03-10T09:00:00Z", completed_at: "2026-03-10T10:00:00Z", student_name: "Neha D.", mentor_name: "Arjun Mehta" },
+  { id: "s2", student_id: "u3", mentor_id: "m1", duration_minutes: 30, agreed_rate_inr: 299, meet_link: "https://meet.jit.si/takshak-s2", topic: "Mock Test Analysis", status: "confirmed", created_at: new Date(Date.now() + 86400000).toISOString(), student_name: "Varun K.", mentor_name: "Arjun Mehta" },
 ]
 
 const DEMO_TRANSACTIONS = [

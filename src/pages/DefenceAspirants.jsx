@@ -152,7 +152,7 @@ const PRICING_PLANS = [
             "OLQ Assessment & improvement areas",
             "Conference Round Prep strategy",
             "30-day WhatsApp group access for doubts",
-            "Certificate of Completion by NetraX",
+            "Certificate of Completion by TAKSHAK",
             "Bonus: SSB Resource Kit (PIQ guide, GK revision, current affairs)",
         ],
         cta: "Enroll — ₹699",
@@ -205,7 +205,7 @@ export default function DefenceAspirants() {
     return (
         <>
             <Helmet>
-                <title>Defence Exam Aspirants — NDA, CDS, AFCAT & SSB Prep | NetraX</title>
+                <title>Defence Exam Aspirants — NDA, CDS, AFCAT & SSB Prep | TAKSHAK</title>
                 <meta name="description" content="Prepare for NDA, CDS, AFCAT exams and SSB interviews with expert mentors. First guidance session free. Written exam mentorship ₹99/session. Complete SSB Prep ₹699." />
             </Helmet>
 
@@ -450,7 +450,7 @@ export default function DefenceAspirants() {
 
                 {/* ═══ WHY CHOOSE US ═══ */}
                 <section className="rounded-2xl border border-slate-200/80 bg-gradient-to-br from-slate-50 to-white p-8 md:p-12 shadow-sm">
-                    <h2 className="text-2xl font-black text-slate-900 mb-6 text-center">Why Aspirants Choose NetraX</h2>
+                    <h2 className="text-2xl font-black text-slate-900 mb-6 text-center">Why Aspirants Choose TAKSHAK</h2>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
                         {[
                             { icon: Shield, label: "Mentors Who've Done It", desc: "Learn from AIR 371 NDA holder and defence exam specialists", color: "text-emerald-600 bg-emerald-50" },

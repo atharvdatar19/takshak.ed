@@ -78,7 +78,7 @@ export default function AdminShell() {
                                 {(user?.email || "A")[0].toUpperCase()}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-xs font-semibold text-white truncate">{user?.email || "admin@netrax.in"}</p>
+                                <p className="text-xs font-semibold text-white truncate">{user?.email || "admin@takshak.in"}</p>
                                 <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">{userRole}</p>
                             </div>
                             <button onClick={handleSignOut} className="p-1.5 rounded-lg hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition">

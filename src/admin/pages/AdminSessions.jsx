@@ -2,9 +2,9 @@ import { motion } from "framer-motion"
 import { CalendarDays, Video, CheckCircle, Clock, XCircle } from "lucide-react"
 
 const DEMO_SESSIONS = [
-    { id: "s1", student: "Neha D.", mentor: "Arjun Mehta", topic: "JEE Maths Strategy", duration: 60, rate: 499, status: "completed", date: "2026-03-10", meet_link: "https://meet.jit.si/netrax-s1" },
-    { id: "s2", student: "Varun K.", mentor: "Arjun Mehta", topic: "Mock Test Analysis", duration: 30, rate: 299, status: "confirmed", date: "2026-03-20", meet_link: "https://meet.jit.si/netrax-s2" },
-    { id: "s3", student: "Priya S.", mentor: "Anita R.", topic: "NEET Bio Revision", duration: 60, rate: 449, status: "confirmed", date: "2026-03-22", meet_link: "https://meet.jit.si/netrax-s3" },
+    { id: "s1", student: "Neha D.", mentor: "Arjun Mehta", topic: "JEE Maths Strategy", duration: 60, rate: 499, status: "completed", date: "2026-03-10", meet_link: "https://meet.jit.si/takshak-s1" },
+    { id: "s2", student: "Varun K.", mentor: "Arjun Mehta", topic: "Mock Test Analysis", duration: 30, rate: 299, status: "confirmed", date: "2026-03-20", meet_link: "https://meet.jit.si/takshak-s2" },
+    { id: "s3", student: "Priya S.", mentor: "Anita R.", topic: "NEET Bio Revision", duration: 60, rate: 449, status: "confirmed", date: "2026-03-22", meet_link: "https://meet.jit.si/takshak-s3" },
     { id: "s4", student: "Karan J.", mentor: "Arjun Mehta", topic: "College Selection", duration: 30, rate: 299, status: "cancelled", date: "2026-03-07", meet_link: null },
 ]
 

@@ -7,7 +7,7 @@ const DEMO_USERS = [
     { id: "u2", full_name: "Neha Deshmukh", email: "neha@gmail.com", role: "student", status: "active", joined: "2026-02-01" },
     { id: "u3", full_name: "Varun Kumar", email: "varun@gmail.com", role: "student", status: "active", joined: "2026-02-10" },
     { id: "u4", full_name: "Priya Sharma", email: "priya@aiims.in", role: "mentor", status: "active", joined: "2026-01-20" },
-    { id: "u5", full_name: "Admin User", email: "admin@netrax.in", role: "admin", status: "active", joined: "2026-01-01" },
+    { id: "u5", full_name: "Admin User", email: "admin@takshak.in", role: "admin", status: "active", joined: "2026-01-01" },
 ]
 
 export default function AdminUsers() {

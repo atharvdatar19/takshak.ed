@@ -1,11 +1,11 @@
-export const eduraExams = [
+export const takshakExams = [
     { id: 'gate', name: 'GATE', fullName: 'Graduate Aptitude Test in Engineering', category: 'Engineering' },
     { id: 'jee', name: 'JEE', fullName: 'Joint Entrance Examination', category: 'Engineering' },
     { id: 'cat', name: 'CAT', fullName: 'Common Admission Test', category: 'Management' },
     { id: 'upsc', name: 'UPSC', fullName: 'Union Public Service Commission', category: 'Civil Services' }
 ];
 
-export const eduraProviders = [
+export const takshakProviders = [
     'PhysicsWallah',
     'Unacademy',
     "Byju's",
@@ -14,7 +14,7 @@ export const eduraProviders = [
     'YouTube (Free)'
 ];
 
-export const eduraEducators = [
+export const takshakEducators = [
     {
         id: 'edu_1',
         name: 'Alakh Pandey',
@@ -83,7 +83,7 @@ export const eduraEducators = [
     }
 ];
 
-export const eduraCourses = [
+export const takshakCourses = [
     {
         id: 'crs_1',
         title: 'Lakshya JEE 2026',
@@ -119,7 +119,7 @@ export const eduraCourses = [
     }
 ];
 
-export const eduraDeadlines = [
+export const takshakDeadlines = [
     {
         id: 'dl_1',
         title: 'GATE 2025 Registration',
@@ -162,7 +162,7 @@ export const eduraDeadlines = [
     }
 ];
 
-export const eduraFilters = {
+export const takshakFilters = {
     subjects: ['Physics', 'Chemistry', 'Mathematics', 'Reasoning', 'English', 'General Studies', 'Computer Science'],
     levels: ['Beginner', 'Intermediate', 'Advanced', 'Comprehensive'],
     teachingStyles: ['Conceptual', 'Problem Solving', 'Exam Focused', 'Comprehensive'],

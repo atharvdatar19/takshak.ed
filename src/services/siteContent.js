@@ -5,7 +5,7 @@
  */
 import supabase, { isDemoMode } from "../supabaseClient"
 
-const LS_PREFIX = "netrax_content_"
+const LS_PREFIX = "takshak_content_"
 
 // ── Default Values (mirrors current hardcoded content) ──
 const DEFAULTS = {
@@ -51,7 +51,7 @@ const DEFAULTS = {
         "Nations are built by minds that never stopped learning.",
     ],
     siteSettings: {
-        brandName: "NetraX",
+        brandName: "TAKSHAK",
         tagline: "Where real experience meets real ambition",
         supportEmail: "atharvd10166@gmail.com",
         whatsappNumber: "",
@@ -62,8 +62,8 @@ const DEFAULTS = {
             defenceAspirants: true,
         },
         seo: {
-            defaultTitle: "NetraX — College Admissions & Mentoring Platform",
-            defaultDescription: "Track college admissions, access 1:1 mentoring, and prepare for competitive exams with NetraX.",
+            defaultTitle: "TAKSHAK — College Admissions & Mentoring Platform",
+            defaultDescription: "Track college admissions, access 1:1 mentoring, and prepare for competitive exams with TAKSHAK.",
             ogImageUrl: "",
         },
     },

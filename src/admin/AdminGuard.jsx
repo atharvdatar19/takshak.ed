@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
-import { supabase, isDemoMode } from "../supabaseClient"
+import supabase, { isDemoMode } from "../supabaseClient"
 
 const ADMIN_ROLES = ["admin", "moderator", "content_editor", "finance_viewer"]
 

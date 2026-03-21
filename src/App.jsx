@@ -73,7 +73,7 @@ class AppErrorBoundary extends Component {
     return { hasError: true, error }
   }
   componentDidCatch(err, info) {
-    console.error("[NetraX] Page Error:", err, info)
+    console.error("[TAKSHAK] Page Error:", err, info)
   }
   render() {
     if (this.state.hasError) {

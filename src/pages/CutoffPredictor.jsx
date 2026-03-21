@@ -136,7 +136,7 @@ export default function CutoffPredictor() {
     return (
         <div className="space-y-8 pb-10">
             <Helmet>
-                <title>Cutoff Predictor 2024 | NetraX</title>
+                <title>Cutoff Predictor 2024 | TAKSHAK</title>
                 <meta name="description" content="Predict your college admission chances based on your rank, category, and preferred exams." />
             </Helmet>
 

@@ -141,3 +141,19 @@ export function SlideIn({
         </motion.div>
     )
 }
+
+/**
+ * Magnetic Card — slight scaling and magnet effect on hover.
+ */
+export function MagneticCard({ children, intensity = 0.05, className = "" }) {
+    return (
+        <motion.div
+            whileHover={{ scale: 1 + intensity }}
+            whileTap={{ scale: 1 - intensity }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className={className}
+        >
+            {children}
+        </motion.div>
+    )
+}

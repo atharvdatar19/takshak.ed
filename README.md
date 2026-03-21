@@ -1,5 +1,5 @@
 
-Mentor Bhaiyaaa is a structured opportunity visibility platform built to solve information asymmetry faced by students from Tier-2 and Tier-3 cities. 
+TAKSHAK is a structured opportunity visibility platform built to solve information asymmetry faced by students from Tier-2 and Tier-3 cities. 
 
 Many students miss lateral entries, spot rounds, CUET-based admissions, and state-level opportunities simply because the information is scattered across newspapers, regional portals, and university websites.
 
@@ -9,11 +9,8 @@ We centralize those opportunities and highlight deadlines so no student misses o
 
 ## 🌍 Live Prototypes
 
-### 🤖 AI Web Assisted Prototype (Completed)
-🔗 https://mentorbhaiyaaa.base44.app
-
 ### 🛠 Under Development Full-Stack Prototype
-🔗 https://mentorbhaiyaaaguidora.netlify.app
+🔗 https://takshak.netlify.app
 
 ---
 
@@ -27,13 +24,13 @@ Students in smaller cities face:
 - Missed deadlines due to poor visibility
 - No structured admission timeline
 
-Mentor Bhaiyaaa aims to solve this gap.
+TAKSHAK aims to solve this gap.
 
 ---
 
 ## 💡 Our Solution
 
-Mentor Bhaiyaaa provides:
+TAKSHAK provides:
 
 - 🎓 College Opportunity Directory
 - 🗓 Smart Timeline for Exams & Registrations
@@ -150,7 +147,7 @@ Information asymmetry in education is real.
 
 Students from smaller cities often miss life-changing opportunities simply due to lack of visibility.
 
-Mentor Bhaiyaaa aims to democratize real guidance, admission awareness and make structured opportunity tracking accessible to everyone.
+TAKSHAK aims to democratize real guidance, admission awareness and make structured opportunity tracking accessible to everyone.
 
 ---
 
@@ -165,7 +162,7 @@ Mentor Bhaiyaaa aims to democratize real guidance, admission awareness and make 
 
 ## 🔚 Conclusion
 
-Mentor Bhaiyaaa is not just a college directory it is a platform to find mentors who have walked the pathand what it takes! 
+TAKSHAK is not just a college directory it is a platform to find mentors who have walked the pathand what it takes! 
 
 It is a structured, scalable platform designed to get real guidance from your own BHAIYA and DIDI, eliminate missed opportunities and bring clarity to admission pathways for students across India.
 

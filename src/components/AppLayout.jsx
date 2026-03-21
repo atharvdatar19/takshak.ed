@@ -109,8 +109,8 @@ function SidebarContent({ onNavigate }) {
     <>
       {/* Brand */}
       <div className="flex items-center gap-3 px-5 py-5">
-        <img src="/logo.png" alt="NetraX" className="h-10 w-auto rounded-xl" />
-        <span className="font-bold text-slate-800 text-sm hidden md:block">NetraX</span>
+        <img src="/takshak_logo.jpg" alt="TAKSHAK" className="h-10 w-auto rounded-xl" />
+        <span className="font-bold text-slate-800 text-sm hidden md:block">TAKSHAK</span>
       </div>
 
       {/* Nav Sections */}
@@ -230,8 +230,8 @@ export default function AppLayout() {
       {/* ── Mobile Top Bar ── */}
       <div className="fixed inset-x-0 top-0 z-30 flex items-center justify-between border-b border-slate-200/60 bg-white/90 px-4 py-3 backdrop-blur-xl md:hidden">
         <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="NetraX" className="h-8 w-auto rounded-lg" />
-          <span className="font-bold text-slate-800 text-sm">NetraX</span>
+          <img src="/takshak_logo.jpg" alt="TAKSHAK" className="h-8 w-auto rounded-lg" />
+          <span className="font-bold text-slate-800 text-sm">TAKSHAK</span>
         </div>
         <button
           type="button"
@@ -297,10 +297,10 @@ export default function AppLayout() {
           <footer className="mt-20 border-t border-slate-200/60 pt-8 pb-12">
             <div className="flex flex-col items-center justify-center gap-2">
               <p className="text-sm font-medium text-slate-500">
-                Made with ❤️ by <span className="font-bold text-indigo-600">NetraX</span>
+                Made with ❤️ by <span className="font-bold text-indigo-600">TAKSHAK</span>
               </p>
               <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400 font-bold">
-                NetraX — Empowering Students since 2024
+                TAKSHAK — Empowering Students since 2024
               </p>
             </div>
           </footer>

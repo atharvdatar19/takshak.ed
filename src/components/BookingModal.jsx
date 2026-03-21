@@ -42,7 +42,7 @@ export default function BookingModal({ isOpen, onClose, mentor, selectedSlot }) 
                 key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_your_key_id", // Fallback to test key if env not set
                 amount: Math.round(data.amount_inr * 100), // paise
                 currency: "INR",
-                name: "NetraX Session",
+                name: "TAKSHAK Session",
                 description: `1-on-1 Mentorship with ${name}`,
                 order_id: data.razorpay_order_id,
                 handler: function (response) {
@@ -225,7 +225,7 @@ export default function BookingModal({ isOpen, onClose, mentor, selectedSlot }) 
                                 <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 text-left space-y-2 mb-5">
                                     <div className="flex justify-between text-xs"><span className="text-slate-400">Session ID</span><span className="font-mono font-bold text-slate-600">NTX-{Date.now().toString(36).toUpperCase()}</span></div>
                                     <div className="flex justify-between text-xs"><span className="text-slate-400">Meet Link</span>
-                                        <a href={`https://meet.jit.si/netrax-${Date.now()}`} target="_blank" rel="noopener noreferrer"
+                                        <a href={`https://meet.jit.si/takshak-${Date.now()}`} target="_blank" rel="noopener noreferrer"
                                             className="text-indigo-600 font-bold flex items-center gap-1 hover:underline">
                                             Join <ExternalLink size={10} />
                                         </a>

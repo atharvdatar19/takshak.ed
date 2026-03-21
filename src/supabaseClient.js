@@ -9,7 +9,7 @@ export const isDemoMode = isInvalidKey || !supabaseUrl || !supabaseAnonKey
 
 if (isDemoMode) {
   console.warn(
-    "[MentorBhaiyaaa] Invalid or missing Supabase credentials detected. " +
+    "[TAKSHAK] Invalid or missing Supabase credentials detected. " +
     "Falling back to DEMO MODE. Auth and backend will use local mocks."
   )
 }

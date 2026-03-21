@@ -63,7 +63,7 @@ export default function Mentors() {
     return (
         <div className="space-y-8 pb-12">
             <Helmet>
-                <title>Find a Mentor — 1:1 Sessions with IIT/NIT Seniors | NetraX</title>
+                <title>Find a Mentor — 1:1 Sessions with IIT/NIT Seniors | TAKSHAK</title>
                 <meta name="description" content="Book 1:1 mentoring sessions with verified IIT, NIT, AIIMS seniors. Get exam strategy, college advice, and mock analysis." />
             </Helmet>
 

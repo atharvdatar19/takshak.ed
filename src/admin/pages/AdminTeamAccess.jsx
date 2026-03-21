@@ -4,9 +4,9 @@ import { ShieldCheck, Plus, Trash2, Save } from "lucide-react"
 
 const ROLES = ["admin", "moderator", "content_editor", "finance_viewer"]
 const DEMO_TEAM = [
-    { id: "t1", name: "Atharv (Founder)", email: "admin@netrax.in", role: "admin" },
-    { id: "t2", name: "Priya (Content Lead)", email: "priya@netrax.in", role: "content_editor" },
-    { id: "t3", name: "Rahul (Finance)", email: "rahul@netrax.in", role: "finance_viewer" },
+    { id: "t1", name: "Atharv (Founder)", email: "admin@takshak.in", role: "admin" },
+    { id: "t2", name: "Priya (Content Lead)", email: "priya@takshak.in", role: "content_editor" },
+    { id: "t3", name: "Rahul (Finance)", email: "rahul@takshak.in", role: "finance_viewer" },
 ]
 
 export default function AdminTeamAccess() {
