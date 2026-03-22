@@ -39,6 +39,7 @@ import CommandPalette from "./CommandPalette"
 import CursorTrail from "./CursorTrail"
 import PageTransition from "./PageTransition"
 import ThemeToggle from "./ThemeToggle"
+import LeadCaptureModal from "./LeadCaptureModal"
 
 const FloatingBackground = lazy(() => import("./3d/FloatingBackground"))
 
@@ -311,6 +312,7 @@ export default function AppLayout() {
       <CommandPalette />
       <CursorTrail />
       <ChatbotAssistant />
+      <LeadCaptureModal />
     </div>
   )
 }

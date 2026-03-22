@@ -1,38 +1,38 @@
-import { useEffect, useRef } from "react"
-import supabase from "../supabaseClient"
+import { useEffect } from 'react'
+import supabase from '../supabaseClient'
 
-/**
- * Subscribe to Supabase Realtime changes on a table.
- * Calls `onData` whenever an INSERT, UPDATE, or DELETE occurs.
- *
- * @param {string} table  – Supabase table name (e.g. "colleges")
- * @param {Function} onData – callback invoked with { eventType, new, old }
- * @param {boolean} [enabled=true]
- */
-export function useRealtimeSync(table, onData, enabled = true) {
-    const callbackRef = useRef(onData)
-    callbackRef.current = onData
+export function useRealtimeSync(tableName, setData) {
+  useEffect(() => {
+    if (!supabase) return
 
-    useEffect(() => {
-        if (!supabase || !enabled) return
+    const channel = supabase
+      .channel(`public:${tableName}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: tableName },
+        (payload) => {
+          setData((currentData) => {
+            if (!currentData || !Array.isArray(currentData)) return currentData
 
-        const channel = supabase
-            .channel(`realtime-${table}`)
-            .on(
-                "postgres_changes",
-                { event: "*", schema: "public", table },
-                (payload) => {
-                    callbackRef.current({
-                        eventType: payload.eventType,
-                        newRecord: payload.new,
-                        oldRecord: payload.old,
-                    })
-                },
-            )
-            .subscribe()
-
-        return () => {
-            supabase.removeChannel(channel)
+            switch (payload.eventType) {
+              case 'INSERT':
+                return [...currentData, payload.new]
+              case 'UPDATE':
+                return currentData.map((item) =>
+                  item.id === payload.new.id ? { ...item, ...payload.new } : item
+                )
+              case 'DELETE':
+                return currentData.filter((item) => item.id !== payload.old.id)
+              default:
+                return currentData
+            }
+          })
         }
-    }, [table, enabled])
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [tableName, setData])
 }

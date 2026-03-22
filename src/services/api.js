@@ -174,14 +174,13 @@ export async function getExamsTimeline(params = {}) {
   let query = supabase
     .from("exams_timeline")
     .select("*")
-    .order("priority", { ascending: false })
-    .order("start_date", { ascending: true })
+    .order("exam_date", { ascending: true })
 
   if (stream) query = query.eq("stream", stream)
-  if (targetExam) query = query.eq("target_exam", targetExam)
+  if (targetExam) query = query.eq("exam_name", targetExam)
 
   if (state) {
-    query = query.or(`is_national.eq.true,state.eq.${state}`)
+    query = query.eq("state", state)
   }
 
   const { data, error } = await query
@@ -197,7 +196,8 @@ export async function getMentors(params = {}) {
   if (!supabase || isDemoMode) return DEMO_MENTORS
 
   let query = supabase.from("mentors").select("*").order("rating", { ascending: false })
-  if (params.stream) query = query.eq("stream", params.stream)
+  // Stream is not a column in the currently audited mentors table, omitting filter to prevent error
+  // if (params.stream) query = query.eq("stream", params.stream)
 
   const { data, error } = await query
 

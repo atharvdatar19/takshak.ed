@@ -6,6 +6,7 @@ import { Star, MapPin, GraduationCap, CalendarDays, Globe, ChevronDown, Filter, 
 import { getMentors } from "../services/api"
 import DataState from "../components/DataState"
 import LoadingSkeleton from "../components/LoadingSkeleton"
+import { useRealtimeSync } from "../hooks/useRealtimeSync"
 
 const EXAM_OPTIONS = ["All", "JEE", "NEET", "CUET"]
 const SUBJECT_OPTIONS = ["All", "Physics", "Chemistry", "Maths", "Biology"]
@@ -38,6 +39,9 @@ export default function Mentors() {
             setLoading(false)
         }).catch(err => { setError(err.message); setLoading(false) })
     }, [])
+
+    // Real-time Supabase sync for mentor list
+    useRealtimeSync("mentors", setMentors)
 
     const filteredMentors = useMemo(() => {
         const pr = PRICE_RANGES[priceRange]

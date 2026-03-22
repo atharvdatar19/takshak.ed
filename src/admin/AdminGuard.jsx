@@ -1,36 +1,10 @@
-import { useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
-import supabase, { isDemoMode } from "../supabaseClient"
 
 const ADMIN_ROLES = ["admin", "moderator", "content_editor", "finance_viewer"]
 
 export default function AdminGuard({ children, requiredRoles = ADMIN_ROLES }) {
-    const { user } = useAuth()
-    const [role, setRole] = useState(null)
-    const [loading, setLoading] = useState(true)
-
-    useEffect(() => {
-        if (!user) { setLoading(false); return }
-
-        if (isDemoMode || !supabase) {
-            // In demo mode, treat every logged-in user as admin
-            setRole("admin")
-            setLoading(false)
-            return
-        }
-
-        supabase
-            .from("users")
-            .select("role")
-            .eq("id", user.id)
-            .single()
-            .then(({ data }) => {
-                setRole(data?.role || "student")
-                setLoading(false)
-            })
-            .catch(() => { setRole("student"); setLoading(false) })
-    }, [user])
+    const { user, role, loading } = useAuth()
 
     if (loading) {
         return (
