@@ -1,4 +1,5 @@
 import { Eye, EyeOff, LogIn, Mail, User, Lock, ChevronDown, ChevronRight, Sparkles, ArrowRight, Smartphone } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import { useState, useRef } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { signUpWithEmail, signInWithEmail, signInWithGoogle, resetPassword, signInWithOtp, verifyOtp } from "../services/auth"
