@@ -174,7 +174,7 @@ export async function getExamsTimeline(params = {}) {
   let query = supabase
     .from("exams_timeline")
     .select("*")
-    .order("exam_date", { ascending: true })
+    .order("start_date", { ascending: true })
 
   if (stream) query = query.eq("stream", stream)
   if (targetExam) query = query.eq("exam_name", targetExam)

@@ -273,7 +273,7 @@ export default function Dashboard() {
                         <p className="text-sm font-bold text-slate-900">{mentor.name}</p>
                         <p className="text-xs text-slate-500">{mentor.subject} • ⭐ {mentor.rating}</p>
                       </div>
-                      <Link to="/mentor-marketplace" className="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Book</Link>
+                      <Link to="/mentors" className="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Book</Link>
                     </div>
                   ))}
                 </div>

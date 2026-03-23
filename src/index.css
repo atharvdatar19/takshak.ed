@@ -1,5 +1,5 @@
-/* ── Google Fonts: Inter ── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* ── Google Fonts: Manrope + Inter ── */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -11,10 +11,26 @@
    ═══════════════════════════════════════════════════════════ */
 
 :root {
+  /* ── Takshak Obsidian Design Tokens ── */
+  --obsidian-bg: #0b1326;
+  --obsidian-surface: #0f1930;
+  --obsidian-surface-high: #141f38;
+  --obsidian-surface-highest: #192540;
+  --obsidian-surface-variant: #2d3449;
+  --obsidian-primary: #4edea3;
+  --obsidian-primary-container: #10b981;
+  --obsidian-secondary: #c0c1ff;
+  --obsidian-secondary-container: #3131c0;
+  --obsidian-tertiary: #ff6f7e;
+  --obsidian-on-surface: #dee5ff;
+  --obsidian-on-surface-variant: #a3aac4;
+  --obsidian-outline: #6d758c;
+  --obsidian-outline-variant: #40485d;
+
   /* ── Semantic Glass Colors ── */
-  --bg-glass: rgba(255, 255, 255, 0.7);
-  --border-glass: rgba(255, 255, 255, 0.4);
-  --shadow-glass: rgba(0, 0, 0, 0.05);
+  --bg-glass: rgba(45, 52, 73, 0.4);
+  --border-glass: rgba(64, 72, 93, 0.15);
+  --shadow-glass: rgba(0, 0, 0, 0.3);
 
   /* ── Animation Easing ── */
   --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
@@ -22,8 +38,8 @@
   --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
 
   /* ── Accent Glows ── */
-  --accent-glow: rgba(99, 102, 241, 0.15);
-  --accent-glow-intense: rgba(124, 58, 237, 0.25);
+  --accent-glow: rgba(78, 222, 163, 0.15);
+  --accent-glow-intense: rgba(78, 222, 163, 0.25);
 }
 
 html.dark {
@@ -38,10 +54,12 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.01em;
+  background: var(--obsidian-bg);
+  color: var(--obsidian-on-surface);
 }
 
 /* Smooth transitions for Dark Mode toggle across structural elements */
@@ -70,7 +88,7 @@ textarea {
 
 /* ── Main Background ── */
 .bg-app {
-  background: linear-gradient(180deg, #f1f0fb 0%, #f8f7ff 30%, #ffffff 70%, #f1f0fb 100%);
+  background: var(--obsidian-bg);
   min-height: 100vh;
 }
 

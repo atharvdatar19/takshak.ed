@@ -4,15 +4,10 @@ import { AnimatePresence, motion } from "framer-motion"
 import { useAuth } from "../contexts/AuthContext"
 import {
   ArrowLeft,
-  ArrowLeftRight,
   Bell,
   BookOpen,
-  Calendar,
   ClipboardCheck,
-  Compass,
-  DollarSign,
   GraduationCap,
-  Heart,
   Home,
   LayoutDashboard,
   Layers,
@@ -22,17 +17,12 @@ import {
   MessageSquare,
   Shield,
   ShieldCheck,
+  ShoppingBag,
   Star,
-  Target,
   TrendingUp,
   User,
   Users,
-  Video,
   X,
-  Map,
-  GitCompare,
-  ShoppingBag,
-  Gamepad2,
 } from "lucide-react"
 import ChatbotAssistant from "./chatbot/ChatbotAssistant"
 import CommandPalette from "./CommandPalette"
@@ -111,7 +101,7 @@ function SidebarContent({ onNavigate }) {
       {/* Brand */}
       <div className="flex items-center gap-3 px-5 py-5">
         <img src="/takshak_logo.jpg" alt="TAKSHAK" className="h-10 w-auto rounded-xl" />
-        <span className="font-bold text-slate-800 text-sm hidden md:block">TAKSHAK</span>
+        <span className="font-bold text-sm hidden md:block" style={{ color: '#dee5ff' }}>TAKSHAK</span>
       </div>
 
       {/* Nav Sections */}
@@ -120,7 +110,7 @@ function SidebarContent({ onNavigate }) {
           const SIcon = section.icon
           return (
             <div key={section.title}>
-              <p className="mb-1.5 flex items-center gap-1.5 px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <p className="mb-1.5 flex items-center gap-1.5 px-2 text-[11px] font-bold uppercase tracking-wider" style={{ color: '#6d758c' }}>
                 <SIcon size={11} /> {section.title}
               </p>
               <nav className="space-y-0.5">
@@ -135,9 +125,10 @@ function SidebarContent({ onNavigate }) {
                       className={({ isActive }) =>
                         `group flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-200 ${isActive
                           ? "nav-active"
-                          : "text-slate-600 hover:bg-indigo-50 hover:text-indigo-600"
+                          : "hover:bg-white/5"
                         }`
                       }
+                      style={({ isActive }) => (isActive ? {} : { color: '#a3aac4' })}
                     >
                       <Icon size={16} className="shrink-0" />
                       <span className="truncate">{link.label}</span>
@@ -152,7 +143,7 @@ function SidebarContent({ onNavigate }) {
         {/* Admin link — only visible to admins */}
         {isAdmin && (
           <div>
-            <p className="mb-1.5 flex items-center gap-1.5 px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            <p className="mb-1.5 flex items-center gap-1.5 px-2 text-[11px] font-bold uppercase tracking-wider" style={{ color: '#6d758c' }}>
               <ShieldCheck size={11} /> Admin
             </p>
             <nav>
@@ -160,8 +151,9 @@ function SidebarContent({ onNavigate }) {
                 to="/admin"
                 onClick={onNavigate}
                 className={({ isActive }) =>
-                  `group flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-200 ${isActive ? "nav-active" : "text-slate-600 hover:bg-indigo-50 hover:text-indigo-600"}`
+                  `group flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-200 ${isActive ? "nav-active" : "hover:bg-white/5"}`
                 }
+                style={{ color: '#a3aac4' }}
               >
                 <ShieldCheck size={16} className="shrink-0" />
                 <span className="truncate">Admin Control</span>

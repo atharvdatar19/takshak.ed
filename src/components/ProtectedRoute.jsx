@@ -7,7 +7,7 @@ import { Navigate, useLocation } from "react-router-dom"
  * Optionally checks for specific roles.
  */
 export default function ProtectedRoute({ children, roles = [] }) {
-    const { user, profile, loading } = useAuth()
+    const { user, role, loading } = useAuth()
     const location = useLocation()
 
     // Still loading auth state
@@ -24,11 +24,10 @@ export default function ProtectedRoute({ children, roles = [] }) {
         return <Navigate to="/login" state={{ from: location.pathname }} replace />
     }
 
-    // Check role if specified
+    // Check role if specified — use the unified `role` from AuthContext (includes isAdmin override)
     if (roles.length > 0) {
-        const userRole = profile?.role || "student"
         // Admin can access everything
-        if (userRole !== "admin" && !roles.includes(userRole)) {
+        if (role !== "admin" && !roles.includes(role)) {
             return (
                 <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
                     <div className="text-6xl mb-4">🔒</div>

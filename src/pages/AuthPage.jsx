@@ -22,10 +22,7 @@ const slideVariants = {
 }
 
 const slideTransition = {
-    type: "spring",
-    stiffness: 300,
-    damping: 30,
-    mass: 0.8,
+    type: "spring", stiffness: 300, damping: 30, mass: 0.8,
 }
 
 export default function AuthPage({ defaultTab = "signup" }) {
@@ -34,7 +31,7 @@ export default function AuthPage({ defaultTab = "signup" }) {
     const from = location.state?.from || "/"
 
     const [tab, setTab] = useState(defaultTab)
-    const [direction, setDirection] = useState(1) // 1 = right, -1 = left
+    const [direction, setDirection] = useState(1)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
@@ -56,7 +53,6 @@ export default function AuthPage({ defaultTab = "signup" }) {
     const [otp, setOtp] = useState("")
     const [otpSent, setOtpSent] = useState(false)
 
-    // Signup step (Brilliant-style multi-step)
     const [signupStep, setSignupStep] = useState(0)
 
     function switchTab(newTab) {
@@ -80,7 +76,7 @@ export default function AuthPage({ defaultTab = "signup" }) {
         const { error: err } = await signUpWithEmail({ email, password, fullName, stream, state, role })
         setLoading(false)
         if (err) { setError(err.message); return }
-        setSuccess("Account created! Check your email to verify, then log in.")
+        setSuccess("Account created! Check your email to verify.")
         setTimeout(() => switchTab("login"), 2000)
     }
 
@@ -142,14 +138,17 @@ export default function AuthPage({ defaultTab = "signup" }) {
     }
 
     return (
-        <div className="min-h-screen flex bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/20">
-            {/* ═══ LEFT HERO ═══ */}
-            <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden items-center justify-center p-12"
-                style={{ background: "linear-gradient(135deg, #4338ca 0%, #6d28d9 35%, #7c3aed 65%, #6366f1 100%)" }}>
+        <div className="min-h-screen flex bg-[#0b1326] relative overflow-hidden">
+            {/* Ambient Base Glows */}
+            <div className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
 
+            {/* ═══ LEFT HERO ═══ */}
+            <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden items-center justify-center p-12 border-r border-white/5 bg-[#0f1930]/40 backdrop-blur-3xl z-10">
+                
                 {/* Animated grid dots */}
-                <div className="absolute inset-0 opacity-20" style={{
-                    backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)",
+                <div className="absolute inset-0 opacity-10" style={{
+                    backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px)",
                     backgroundSize: "24px 24px",
                 }} />
 
@@ -159,18 +158,14 @@ export default function AuthPage({ defaultTab = "signup" }) {
                         key={i}
                         className="absolute rounded-full"
                         style={{
-                            width: 60 + i * 30,
-                            height: 60 + i * 30,
-                            background: `radial-gradient(circle, rgba(255,255,255,${0.08 + i * 0.02}), transparent)`,
-                            left: `${15 + i * 15}%`,
-                            top: `${10 + i * 18}%`,
+                            width: 60 + i * 30, height: 60 + i * 30,
+                            background: `radial-gradient(circle, rgba(78,222,163,${0.02 + i * 0.01}), transparent)`,
+                            left: `${15 + i * 15}%`, top: `${10 + i * 18}%`,
                         }}
                         animate={{
-                            y: [0, -20 - i * 5, 0],
-                            x: [0, 10 + i * 3, 0],
-                            scale: [1, 1.05, 1],
+                            y: [0, -20 - i * 5, 0], x: [0, 10 + i * 3, 0], scale: [1, 1.05, 1],
                         }}
-                        transition={{ duration: 5 + i, repeat: Infinity, ease: "easeInOut" }}
+                        transition={{ duration: 8 + i, repeat: Infinity, ease: "easeInOut" }}
                     />
                 ))}
 
@@ -178,79 +173,68 @@ export default function AuthPage({ defaultTab = "signup" }) {
                     <motion.img
                         src="/takshak_logo.jpg"
                         alt="TAKSHAK"
-                        className="w-16 h-16 object-contain mb-8 drop-shadow-xl rounded-2xl"
+                        className="w-16 h-16 object-cover mb-8 drop-shadow-[0_0_15px_rgba(78,222,163,0.3)] rounded-2xl border border-white/10"
                         initial={{ scale: 0, rotate: -180 }}
                         animate={{ scale: 1, rotate: 0 }}
                         transition={{ type: "spring", stiffness: 200, damping: 15 }}
                     />
 
                     <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="text-4xl font-extrabold leading-tight tracking-tight"
+                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+                        className="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight text-white drop-shadow-lg"
                     >
                         Learn, prepare,<br />
-                        <span className="text-gradient-animated">succeed together.</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-indigo-400">succeed together.</span>
                     </motion.h1>
 
                     <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5 }}
-                        className="mt-4 text-indigo-100/80 text-[15px] leading-relaxed"
+                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+                        className="mt-6 text-[#a3aac4] text-base leading-relaxed"
                     >
                         Join thousands of students who trust TAKSHAK for exam preparation,
                         cutoff predictions, and 1:1 guidance from top rankers.
                     </motion.p>
 
                     {/* Stat pills */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.7 }}
-                        className="mt-10 flex gap-3"
-                    >
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="mt-10 flex gap-3">
                         {[
                             { val: "10K+", label: "Students" },
                             { val: "500+", label: "Mentors" },
                             { val: "50+", label: "Exams" },
                         ].map(s => (
-                            <div key={s.label} className="rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 px-4 py-3 text-center">
-                                <p className="text-lg font-bold">{s.val}</p>
-                                <p className="text-[10px] text-indigo-200 uppercase tracking-wider">{s.label}</p>
+                            <div key={s.label} className="rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 px-4 py-3 text-center flex-1">
+                                <p className="text-xl font-black text-white">{s.val}</p>
+                                <p className="text-[9px] text-[#6d758c] uppercase tracking-widest font-bold mt-0.5">{s.label}</p>
                             </div>
                         ))}
                     </motion.div>
                 </div>
             </div>
 
-            {/* ═══ RIGHT FORM — Brilliant-style sliding panels ═══ */}
-            <div className="flex-1 flex items-center justify-center p-6 md:p-12">
+            {/* ═══ RIGHT FORM ═══ */}
+            <div className="flex-1 flex items-center justify-center p-6 md:p-12 relative z-10">
                 <div className="w-full max-w-md">
                     {/* Mobile brand */}
                     <div className="flex items-center gap-3 mb-8 lg:hidden">
-                        <img src="/takshak_logo.jpg" alt="TAKSHAK" className="w-10 h-10 object-contain rounded-xl" />
-                        <span className="text-xl font-bold text-slate-900">TAKSHAK</span>
+                        <img src="/takshak_logo.jpg" alt="TAKSHAK" className="w-10 h-10 object-cover rounded-xl shadow-lg border border-white/10" />
+                        <span className="text-xl font-bold text-white tracking-widest">TAKSHAK</span>
                     </div>
 
                     {/* Tab toggle — pill style */}
-                    <div className="flex rounded-2xl bg-white border border-slate-200 p-1 mb-6 shadow-sm">
+                    <div className="flex rounded-2xl bg-white/5 border border-white/10 p-1.5 mb-8 backdrop-blur-md">
                         {["signup", "login"].map(t => (
                             <button
-                                key={t}
-                                type="button"
-                                onClick={() => switchTab(t)}
-                                className="flex-1 relative rounded-xl py-2.5 text-sm font-semibold transition-colors duration-200"
+                                key={t} type="button" onClick={() => switchTab(t)}
+                                className="flex-1 relative rounded-xl py-3 text-sm font-bold transition-colors duration-200"
                             >
                                 {tab === t && (
                                     <motion.div
                                         layoutId="auth-tab"
-                                        className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg"
+                                        className="absolute inset-0 rounded-xl bg-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.4)]"
                                         transition={{ type: "spring", stiffness: 300, damping: 25 }}
                                     />
                                 )}
-                                <span className={`relative z-10 ${tab === t ? "text-white" : "text-slate-500"}`}>
+                                <span className={`relative z-10 ${tab === t ? "text-white" : "text-[#a3aac4] hover:text-white"}`}>
                                     {t === "signup" ? "Sign Up" : "Log In"}
                                 </span>
                             </button>
@@ -261,66 +245,51 @@ export default function AuthPage({ defaultTab = "signup" }) {
                     <AnimatePresence>
                         {error && (
                             <motion.div
-                                initial={{ opacity: 0, y: -10, height: 0 }}
-                                animate={{ opacity: 1, y: 0, height: "auto" }}
-                                exit={{ opacity: 0, y: -10, height: 0 }}
-                                className="mb-4 rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-700"
+                                initial={{ opacity: 0, y: -10, height: 0 }} animate={{ opacity: 1, y: 0, height: "auto" }} exit={{ opacity: 0, y: -10, height: 0 }}
+                                className="mb-6 rounded-xl bg-rose-500/10 border border-rose-500/20 px-4 py-3 text-sm text-rose-400 backdrop-blur-md relative overflow-hidden"
                             >
+                                <div className="absolute top-0 left-0 w-1 h-full bg-rose-500" />
                                 {error}
                             </motion.div>
                         )}
                         {success && (
                             <motion.div
-                                initial={{ opacity: 0, y: -10, height: 0 }}
-                                animate={{ opacity: 1, y: 0, height: "auto" }}
-                                exit={{ opacity: 0, y: -10, height: 0 }}
-                                className="mb-4 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-700"
+                                initial={{ opacity: 0, y: -10, height: 0 }} animate={{ opacity: 1, y: 0, height: "auto" }} exit={{ opacity: 0, y: -10, height: 0 }}
+                                className="mb-6 rounded-xl bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 text-sm text-emerald-400 backdrop-blur-md relative overflow-hidden"
                             >
+                                <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
                                 {success}
                             </motion.div>
                         )}
                     </AnimatePresence>
 
                     {/* ═══ SLIDING FORM PANELS ═══ */}
-                    <div className="relative overflow-hidden rounded-3xl bg-white border border-slate-200 shadow-xl shadow-indigo-100/20 min-h-[400px]">
+                    <div className="relative overflow-hidden rounded-[2rem] bg-[#0f1930]/80 backdrop-blur-2xl border border-white/10 shadow-[0_15px_40px_rgba(0,0,0,0.5)] min-h-[440px]">
                         <AnimatePresence mode="wait" custom={direction}>
                             {tab === "signup" ? (
                                 /* ── SIGNUP MULTI-STEP ── */
-                                <motion.div
-                                    key={`signup-${signupStep}`}
-                                    custom={direction}
-                                    variants={slideVariants}
-                                    initial={direction > 0 ? "enterRight" : "enterLeft"}
-                                    animate="center"
-                                    exit={direction > 0 ? "exitLeft" : "exitRight"}
-                                    transition={slideTransition}
-                                    className="p-6 md:p-8"
-                                >
+                                <motion.div key={`signup-${signupStep}`} custom={direction} variants={slideVariants} initial={direction > 0 ? "enterRight" : "enterLeft"} animate="center" exit={direction > 0 ? "exitLeft" : "exitRight"} transition={slideTransition} className="p-8">
                                     {signupStep === 0 && (
-                                        <StaggerContainer stagger={0.08} className="space-y-4">
+                                        <StaggerContainer stagger={0.08} className="space-y-5">
                                             <StaggerItem>
-                                                <h2 className="text-xl font-bold text-slate-900">Create your account</h2>
-                                                <p className="text-sm text-slate-500 mt-1">Step 1 of 3 — Your details</p>
+                                                <h2 className="text-2xl font-extrabold text-white tracking-tight">Create your account</h2>
+                                                <p className="text-sm text-[#6d758c] mt-1">Step 1 of 3 — Your details</p>
                                             </StaggerItem>
                                             <StaggerItem><StepDots current={0} total={3} /></StaggerItem>
                                             
                                             <StaggerItem>
-                                                <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
-                                                    <InputField icon={User} placeholder="Full Name" value={fullName} onChange={setFullName} autoComplete="name" />
-                                                </PulseGlow>
+                                                <InputField icon={User} placeholder="Full Name" value={fullName} onChange={setFullName} autoComplete="name" />
                                             </StaggerItem>
                                             
                                             <StaggerItem>
-                                                <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
-                                                    <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} autoComplete="email" />
-                                                </PulseGlow>
+                                                <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} autoComplete="email" />
                                             </StaggerItem>
 
                                             <StaggerItem>
-                                                <div className="flex rounded-xl border border-slate-200 p-1 gap-1">
+                                                <div className="flex rounded-xl border border-white/10 bg-white/5 p-1.5 gap-1.5">
                                                     {[{ key: "student", emoji: "🎓", label: "Student" }, { key: "mentor", emoji: "👨‍🏫", label: "Mentor" }].map(r => (
                                                         <button key={r.key} type="button" onClick={() => setRole(r.key)}
-                                                            className={`flex-1 rounded-lg py-2.5 text-xs font-semibold transition ${role === r.key ? "bg-indigo-100 text-indigo-700 shadow-sm" : "text-slate-500 hover:bg-slate-50"}`}>
+                                                            className={`flex-1 rounded-lg py-3 text-xs font-bold transition-colors ${role === r.key ? "bg-indigo-500 text-white shadow-[0_0_15px_rgba(99,102,241,0.5)]" : "text-[#a3aac4] hover:text-white"}`}>
                                                             {r.emoji} {r.label}
                                                         </button>
                                                     ))}
@@ -328,8 +297,7 @@ export default function AuthPage({ defaultTab = "signup" }) {
                                             </StaggerItem>
 
                                             <StaggerItem>
-                                                <button type="button" onClick={nextStep}
-                                                    className="btn-ripple w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition">
+                                                <button type="button" onClick={nextStep} className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-3.5 text-sm font-bold text-[#002919] uppercase tracking-wider shadow-[0_0_20px_rgba(78,222,163,0.3)] hover:shadow-[0_0_30px_rgba(78,222,163,0.5)] hover:-translate-y-0.5 transition-all">
                                                     Continue <ArrowRight size={16} />
                                                 </button>
                                             </StaggerItem>
@@ -340,33 +308,29 @@ export default function AuthPage({ defaultTab = "signup" }) {
                                     )}
 
                                     {signupStep === 1 && (
-                                        <StaggerContainer stagger={0.08} className="space-y-4">
+                                        <StaggerContainer stagger={0.08} className="space-y-5">
                                             <StaggerItem>
-                                                <h2 className="text-xl font-bold text-slate-900">Almost there!</h2>
-                                                <p className="text-sm text-slate-500 mt-1">Step 2 of 3 — Your preferences</p>
+                                                <h2 className="text-2xl font-extrabold text-white tracking-tight">Almost there!</h2>
+                                                <p className="text-sm text-[#6d758c] mt-1">Step 2 of 3 — Your preferences</p>
                                             </StaggerItem>
                                             <StaggerItem><StepDots current={1} total={3} /></StaggerItem>
                                             <StaggerItem>
-                                                <div className="grid grid-cols-2 gap-3">
+                                                <div className="grid grid-cols-2 gap-4">
                                                     <SelectField label="Stream" value={stream} onChange={setStream} options={["PCM", "PCB", "Commerce", "Arts"]} />
                                                     <SelectField label="State" value={state} onChange={setState} options={INDIAN_STATES} />
                                                 </div>
                                             </StaggerItem>
                                             <StaggerItem>
-                                                <div className="rounded-2xl bg-indigo-50 border border-indigo-100 p-4">
-                                                    <p className="text-xs text-indigo-700 font-medium flex items-center gap-1.5">
-                                                        <Sparkles size={14} /> We personalize your experience based on stream & state
+                                                <div className="rounded-2xl bg-indigo-500/10 border border-indigo-500/20 p-4 backdrop-blur-md">
+                                                    <p className="text-[#a3aac4] text-xs font-medium leading-relaxed flex items-center gap-2">
+                                                        <Sparkles size={16} className="text-indigo-400 shrink-0" /> We personalize your dashboard specifically based on your stream & state.
                                                     </p>
                                                 </div>
                                             </StaggerItem>
                                             <StaggerItem>
-                                                <div className="flex gap-3">
-                                                    <button type="button" onClick={prevStep}
-                                                        className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition">
-                                                        Back
-                                                    </button>
-                                                    <button type="button" onClick={nextStep}
-                                                        className="btn-ripple flex-[2] flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition">
+                                                <div className="flex gap-3 pt-2">
+                                                    <button type="button" onClick={prevStep} className="w-1/3 rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-sm font-bold text-white hover:bg-white/10 transition-colors">Back</button>
+                                                    <button type="button" onClick={nextStep} className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-3.5 text-sm font-bold text-[#002919] uppercase tracking-wider shadow-[0_0_20px_rgba(78,222,163,0.3)] hover:-translate-y-0.5 transition-all">
                                                         Continue <ArrowRight size={16} />
                                                     </button>
                                                 </div>
@@ -376,36 +340,28 @@ export default function AuthPage({ defaultTab = "signup" }) {
 
                                     {signupStep === 2 && (
                                         <form onSubmit={handleSignUp}>
-                                            <StaggerContainer stagger={0.08} className="space-y-4">
+                                            <StaggerContainer stagger={0.08} className="space-y-5">
                                                 <StaggerItem>
-                                                    <h2 className="text-xl font-bold text-slate-900">Set your password</h2>
-                                                    <p className="text-sm text-slate-500 mt-1">Step 3 of 3 — Secure your account</p>
+                                                    <h2 className="text-2xl font-extrabold text-white tracking-tight">Set your password</h2>
+                                                    <p className="text-sm text-[#6d758c] mt-1">Step 3 of 3 — Secure your account</p>
                                                 </StaggerItem>
                                                 <StaggerItem><StepDots current={2} total={3} /></StaggerItem>
                                                 <StaggerItem>
-                                                    <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover className="relative">
+                                                    <div className="relative">
                                                         <InputField icon={Lock} type={showPassword ? "text" : "password"} placeholder="Password (min. 6 chars)" value={password} onChange={setPassword} autoComplete="new-password" />
-                                                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10">
+                                                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6d758c] hover:text-white transition-colors z-10">
                                                             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                                         </button>
-                                                    </PulseGlow>
+                                                    </div>
                                                 </StaggerItem>
                                                 <StaggerItem>
-                                                    <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
-                                                        <InputField icon={Lock} type="password" placeholder="Confirm Password" value={confirmPassword} onChange={setConfirmPassword} autoComplete="new-password" />
-                                                    </PulseGlow>
+                                                    <InputField icon={Lock} type="password" placeholder="Confirm Password" value={confirmPassword} onChange={setConfirmPassword} autoComplete="new-password" />
                                                 </StaggerItem>
-                                                {password && (
-                                                    <StaggerItem><PasswordStrength password={password} /></StaggerItem>
-                                                )}
+                                                {password && <StaggerItem><PasswordStrength password={password} /></StaggerItem>}
                                                 <StaggerItem>
-                                                    <div className="flex gap-3">
-                                                        <button type="button" onClick={prevStep}
-                                                            className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition">
-                                                            Back
-                                                        </button>
-                                                        <button type="submit" disabled={loading}
-                                                            className="btn-ripple flex-[2] flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition disabled:opacity-50">
+                                                    <div className="flex gap-3 pt-2">
+                                                        <button type="button" onClick={prevStep} className="w-1/3 rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-sm font-bold text-white hover:bg-white/10 transition-colors">Back</button>
+                                                        <button type="submit" disabled={loading} className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-3.5 text-sm font-bold text-[#002919] uppercase tracking-wider shadow-[0_0_20px_rgba(78,222,163,0.3)] hover:-translate-y-0.5 disabled:opacity-50 transition-all">
                                                             {loading ? <Spinner /> : "Create Account"}
                                                         </button>
                                                     </div>
@@ -417,37 +373,24 @@ export default function AuthPage({ defaultTab = "signup" }) {
 
                             ) : showForgot ? (
                                 /* ── FORGOT PASSWORD ── */
-                                <motion.div
-                                    key="forgot"
-                                    custom={direction}
-                                    variants={slideVariants}
-                                    initial="enterRight"
-                                    animate="center"
-                                    exit="exitLeft"
-                                    transition={slideTransition}
-                                    className="p-6 md:p-8"
-                                >
+                                <motion.div key="forgot" custom={direction} variants={slideVariants} initial="enterRight" animate="center" exit="exitLeft" transition={slideTransition} className="p-8">
                                     <form onSubmit={handleForgotPassword}>
-                                        <StaggerContainer stagger={0.08} className="space-y-4">
+                                        <StaggerContainer stagger={0.08} className="space-y-5">
                                             <StaggerItem>
-                                                <h2 className="text-xl font-bold text-slate-900">Reset password</h2>
-                                                <p className="text-sm text-slate-500 mt-1">We'll send a reset link to your email</p>
+                                                <h2 className="text-2xl font-extrabold text-white tracking-tight">Reset password</h2>
+                                                <p className="text-sm text-[#6d758c] mt-1">We'll send a reset link to your email</p>
                                             </StaggerItem>
                                             <StaggerItem>
-                                                <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
-                                                    <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} />
-                                                </PulseGlow>
+                                                <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} />
                                             </StaggerItem>
                                             <StaggerItem>
-                                                <button type="submit" disabled={loading}
-                                                    className="btn-ripple w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50 transition">
+                                                <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3.5 text-sm font-bold text-white shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:-translate-y-0.5 disabled:opacity-50 transition-all mt-2">
                                                     {loading ? <Spinner /> : "Send Reset Link"}
                                                 </button>
                                             </StaggerItem>
                                             <StaggerItem>
-                                                <button type="button" onClick={() => { setDirection(-1); setShowForgot(false) }}
-                                                    className="w-full text-center text-sm text-indigo-600 hover:underline">
-                                                    ← Back to login
+                                                <button type="button" onClick={() => { setDirection(-1); setShowForgot(false) }} className="w-full text-center text-xs font-bold uppercase tracking-wider text-[#a3aac4] hover:text-white mt-4 transition-colors">
+                                                    &larr; Back to login
                                                 </button>
                                             </StaggerItem>
                                         </StaggerContainer>
@@ -456,48 +399,35 @@ export default function AuthPage({ defaultTab = "signup" }) {
 
                             ) : (
                                 /* ── LOGIN ── */
-                                <motion.div
-                                    key="login"
-                                    custom={direction}
-                                    variants={slideVariants}
-                                    initial={direction > 0 ? "enterRight" : "enterLeft"}
-                                    animate="center"
-                                    exit={direction > 0 ? "exitLeft" : "exitRight"}
-                                    transition={slideTransition}
-                                    className="p-6 md:p-8"
-                                >
+                                <motion.div key="login" custom={direction} variants={slideVariants} initial={direction > 0 ? "enterRight" : "enterLeft"} animate="center" exit={direction > 0 ? "exitLeft" : "exitRight"} transition={slideTransition} className="p-8">
                                     <form onSubmit={handleLogin}>
-                                        <StaggerContainer stagger={0.08} className="space-y-4">
+                                        <StaggerContainer stagger={0.08} className="space-y-5">
                                             <StaggerItem>
-                                                <h2 className="text-xl font-bold text-slate-900">Welcome back</h2>
-                                                <p className="text-sm text-slate-500 mt-1">Log in to continue where you left off</p>
+                                                <h2 className="text-2xl font-extrabold text-white tracking-tight">Welcome back</h2>
+                                                <p className="text-sm text-[#6d758c] mt-1">Log in to continue your preparation</p>
                                             </StaggerItem>
 
                                             <StaggerItem>
-                                                <div className="flex rounded-xl border border-slate-200 p-1 gap-1">
-                                                    <button type="button" onClick={() => { setLoginMethod("email"); setOtpSent(false); }} className={`flex-1 rounded-lg py-2.5 text-xs font-semibold transition ${loginMethod === "email" ? "bg-indigo-100 text-indigo-700 shadow-sm" : "text-slate-500 hover:bg-slate-50"}`}>Email</button>
-                                                    <button type="button" onClick={() => { setLoginMethod("phone"); setOtpSent(false); }} className={`flex-1 rounded-lg py-2.5 text-xs font-semibold transition ${loginMethod === "phone" ? "bg-indigo-100 text-indigo-700 shadow-sm" : "text-slate-500 hover:bg-slate-50"}`}>Phone (OTP)</button>
+                                                <div className="flex rounded-xl border border-white/10 bg-white/5 p-1.5 gap-1.5">
+                                                    <button type="button" onClick={() => { setLoginMethod("email"); setOtpSent(false); }} className={`flex-1 rounded-lg py-2.5 text-xs font-bold transition-colors ${loginMethod === "email" ? "bg-indigo-500 text-white shadow-[0_0_15px_rgba(99,102,241,0.5)]" : "text-[#a3aac4] hover:text-white"}`}>Email</button>
+                                                    <button type="button" onClick={() => { setLoginMethod("phone"); setOtpSent(false); }} className={`flex-1 rounded-lg py-2.5 text-xs font-bold transition-colors ${loginMethod === "phone" ? "bg-indigo-500 text-white shadow-[0_0_15px_rgba(99,102,241,0.5)]" : "text-[#a3aac4] hover:text-white"}`}>Phone (OTP)</button>
                                                 </div>
                                             </StaggerItem>
 
                                             {loginMethod === "email" ? (
                                                 <>
+                                                    <StaggerItem><InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} autoComplete="email" /></StaggerItem>
                                                     <StaggerItem>
-                                                        <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
-                                                            <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} autoComplete="email" />
-                                                        </PulseGlow>
-                                                    </StaggerItem>
-                                                    <StaggerItem>
-                                                        <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover className="relative">
+                                                        <div className="relative">
                                                             <InputField icon={Lock} type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={setPassword} autoComplete="current-password" />
-                                                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10">
+                                                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6d758c] hover:text-white transition-colors z-10">
                                                                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                                             </button>
-                                                        </PulseGlow>
+                                                        </div>
                                                     </StaggerItem>
                                                     <StaggerItem>
                                                         <div className="flex justify-end">
-                                                            <button type="button" onClick={() => { setDirection(1); setShowForgot(true) }} className="text-xs text-indigo-600 hover:underline">
+                                                            <button type="button" onClick={() => { setDirection(1); setShowForgot(true) }} className="text-[11px] font-black uppercase tracking-wider text-indigo-400 hover:text-indigo-300 transition-colors">
                                                                 Forgot password?
                                                             </button>
                                                         </div>
@@ -505,24 +435,13 @@ export default function AuthPage({ defaultTab = "signup" }) {
                                                 </>
                                             ) : (
                                                 <>
-                                                    <StaggerItem>
-                                                        <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
-                                                            <InputField icon={Smartphone} type="tel" placeholder="Phone Number (e.g. 9876543210)" value={phone} onChange={setPhone} autoComplete="tel" />
-                                                        </PulseGlow>
-                                                    </StaggerItem>
-                                                    {otpSent && (
-                                                        <StaggerItem>
-                                                            <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
-                                                                <InputField icon={Lock} type="text" placeholder="Enter OTP" value={otp} onChange={setOtp} autoComplete="one-time-code" />
-                                                            </PulseGlow>
-                                                        </StaggerItem>
-                                                    )}
+                                                    <StaggerItem><InputField icon={Smartphone} type="tel" placeholder="Phone Number (e.g. 9876543210)" value={phone} onChange={setPhone} autoComplete="tel" /></StaggerItem>
+                                                    {otpSent && <StaggerItem><InputField icon={Lock} type="text" placeholder="Enter OTP" value={otp} onChange={setOtp} autoComplete="one-time-code" /></StaggerItem>}
                                                 </>
                                             )}
 
                                             <StaggerItem>
-                                                <button type="submit" disabled={loading}
-                                                    className="btn-ripple w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition disabled:opacity-50">
+                                                <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-3.5 text-sm font-bold text-[#002919] uppercase tracking-wider shadow-[0_0_20px_rgba(78,222,163,0.3)] hover:-translate-y-0.5 disabled:opacity-50 transition-all mt-2">
                                                     {loading ? <Spinner /> : (loginMethod === "phone" && !otpSent ? "Send OTP" : "Log In")}
                                                 </button>
                                             </StaggerItem>
@@ -535,8 +454,8 @@ export default function AuthPage({ defaultTab = "signup" }) {
                         </AnimatePresence>
                     </div>
 
-                    <p className="mt-5 text-center text-xs text-slate-400">
-                        By continuing, you agree to our Terms of Service and Privacy Policy.
+                    <p className="mt-8 text-center text-[10px] uppercase font-bold tracking-widest text-[#6d758c]">
+                        By continuing, you agree to our Terms & Privacy Policy
                     </p>
                 </div>
             </div>
@@ -553,10 +472,7 @@ function StepDots({ current, total }) {
                 <motion.div
                     key={i}
                     className="h-1.5 rounded-full"
-                    animate={{
-                        width: i === current ? 32 : 12,
-                        backgroundColor: i <= current ? "#6366f1" : "#e2e8f0",
-                    }}
+                    animate={{ width: i === current ? 32 : 12, backgroundColor: i <= current ? "#4edea3" : "rgba(255,255,255,0.1)" }}
                     transition={{ type: "spring", stiffness: 300, damping: 25 }}
                 />
             ))}
@@ -566,31 +482,26 @@ function StepDots({ current, total }) {
 
 function PasswordStrength({ password }) {
     const checks = [
-        { label: "6+ characters", pass: password.length >= 6 },
-        { label: "Uppercase letter", pass: /[A-Z]/.test(password) },
+        { label: "6+ chars", pass: password.length >= 6 },
+        { label: "Upper", pass: /[A-Z]/.test(password) },
         { label: "Number", pass: /\d/.test(password) },
     ]
     const strength = checks.filter(c => c.pass).length
     const color = strength === 3 ? "emerald" : strength === 2 ? "amber" : "rose"
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-3 p-4 rounded-xl border border-white/5 bg-white/5 backdrop-blur-md">
             <div className="flex gap-1">
                 {[0, 1, 2].map(i => (
                     <motion.div
-                        key={i}
-                        className="h-1 flex-1 rounded-full"
-                        animate={{
-                            backgroundColor: i < strength
-                                ? color === "emerald" ? "#10b981" : color === "amber" ? "#f59e0b" : "#f43f5e"
-                                : "#e2e8f0",
-                        }}
+                        key={i} className="h-1 flex-1 rounded-full"
+                        animate={{ backgroundColor: i < strength ? (color === "emerald" ? "#4edea3" : color === "amber" ? "#fbbf24" : "#f43f5e") : "rgba(255,255,255,0.1)" }}
                     />
                 ))}
             </div>
-            <div className="flex flex-wrap gap-x-3 gap-y-1">
+            <div className="flex flex-wrap gap-x-4 gap-y-2">
                 {checks.map(c => (
-                    <span key={c.label} className={`text-[10px] ${c.pass ? "text-emerald-600" : "text-slate-400"}`}>
+                    <span key={c.label} className={`text-[10px] font-black uppercase tracking-wider ${c.pass ? "text-emerald-400" : "text-[#6d758c]"}`}>
                         {c.pass ? "✓" : "○"} {c.label}
                     </span>
                 ))}
@@ -601,10 +512,10 @@ function PasswordStrength({ password }) {
 
 function InputField({ icon: Icon, type = "text", placeholder, value, onChange, autoComplete }) {
     return (
-        <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 focus-within:bg-white transition">
-            {Icon && <Icon size={16} className="text-slate-400 shrink-0" />}
+        <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 focus-within:border-indigo-500 focus-within:bg-indigo-500/10 transition-all shadow-inner">
+            {Icon && <Icon size={16} className="text-[#a3aac4] shrink-0" />}
             <input type={type} placeholder={placeholder} value={value} onChange={e => onChange(e.target.value)}
-                autoComplete={autoComplete} className="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400" />
+                autoComplete={autoComplete} className="flex-1 bg-transparent text-sm text-white font-medium outline-none placeholder:text-[#6d758c] w-full" />
         </div>
     )
 }
@@ -613,21 +524,21 @@ function SelectField({ label, value, onChange, options }) {
     return (
         <div className="relative">
             <select value={value} onChange={e => onChange(e.target.value)}
-                className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50/50 pl-4 pr-8 py-3 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 focus:bg-white transition">
-                <option value="">{label}</option>
-                {options.map(o => <option key={o} value={o}>{o}</option>)}
+                className="w-full appearance-none rounded-xl border border-white/10 bg-white/5 pl-4 pr-10 py-3.5 text-sm font-medium text-white outline-none focus:border-indigo-500 focus:bg-indigo-500/10 transition-all shadow-inner">
+                <option value="" className="bg-[#0f1930]">{label}</option>
+                {options.map(o => <option key={o} value={o} className="bg-[#0f1930]">{o}</option>)}
             </select>
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#a3aac4] pointer-events-none" />
         </div>
     )
 }
 
 function Divider() {
     return (
-        <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-slate-200" />
-            <span className="text-xs text-slate-400">or</span>
-            <div className="flex-1 h-px bg-slate-200" />
+        <div className="flex items-center gap-4 py-2">
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-[10px] font-black uppercase text-[#6d758c] tracking-widest">or</span>
+            <div className="flex-1 h-px bg-white/10" />
         </div>
     )
 }
@@ -635,7 +546,7 @@ function Divider() {
 function GoogleButton({ onClick, label }) {
     return (
         <button type="button" onClick={onClick}
-            className="w-full flex items-center justify-center gap-2.5 rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 hover:shadow-md transition">
+            className="w-full flex items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 text-sm font-bold text-white hover:bg-white/10 transition-colors">
             <svg viewBox="0 0 24 24" width="18" height="18">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -648,5 +559,5 @@ function GoogleButton({ onClick, label }) {
 }
 
 function Spinner() {
-    return <span className="animate-spin inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+    return <span className="animate-spin inline-block h-4 w-4 border-2 border-[#002919] border-t-transparent rounded-full" />
 }

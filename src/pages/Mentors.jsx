@@ -1,236 +1,295 @@
+import { useState, useEffect, useMemo, useRef } from "react"
 import { Helmet } from "react-helmet-async"
-import { motion } from "framer-motion"
-import { useState, useEffect, useMemo } from "react"
-import { useNavigate } from "react-router-dom"
-import { Star, MapPin, GraduationCap, CalendarDays, Globe, ChevronDown, Filter, Users, Search, Sparkles } from "lucide-react"
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
+import { Search, Filter, Star, GraduationCap, MapPin, CheckCircle, Zap, Shield, Sparkles, ChevronRight, X } from "lucide-react"
 import { getMentors } from "../services/api"
-import DataState from "../components/DataState"
+import { Link, useNavigate } from "react-router-dom"
 import LoadingSkeleton from "../components/LoadingSkeleton"
-import { useRealtimeSync } from "../hooks/useRealtimeSync"
 
-const EXAM_OPTIONS = ["All", "JEE", "NEET", "CUET"]
-const SUBJECT_OPTIONS = ["All", "Physics", "Chemistry", "Maths", "Biology"]
-const COLLEGE_TYPE_OPTIONS = ["All", "IIT", "NIT", "IIIT", "AIIMS", "Other"]
-const LANGUAGE_OPTIONS = ["All", "Hindi", "English", "Hinglish"]
-const PRICE_RANGES = [
-    { label: "All Prices", min: 0, max: Infinity },
-    { label: "Under ₹200", min: 0, max: 200 },
-    { label: "₹200 – ₹500", min: 200, max: 500 },
-    { label: "₹500+", min: 500, max: Infinity },
-]
+const STREAMS = ["All", "Engineering", "Medical", "Design", "Commerce", "Arts"]
 
 export default function Mentors() {
     const navigate = useNavigate()
     const [mentors, setMentors] = useState([])
     const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-    const [search, setSearch] = useState("")
-    const [examFilter, setExamFilter] = useState("All")
-    const [subjectFilter, setSubjectFilter] = useState("All")
-    const [collegeFilter, setCollegeFilter] = useState("All")
-    const [languageFilter, setLanguageFilter] = useState("All")
-    const [priceRange, setPriceRange] = useState(0)
-    const [minRating, setMinRating] = useState(0)
+    const [searchQuery, setSearchQuery] = useState("")
+    const [activeStream, setActiveStream] = useState("All")
+    const [hoveredCard, setHoveredCard] = useState(null)
+    const containerRef = useRef(null)
+
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end end"]
+    })
+    const yParallax = useTransform(scrollYProgress, [0, 1], [0, 150])
+    // Bug fix: useTransform must be called at top level, NOT inline in JSX
+    const yParallax2 = useTransform(scrollYProgress, [0, 1], [0, -200])
 
     useEffect(() => {
         setLoading(true)
-        getMentors({}).then(data => {
-            setMentors(data)
-            setLoading(false)
-        }).catch(err => { setError(err.message); setLoading(false) })
+        getMentors()
+            .then((data) => { setMentors(data); setLoading(false) })
+            .catch(() => setLoading(false))
     }, [])
 
-    // Real-time Supabase sync for mentor list
-    useRealtimeSync("mentors", setMentors)
-
     const filteredMentors = useMemo(() => {
-        const pr = PRICE_RANGES[priceRange]
         return mentors.filter(m => {
-            if (examFilter !== "All" && !m.exam_focus?.includes(examFilter) && m.stream !== examFilter) return false
-            if (subjectFilter !== "All" && !m.subjects?.includes(subjectFilter) && m.specialization !== subjectFilter) return false
-            if (collegeFilter !== "All" && m.college_type !== collegeFilter) return false
-            if (languageFilter !== "All" && !m.languages?.includes(languageFilter) && m.language !== languageFilter) return false
-            const rate = m.rate_30min_inr || m.session_price || 0
-            if (rate < pr.min || rate > pr.max) return false
-            if ((m.rating || 0) < minRating) return false
-            if (search) {
-                const q = search.toLowerCase()
-                const nameMatch = (m.full_name || m.name || "").toLowerCase().includes(q)
-                const collegeMatch = (m.college || "").toLowerCase().includes(q)
-                const subMatch = (m.subjects || []).join(" ").toLowerCase().includes(q)
-                if (!nameMatch && !collegeMatch && !subMatch) return false
-            }
-            return true
+            const matchesSearch =
+                m.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                m.college?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                m.exam_focus?.some(e => e.toLowerCase().includes(searchQuery.toLowerCase()))
+            const matchesStream = activeStream === "All" || (m.subjects || []).includes(activeStream)
+            return matchesSearch && matchesStream
         })
-    }, [mentors, examFilter, subjectFilter, collegeFilter, languageFilter, priceRange, minRating, search])
+    }, [mentors, searchQuery, activeStream])
+
+    // Container Animation
+    const staggerAnim = {
+        hidden: { opacity: 0 },
+        show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+    }
+    const cardAnim = {
+        hidden: { opacity: 0, y: 30, scale: 0.95 },
+        show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 200, damping: 20 } }
+    }
 
     return (
-        <div className="space-y-8 pb-12">
+        <div className="relative min-h-screen pb-24 overflow-hidden" ref={containerRef}>
             <Helmet>
-                <title>Find a Mentor — 1:1 Sessions with IIT/NIT Seniors | TAKSHAK</title>
-                <meta name="description" content="Book 1:1 mentoring sessions with verified IIT, NIT, AIIMS seniors. Get exam strategy, college advice, and mock analysis." />
+                <title>Find a Mentor — Elite 1:1 Guidance | TAKSHAK</title>
+                <meta name="description" content="Connect with verified students from IITs, NITs, and top colleges for 1:1 mentorship and exam strategy." />
             </Helmet>
 
-            {/* Hero */}
-            <motion.section
-                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                className="rounded-[32px] bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 px-8 py-12 text-white relative overflow-hidden shadow-xl"
-            >
-                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-400 via-transparent to-transparent" />
-                <div className="relative z-10 max-w-2xl">
-                    <span className="inline-block rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-wider mb-4 border border-white/20 backdrop-blur-md text-indigo-200">
-                        <Sparkles size={12} className="inline mr-1" /> Verified Seniors Only
+            {/* ── Breathtaking Ambient Backgrounds ── */}
+            <div className="fixed inset-0 pointer-events-none z-0">
+                <motion.div
+                    style={{ y: yParallax, background: "radial-gradient(circle, #4edea3 0%, transparent 70%)" }}
+                    className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full mix-blend-screen opacity-20"
+                    animate={{ rotate: 360, scale: [1, 1.1, 1] }}
+                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                />
+                <motion.div
+                    style={{ y: yParallax2, background: "radial-gradient(circle, #3131c0 0%, transparent 70%)" }}
+                    className="absolute bottom-[-10%] left-[-10%] w-[800px] h-[800px] rounded-full mix-blend-screen opacity-15"
+                    animate={{ rotate: -360, scale: [1, 1.2, 1] }}
+                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                />
+                <div className="absolute top-[40%] left-[20%] w-[400px] h-[400px] rounded-full opacity-10 blur-[100px] mix-blend-screen bg-rose-500" />
+            </div>
+
+            {/* ── Hero Section ── */}
+            <div className="relative z-10 mx-auto max-w-7xl px-5 pt-12 pb-8">
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, ease: "easeOut" }} className="text-center relative">
+                    <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-6 backdrop-blur-md shadow-[0_0_20px_rgba(78,222,163,0.2)]">
+                        <Sparkles size={12} /> The Top 1% of Minds
                     </span>
-                    <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4">Find Your Mentor</h1>
-                    <p className="text-indigo-100/90 text-lg leading-relaxed">
-                        Book 1:1 sessions with <strong>verified seniors</strong> from IITs, NITs, and AIIMS. Get personalized strategies, mock analysis, and honest college advice.
+                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-indigo-100 to-indigo-400 drop-shadow-xl">
+                        Find Your <br className="md:hidden" /> True North
+                    </h1>
+                    <p className="text-base md:text-lg text-[#a3aac4] font-medium max-w-2xl mx-auto leading-relaxed">
+                        Learn directly from those who conquered the hardest exams. First session is absolutely <span className="text-emerald-400 font-bold border-b border-emerald-400/30">FREE <Zap size={14} className="inline mb-1" /></span>
                     </p>
-                </div>
-            </motion.section>
+                </motion.div>
+            </div>
 
-            {/* Filters */}
-            <motion.div
-                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4 sticky top-20 z-10"
-            >
-                {/* Search */}
-                <div className="relative">
-                    <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                        type="text" value={search} onChange={e => setSearch(e.target.value)}
-                        placeholder="Search by name, college, or subject..."
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:bg-white transition"
-                    />
-                </div>
+            {/* ── Floating Control Bar (Glassmorphism) ── */}
+            <div className="sticky top-20 z-40 mx-auto max-w-7xl px-5 mb-12">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                    className="flex flex-col md:flex-row gap-4 items-center p-3 rounded-2xl md:rounded-full border border-white/10 bg-[#0f1930]/60 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
 
-                {/* Filter pills */}
-                <div className="flex flex-wrap items-center gap-3">
-                    <span className="flex items-center gap-1.5 text-slate-500 font-semibold text-xs shrink-0"><Filter size={14} /> Filters:</span>
-                    <FilterSelect label="Exam" value={examFilter} options={EXAM_OPTIONS} onChange={setExamFilter} />
-                    <FilterSelect label="Subject" value={subjectFilter} options={SUBJECT_OPTIONS} onChange={setSubjectFilter} />
-                    <FilterSelect label="College" value={collegeFilter} options={COLLEGE_TYPE_OPTIONS} onChange={setCollegeFilter} />
-                    <FilterSelect label="Language" value={languageFilter} options={LANGUAGE_OPTIONS} onChange={setLanguageFilter} />
-                    <FilterSelect label="Price" value={priceRange} options={PRICE_RANGES.map(p => p.label)} onChange={v => setPriceRange(PRICE_RANGES.findIndex(p => p.label === v) || 0)} isIndex />
-
-                    {/* Rating slider */}
-                    <div className="flex items-center gap-2 ml-auto">
-                        <span className="text-xs text-slate-500 font-medium">Min ⭐</span>
-                        <input type="range" min={0} max={5} step={0.5} value={minRating} onChange={e => setMinRating(Number(e.target.value))}
-                            className="w-20 h-1.5 accent-indigo-600" />
-                        <span className="text-xs font-bold text-indigo-600 w-6">{minRating}</span>
+                    {/* Search Input */}
+                    <div className="relative w-full md:max-w-xs group">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#a3aac4] group-focus-within:text-indigo-400 transition-colors">
+                            <Search size={16} />
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Search by name, college, exam..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="bg-white/5 border border-transparent focus:border-indigo-500/40 focus:bg-white/10 text-white placeholder:text-[#6d758c] text-sm rounded-full w-full py-3.5 pl-11 pr-4 outline-none transition-all duration-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]"
+                        />
+                        {searchQuery && (
+                            <button onClick={() => setSearchQuery("")} className="absolute inset-y-0 right-0 pr-4 flex items-center text-[#6d758c] hover:text-white transition-colors">
+                                <X size={14} />
+                            </button>
+                        )}
                     </div>
-                </div>
-            </motion.div>
 
-            {/* Results */}
-            <DataState loading={loading} error={error} empty={!loading && filteredMentors.length === 0}
-                emptyText="No mentors match your filters. Try adjusting."
-            >
-                {loading ? <LoadingSkeleton rows={6} /> : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                        {filteredMentors.map((mentor, idx) => (
-                            <MentorCard key={mentor.id} mentor={mentor} index={idx} onClick={() => navigate(`/mentors/${mentor.id}`)} />
+                    {/* Stream Filters */}
+                    <div className="flex items-center gap-2 overflow-x-auto w-full pb-2 md:pb-0 hide-scrollbar px-1">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/5 text-[#a3aac4]">
+                            <Filter size={14} />
+                        </div>
+                        {STREAMS.map((s) => (
+                            <button
+                                key={s}
+                                onClick={() => setActiveStream(s)}
+                                className={`whitespace-nowrap rounded-full px-5 py-2 text-xs font-bold transition-all duration-300 relative overflow-hidden ${activeStream === s ? "text-white shadow-[0_0_15px_rgba(99,102,241,0.5)]" : "text-[#a3aac4] hover:text-white hover:bg-white/5"}`}
+                            >
+                                {activeStream === s && (
+                                    <motion.div layoutId="activeStreamBackground" className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 -z-10"
+                                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} />
+                                )}
+                                <span className="relative z-10">{s}</span>
+                            </button>
                         ))}
                     </div>
-                )}
-            </DataState>
-        </div>
-    )
-}
-
-function MentorCard({ mentor, index, onClick }) {
-    const name = mentor.full_name || mentor.name || "Mentor"
-    const initials = name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()
-    const rate = mentor.rate_30min_inr || mentor.session_price || "Free"
-    const subjects = mentor.subjects || (mentor.specialization ? [mentor.specialization] : [])
-    const exams = mentor.exam_focus || (mentor.stream ? [mentor.stream] : [])
-
-    return (
-        <motion.article
-            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-            onClick={onClick}
-            className="group rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col"
-        >
-            {/* Header gradient */}
-            <div className="h-20 bg-gradient-to-r from-indigo-500 to-blue-500 relative">
-                <div className="absolute -bottom-8 left-5">
-                    {mentor.photo_url ? (
-                        <img src={mentor.photo_url} alt={name} className="w-16 h-16 rounded-2xl border-4 border-white shadow-lg object-cover" />
-                    ) : (
-                        <div className="w-16 h-16 rounded-2xl border-4 border-white shadow-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white text-lg font-black">
-                            {initials}
-                        </div>
-                    )}
-                </div>
-                {mentor.is_verified && (
-                    <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-emerald-600 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
-                        ✓ Verified
-                    </span>
-                )}
+                </motion.div>
             </div>
 
-            {/* Body */}
-            <div className="px-5 pt-12 pb-5 flex-1 flex flex-col">
-                <h3 className="text-sm font-bold text-slate-900 group-hover:text-indigo-700 transition">{name}</h3>
-                <p className="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1">
-                    <GraduationCap size={11} /> {mentor.college || "Top College"} · {mentor.branch || ""} '{(mentor.grad_year || "").toString().slice(-2)}
-                </p>
-                {mentor.city_origin && (
-                    <p className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
-                        <MapPin size={10} /> {mentor.city_origin}
-                    </p>
-                )}
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-1 mt-3">
-                    {exams.map(e => (
-                        <span key={e} className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-[9px] font-bold uppercase tracking-wider rounded-md border border-indigo-100">{e}</span>
-                    ))}
-                    {subjects.slice(0, 3).map(s => (
-                        <span key={s} className="px-2 py-0.5 bg-purple-50 text-purple-700 text-[9px] font-bold uppercase tracking-wider rounded-md border border-purple-100">{s}</span>
-                    ))}
-                </div>
-
-                {/* Languages */}
-                {(mentor.languages || []).length > 0 && (
-                    <p className="text-[10px] text-slate-400 mt-2 flex items-center gap-1">
-                        <Globe size={10} /> {mentor.languages.join(", ")}
-                    </p>
-                )}
-
-                {/* Bottom stats */}
-                <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-100">
-                    <div className="flex items-center gap-1 text-amber-500">
-                        <Star size={13} fill="currentColor" />
-                        <span className="text-xs font-bold text-slate-700">{mentor.rating || "New"}</span>
-                        <span className="text-[10px] text-slate-400">({mentor.total_sessions || 0} sessions)</span>
+            {/* ── Breathtaking Mentors Grid ── */}
+            <div className="relative z-10 mx-auto max-w-7xl px-5">
+                {loading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <div key={i} className="rounded-[2rem] h-[450px] bg-white/5 animate-pulse border border-white/10" />
+                        ))}
                     </div>
-                    <span className="text-sm font-black text-emerald-600">₹{rate}<span className="text-[10px] text-slate-400 font-normal">/30min</span></span>
-                </div>
-            </div>
+                ) : filteredMentors.length === 0 ? (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-24 text-center">
+                        <div className="relative w-24 h-24 mb-6">
+                            <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl" />
+                            <Search size={48} className="text-[#6d758c] relative z-10 m-auto mt-6" />
+                        </div>
+                        <h3 className="text-2xl font-bold text-white mb-2">No Mentors Found</h3>
+                        <p className="text-[#a3aac4] text-sm max-w-sm mx-auto">Try adjusting your search criteria or explore other streams. The perfect mentor is waiting!</p>
+                        <button onClick={() => { setSearchQuery(""); setActiveStream("All") }} className="mt-6 px-6 py-2 rounded-full border border-indigo-500/30 text-indigo-400 text-sm font-bold hover:bg-indigo-500/10 transition-colors">
+                            Clear Filters
+                        </button>
+                    </motion.div>
+                ) : (
+                    <motion.div variants={staggerAnim} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        {filteredMentors.map((mentor) => {
+                            const initials = (mentor.full_name || mentor.name || "M").split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()
+                            const isHovered = hoveredCard === mentor.id
 
-            {/* CTA */}
-            <div className="px-5 pb-5">
-                <button className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-4 py-2.5 text-sm font-semibold shadow-sm hover:shadow-md transition flex items-center justify-center gap-2">
-                    <CalendarDays size={15} /> Book Session
-                </button>
-            </div>
-        </motion.article>
-    )
-}
+                            return (
+                                <motion.div
+                                    key={mentor.id}
+                                    variants={cardAnim}
+                                    className="group relative flex flex-col h-[480px] rounded-[2rem] overflow-hidden"
+                                    onHoverStart={() => setHoveredCard(mentor.id)}
+                                    onHoverEnd={() => setHoveredCard(null)}
+                                >
+                                    {/* Sub-Card Glow Drop Shadow */}
+                                    <div className={`absolute inset-0 rounded-[2rem] bg-indigo-500/20 blur-2xl transition-opacity duration-500 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
 
-function FilterSelect({ label, value, options, onChange, isIndex }) {
-    return (
-        <div className="relative min-w-[110px]">
-            <select
-                value={isIndex ? options[value] : value}
-                onChange={e => onChange(e.target.value)}
-                className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 pr-8 text-xs font-semibold text-slate-700 outline-none focus:border-indigo-500 focus:bg-white transition"
-            >
-                {options.map(opt => <option key={opt} value={opt}>{opt === "All" ? `All ${label}s` : opt}</option>)}
-            </select>
-            <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+                                    {/* Card Container */}
+                                    <div className="relative h-full flex flex-col bg-[#0f1930] rounded-[2rem] border border-white/10 overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:border-indigo-500/50">
+
+                                        {/* ── Top Half: Prominent Dynamic Image ── */}
+                                        <div className="relative h-[55%] w-full bg-[#16213e] overflow-hidden shrink-0 group-hover:h-[45%] transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]">
+                                            {/* Free Session Flag */}
+                                            <div className="absolute top-4 left-4 z-20">
+                                                <div className="flex items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-[#002919] px-3 py-1.5 rounded-full text-[10px] font-black tracking-wider uppercase shadow-[0_4px_15px_rgba(78,222,163,0.4)]">
+                                                    <Zap size={12} className="fill-[#002919]" /> First 10m Free
+                                                </div>
+                                            </div>
+
+                                            {/* Top Right Icons */}
+                                            <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
+                                                {mentor.is_verified && (
+                                                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#4edea3] tooltip-trigger">
+                                                        <Shield size={14} className="drop-shadow-[0_0_8px_rgba(78,222,163,0.8)]" />
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* The Picture */}
+                                            {mentor.photo_url ? (
+                                                <motion.img
+                                                    src={mentor.photo_url}
+                                                    alt={mentor.full_name}
+                                                    className="w-full h-full object-cover object-top transition-transform duration-700"
+                                                    animate={{ scale: isHovered ? 1.05 : 1 }}
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-900 to-[#0f1930] transition-transform duration-700"
+                                                    style={{ transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}>
+                                                    <span className="text-6xl font-black text-white/10 drop-shadow-md">{initials}</span>
+                                                </div>
+                                            )}
+
+                                            {/* Bottom Gradient Fade to pure structural dark */}
+                                            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0f1930] via-[#0f1930]/80 to-transparent z-10" />
+
+                                            {/* Rating Badge - Floats on the gradient line */}
+                                            <div className="absolute bottom-4 right-4 z-20">
+                                                <div className="flex items-center gap-1 bg-[#1a264a]/80 backdrop-blur-xl border border-white/10 px-2.5 py-1 rounded-xl shadow-lg">
+                                                    <Star size={12} className="text-amber-400 fill-amber-400 drop-shadow-[0_0_5px_rgba(251,191,36,0.6)]" />
+                                                    <span className="text-xs font-black text-white">{mentor.rating || "5.0"}</span>
+                                                    <span className="text-[9px] text-[#6d758c] font-medium ml-0.5">({mentor.total_sessions || 0})</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* ── Bottom Half: Dark Glass Details ── */}
+                                        <div className="relative flex flex-col flex-1 px-6 pt-2 pb-6 z-20">
+                                            {/* Info block */}
+                                            <div className="flex-1 space-y-3">
+                                                <div>
+                                                    <h3 className="text-xl font-extrabold text-white tracking-tight leading-tight group-hover:text-indigo-300 transition-colors">
+                                                        {(mentor.full_name || mentor.name || "Mentor Name")}
+                                                    </h3>
+                                                    <p className="text-xs text-[#a3aac4] flex items-center gap-1.5 mt-1">
+                                                        <GraduationCap size={14} className="text-indigo-400" />
+                                                        <span className="truncate">{mentor.college}</span>
+                                                    </p>
+                                                    {mentor.city_origin && (
+                                                        <p className="text-[10px] text-[#6d758c] flex items-center gap-1 font-medium mt-1">
+                                                            <MapPin size={10} /> {mentor.city_origin}
+                                                        </p>
+                                                    )}
+                                                </div>
+
+                                                {/* Tags Grid */}
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {(mentor.exam_focus || []).slice(0, 3).map((e) => (
+                                                        <span key={e} className="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
+                                                            {e}
+                                                        </span>
+                                                    ))}
+                                                    {(mentor.subjects || []).slice(0, 2).map((s) => (
+                                                        <span key={s} className="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border border-indigo-500/20 bg-indigo-500/10 text-indigo-400">
+                                                            {s}
+                                                        </span>
+                                                    ))}
+                                                    {((mentor.exam_focus?.length || 0) + (mentor.subjects?.length || 0) > 5) && (
+                                                        <span className="px-2 py-0.5 rounded text-[9px] font-black border border-white/10 bg-white/5 text-[#a3aac4]">
+                                                            +More
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                {/* Bio snippet */}
+                                                <p className="text-[11px] leading-relaxed text-[#6d758c] line-clamp-2 mt-4 transition-all duration-300 opacity-0 h-0 group-hover:opacity-100 group-hover:h-auto overflow-hidden">
+                                                    {mentor.bio || "An expert mentor ready to guide you to success with a personalized roadmap."}
+                                                </p>
+                                            </div>
+
+                                            {/* Pricing & CTA Line */}
+                                            <div className="flex items-center justify-between pt-4 mt-auto border-t border-white/10 relative z-30">
+                                                <div>
+                                                    <p className="text-[9px] uppercase tracking-widest text-[#6d758c] font-black mb-0.5">10 Min Session</p>
+                                                    <p className="text-lg font-black text-white">₹80</p>
+                                                </div>
+                                                <button
+                                                    onClick={() => navigate(`/mentors/${mentor.id}`)}
+                                                    className="flex items-center justify-center h-10 w-10 md:w-auto md:px-5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg transition-all duration-300 hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:scale-95 group/btn"
+                                                >
+                                                    <span className="hidden md:block text-xs font-bold mr-2">Book Slot</span>
+                                                    <ChevronRight size={16} className="transition-transform group-hover/btn:translate-x-1" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )
+                        })}
+                    </motion.div>
+                )}
+            </div>
         </div>
     )
 }

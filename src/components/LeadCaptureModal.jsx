@@ -22,7 +22,8 @@ export default function LeadCaptureModal() {
 
     // Show after 15 seconds of browsing
     const timer = setTimeout(() => {
-      setIsOpen(true);
+      // Disabled auto pop-up as per user request
+      // setIsOpen(true);
     }, 15000);
 
     return () => clearTimeout(timer);

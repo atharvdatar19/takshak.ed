@@ -18,16 +18,14 @@ const NAV_ITEMS = [
     { to: "/admin/educators", label: "Educator CMS", icon: BookOpen, roles: ["admin", "content_editor"] },
     { to: "/admin/colleges", label: "College CMS", icon: Building2, roles: ["admin", "content_editor"] },
     { to: "/admin/exams", label: "Exam Timeline", icon: Clock, roles: ["admin", "content_editor"] },
-    { to: "/admin/bridge-courses", label: "Bridge Courses", icon: Layers, roles: ["admin", "content_editor"] },
     { to: "/admin/team", label: "Team Access", icon: ShieldCheck, roles: ["admin"] },
 ]
 
 export default function AdminShell() {
     const [sidebarOpen, setSidebarOpen] = useState(true)
-    const { user, signOut } = useAuth()
+    const { user, role, signOut } = useAuth()
     const navigate = useNavigate()
-    // In production, fetch from DB. Demo: assume admin
-    const userRole = "admin"
+    const userRole = role // pulled from AuthContext — reflects actual DB + demo role
 
     const visibleNav = NAV_ITEMS.filter(item => item.roles.includes(userRole))
 

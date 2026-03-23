@@ -1,57 +1,158 @@
 import { Helmet } from "react-helmet-async"
 import { motion } from "framer-motion"
 import { useState, useEffect } from "react"
-import { CalendarDays, DollarSign, Clock, User, Video, CheckCircle, ExternalLink, TrendingUp, Calendar, AlertCircle } from "lucide-react"
-import { getMentorSessions, getMyTransactions, markSessionComplete } from "../services/api"
+import { CalendarDays, DollarSign, Clock, User, Video, CheckCircle, XCircle, ExternalLink, TrendingUp, Calendar, AlertCircle, Link2, Shield, Loader, Gift } from "lucide-react"
 import { useAuth } from "../contexts/AuthContext"
 import { useToast } from "../components/Toast"
 import LoadingSkeleton from "../components/LoadingSkeleton"
+import supabase from "../supabaseClient"
 
 const TABS = [
+    { id: "pending", label: "Pending Requests", icon: Clock },
     { id: "sessions", label: "Upcoming Sessions", icon: CalendarDays },
     { id: "earnings", label: "Earnings", icon: DollarSign },
     { id: "availability", label: "Availability", icon: Clock },
     { id: "profile", label: "Profile", icon: User },
 ]
 
-// Demo data for mentor dashboard
-const DEMO_UPCOMING = [
-    { id: "s2", student_name: "Varun K.", topic: "Mock Test Analysis", duration_minutes: 30, agreed_rate_inr: 299, meet_link: "https://meet.jit.si/takshak-s2", status: "confirmed", created_at: new Date(Date.now() + 86400000).toISOString() },
-    { id: "s3", student_name: "Priya S.", topic: "JEE Physics Strategy", duration_minutes: 60, agreed_rate_inr: 499, meet_link: "https://meet.jit.si/takshak-s3", status: "confirmed", created_at: new Date(Date.now() + 86400000 * 3).toISOString() },
-]
-
-const DEMO_EARNINGS = {
-    total: 12450, thisMonth: 3200, pending: 798, lastPayout: "2026-03-15",
-    sessions: [
-        { id: "s1", student_name: "Neha D.", topic: "Electrostatics", amount: 499, payout: 399.20, date: "2026-03-10", status: "cleared" },
-        { id: "s4", student_name: "Rahul M.", topic: "College Selection", amount: 299, payout: 239.20, date: "2026-03-08", status: "cleared" },
-        { id: "s5", student_name: "Ananya R.", topic: "NEET Biology", amount: 499, payout: 399.20, date: "2026-03-03", status: "cleared" },
-    ]
-}
-
 export default function MentorDashboard() {
-    const [activeTab, setActiveTab] = useState("sessions")
-    const [sessions, setSessions] = useState([])
+    const [activeTab, setActiveTab] = useState("pending")
+    const [pendingSessions, setPendingSessions] = useState([])
+    const [upcomingSessions, setUpcomingSessions] = useState([])
     const [loading, setLoading] = useState(true)
+    const [actionLoading, setActionLoading] = useState(null) // track which session is being acted on
     const { user } = useAuth()
     const { addToast } = useToast()
 
+    // Fetch sessions for this mentor
     useEffect(() => {
-        setLoading(true)
-        getMentorSessions("m1").then(data => {
-            setSessions(data)
-            setLoading(false)
-        })
-    }, [])
+        async function loadSessions() {
+            setLoading(true)
+            try {
+                if (supabase && user) {
+                    // Get mentor record for this user
+                    const { data: mentorData } = await supabase
+                        .from("mentors")
+                        .select("id")
+                        .eq("user_id", user.id)
+                        .single()
 
-    const handleMarkComplete = async (sessionId) => {
+                    if (mentorData) {
+                        // Fetch pending sessions
+                        const { data: pending } = await supabase
+                            .from("sessions")
+                            .select("*")
+                            .eq("mentor_id", mentorData.id)
+                            .eq("status", "pending")
+                            .order("created_at", { ascending: false })
+
+                        // Fetch accepted/upcoming sessions
+                        const { data: upcoming } = await supabase
+                            .from("sessions")
+                            .select("*")
+                            .eq("mentor_id", mentorData.id)
+                            .eq("status", "accepted")
+                            .order("scheduled_at", { ascending: true })
+
+                        setPendingSessions(pending || [])
+                        setUpcomingSessions(upcoming || [])
+                    }
+                } else {
+                    // Demo data
+                    setPendingSessions([
+                        { id: "demo-1", student_email: "varun@gmail.com", topic: "JEE Physics — Electrostatics doubt clearing", duration_minutes: 10, agreed_rate_inr: 0, is_free_session: true, status: "pending", created_at: new Date().toISOString() },
+                        { id: "demo-2", student_email: "priya@gmail.com", topic: "College selection advice — NIT vs IIIT", duration_minutes: 10, agreed_rate_inr: 80, is_free_session: false, status: "pending", created_at: new Date(Date.now() - 3600000).toISOString() },
+                    ])
+                    setUpcomingSessions([
+                        { id: "demo-3", student_email: "neha@gmail.com", topic: "Mock Test Analysis", duration_minutes: 10, agreed_rate_inr: 80, meet_link: "https://meet.jit.si/takshak-demo3", status: "accepted", scheduled_at: new Date(Date.now() + 86400000).toISOString(), created_at: new Date().toISOString() },
+                    ])
+                }
+            } catch (err) {
+                console.error("Failed to load sessions:", err)
+            }
+            setLoading(false)
+        }
+        loadSessions()
+    }, [user])
+
+    // Accept a session and generate Jitsi Meet link
+    const handleAccept = async (sessionId) => {
+        setActionLoading(sessionId)
         try {
-            await markSessionComplete(sessionId)
-            setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, status: "completed" } : s))
-            addToast("success", "Session marked as complete. Payout will process in 24 hours.")
+            const meetId = `takshak-${sessionId.slice(0, 8)}-${Date.now().toString(36)}`
+            const meetLink = `https://meet.jit.si/${meetId}`
+            const meetPassword = Math.random().toString(36).slice(2, 8)
+
+            if (supabase) {
+                const { error } = await supabase
+                    .from("sessions")
+                    .update({
+                        status: "accepted",
+                        meet_link: meetLink,
+                        meet_password: meetPassword,
+                    })
+                    .eq("id", sessionId)
+
+                if (error) throw error
+            }
+
+            // Move from pending to upcoming
+            const session = pendingSessions.find(s => s.id === sessionId)
+            if (session) {
+                const updated = { ...session, status: "accepted", meet_link: meetLink, meet_password: meetPassword }
+                setPendingSessions(prev => prev.filter(s => s.id !== sessionId))
+                setUpcomingSessions(prev => [updated, ...prev])
+            }
+
+            addToast("success", "Session accepted! Meet link generated and will be sent to student.")
+        } catch (err) {
+            console.error("Accept Error:", err)
+            addToast("error", err.message || "Failed to accept session")
+        }
+        setActionLoading(null)
+    }
+
+    // Reject a session
+    const handleReject = async (sessionId) => {
+        setActionLoading(sessionId)
+        try {
+            if (supabase) {
+                const { error } = await supabase
+                    .from("sessions")
+                    .update({ status: "rejected" })
+                    .eq("id", sessionId)
+
+                if (error) throw error
+            }
+
+            setPendingSessions(prev => prev.filter(s => s.id !== sessionId))
+            addToast("success", "Session declined. Student will be notified.")
+        } catch (err) {
+            console.error("Reject Error:", err)
+            addToast("error", err.message || "Failed to decline session")
+        }
+        setActionLoading(null)
+    }
+
+    // Mark session complete
+    const handleMarkComplete = async (sessionId) => {
+        setActionLoading(sessionId)
+        try {
+            if (supabase) {
+                await supabase.from("sessions").update({ status: "completed" }).eq("id", sessionId)
+            }
+            setUpcomingSessions(prev => prev.map(s => s.id === sessionId ? { ...s, status: "completed" } : s))
+            addToast("success", "Session marked as complete.")
         } catch {
             addToast("error", "Could not mark session as complete.")
         }
+        setActionLoading(null)
+    }
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "Flexible"
+        const d = new Date(dateStr)
+        return `${d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })} · ${d.toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit", hour12: true })}`
     }
 
     return (
@@ -70,7 +171,19 @@ export default function MentorDashboard() {
                         🎓 Mentor Panel
                     </span>
                     <h1 className="text-3xl font-black tracking-tight">Mentor Dashboard</h1>
-                    <p className="text-emerald-100/80 text-sm mt-1">Manage sessions, track earnings, and update your availability.</p>
+                    <p className="text-emerald-100/80 text-sm mt-1">Manage session requests, track earnings, and update your availability.</p>
+                    
+                    {/* Quick stats */}
+                    <div className="flex gap-6 mt-6">
+                        <div>
+                            <p className="text-2xl font-black text-white">{pendingSessions.length}</p>
+                            <p className="text-[10px] text-emerald-200 uppercase tracking-wider font-bold">Pending</p>
+                        </div>
+                        <div>
+                            <p className="text-2xl font-black text-white">{upcomingSessions.length}</p>
+                            <p className="text-[10px] text-emerald-200 uppercase tracking-wider font-bold">Upcoming</p>
+                        </div>
+                    </div>
                 </div>
             </motion.section>
 
@@ -78,6 +191,7 @@ export default function MentorDashboard() {
             <div className="flex gap-2 overflow-x-auto pb-1">
                 {TABS.map(tab => {
                     const Icon = tab.icon
+                    const count = tab.id === "pending" ? pendingSessions.length : tab.id === "sessions" ? upcomingSessions.length : null
                     return (
                         <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-semibold transition ${activeTab === tab.id
@@ -86,6 +200,9 @@ export default function MentorDashboard() {
                                 }`}
                         >
                             <Icon size={15} /> {tab.label}
+                            {count > 0 && (
+                                <span className="ml-1 px-1.5 py-0.5 rounded-full bg-red-500 text-white text-[9px] font-black">{count}</span>
+                            )}
                         </button>
                     )
                 })}
@@ -94,18 +211,79 @@ export default function MentorDashboard() {
             {/* Tab Content */}
             {loading ? <LoadingSkeleton rows={6} /> : (
                 <>
+                    {/* PENDING REQUESTS */}
+                    {activeTab === "pending" && (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                            {pendingSessions.length === 0 ? (
+                                <div className="text-center py-16 rounded-2xl border border-slate-200 bg-white">
+                                    <p className="text-4xl mb-3">📭</p>
+                                    <p className="text-sm text-slate-500">No pending requests. Students will book you soon!</p>
+                                </div>
+                            ) : (
+                                pendingSessions.map((session, idx) => (
+                                    <motion.div key={session.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}
+                                        className="rounded-2xl border border-slate-200 bg-white shadow-sm p-5"
+                                    >
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-700">
+                                                        Pending
+                                                    </span>
+                                                    {session.is_free_session && (
+                                                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 flex items-center gap-0.5">
+                                                            <Gift size={9} /> Free
+                                                        </span>
+                                                    )}
+                                                    <span className="text-[10px] text-slate-400">{session.duration_minutes} min</span>
+                                                </div>
+                                                <h3 className="text-sm font-bold text-slate-900">{session.student_email || "Student"}</h3>
+                                                <p className="text-xs text-slate-500 mt-0.5">{session.topic}</p>
+                                                <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                                                    <CalendarDays size={11} /> Requested {formatDate(session.created_at)}
+                                                </p>
+                                            </div>
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                <span className="text-lg font-black text-emerald-600">
+                                                    {session.is_free_session ? "FREE" : `₹${session.agreed_rate_inr}`}
+                                                </span>
+                                                <button
+                                                    onClick={() => handleReject(session.id)}
+                                                    disabled={actionLoading === session.id}
+                                                    className="rounded-xl bg-red-50 text-red-600 px-3 py-2 text-xs font-bold border border-red-200 hover:bg-red-100 transition flex items-center gap-1 disabled:opacity-40"
+                                                >
+                                                    <XCircle size={13} /> Decline
+                                                </button>
+                                                <button
+                                                    onClick={() => handleAccept(session.id)}
+                                                    disabled={actionLoading === session.id}
+                                                    className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-3 py-2 text-xs font-bold shadow-sm hover:shadow-md transition flex items-center gap-1 disabled:opacity-40"
+                                                >
+                                                    {actionLoading === session.id ? (
+                                                        <Loader size={13} className="animate-spin" />
+                                                    ) : (
+                                                        <CheckCircle size={13} />
+                                                    )}
+                                                    Accept & Generate Link
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))
+                            )}
+                        </motion.div>
+                    )}
+
                     {/* UPCOMING SESSIONS */}
                     {activeTab === "sessions" && (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                            {DEMO_UPCOMING.length === 0 ? (
+                            {upcomingSessions.length === 0 ? (
                                 <div className="text-center py-16 rounded-2xl border border-slate-200 bg-white">
                                     <p className="text-4xl mb-3">📅</p>
-                                    <p className="text-sm text-slate-500">No upcoming sessions. Students will book you soon!</p>
+                                    <p className="text-sm text-slate-500">No upcoming sessions. Accept pending requests to see them here.</p>
                                 </div>
                             ) : (
-                                DEMO_UPCOMING.map((session, idx) => {
-                                    const sessionDate = new Date(session.created_at)
-                                    const isPast = sessionDate < new Date()
+                                upcomingSessions.map((session, idx) => {
                                     const isCompleted = session.status === "completed"
                                     return (
                                         <motion.div key={session.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}
@@ -119,29 +297,44 @@ export default function MentorDashboard() {
                                                         </span>
                                                         <span className="text-[10px] text-slate-400">{session.duration_minutes} min</span>
                                                     </div>
-                                                    <h3 className="text-sm font-bold text-slate-900">{session.student_name}</h3>
+                                                    <h3 className="text-sm font-bold text-slate-900">{session.student_email || "Student"}</h3>
                                                     <p className="text-xs text-slate-500 mt-0.5">{session.topic}</p>
                                                     <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
-                                                        <CalendarDays size={11} /> {sessionDate.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })} · {sessionDate.toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit", hour12: true })}
+                                                        <CalendarDays size={11} /> {formatDate(session.scheduled_at || session.created_at)}
                                                     </p>
                                                 </div>
                                                 <div className="flex items-center gap-2 shrink-0">
-                                                    <span className="text-lg font-black text-emerald-600">₹{session.agreed_rate_inr}</span>
-                                                    <a href={session.meet_link} target="_blank" rel="noopener noreferrer"
-                                                        className="rounded-xl bg-indigo-50 text-indigo-600 px-3 py-2 text-xs font-bold border border-indigo-200 hover:bg-indigo-100 transition flex items-center gap-1"
-                                                    >
-                                                        <Video size={13} /> Join
-                                                    </a>
+                                                    <span className="text-lg font-black text-emerald-600">
+                                                        {session.is_free_session ? "FREE" : `₹${session.agreed_rate_inr}`}
+                                                    </span>
+                                                    {session.meet_link && (
+                                                        <a href={session.meet_link} target="_blank" rel="noopener noreferrer"
+                                                            className="rounded-xl bg-indigo-50 text-indigo-600 px-3 py-2 text-xs font-bold border border-indigo-200 hover:bg-indigo-100 transition flex items-center gap-1"
+                                                        >
+                                                            <Video size={13} /> Join
+                                                        </a>
+                                                    )}
                                                     {!isCompleted && (
-                                                        <button onClick={() => handleMarkComplete(session.id)} disabled={!isPast}
-                                                            className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-3 py-2 text-xs font-bold shadow-sm hover:shadow-md transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1"
-                                                            title={isPast ? "Mark as complete" : "Wait until session time passes"}
+                                                        <button onClick={() => handleMarkComplete(session.id)}
+                                                            disabled={actionLoading === session.id}
+                                                            className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-3 py-2 text-xs font-bold shadow-sm hover:shadow-md transition disabled:opacity-40 flex items-center gap-1"
                                                         >
                                                             <CheckCircle size={13} /> Complete
                                                         </button>
                                                     )}
                                                 </div>
                                             </div>
+
+                                            {/* Meet link details */}
+                                            {session.meet_link && (
+                                                <div className="mt-3 rounded-xl bg-sky-50 border border-sky-200 p-3 flex items-start gap-2">
+                                                    <Shield size={13} className="text-sky-600 mt-0.5 shrink-0" />
+                                                    <div className="text-[10px] text-sky-700">
+                                                        <p className="font-bold">Meet Link: <a href={session.meet_link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">{session.meet_link}</a></p>
+                                                        {session.meet_password && <p>Password: <span className="font-mono font-bold">{session.meet_password}</span></p>}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </motion.div>
                                     )
                                 })
@@ -152,57 +345,11 @@ export default function MentorDashboard() {
                     {/* EARNINGS */}
                     {activeTab === "earnings" && (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
-                            {/* Stats */}
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                                {[
-                                    { label: "Total Earned", value: `₹${DEMO_EARNINGS.total.toLocaleString()}`, color: "text-emerald-600", bg: "bg-emerald-50" },
-                                    { label: "This Month", value: `₹${DEMO_EARNINGS.thisMonth.toLocaleString()}`, color: "text-indigo-600", bg: "bg-indigo-50" },
-                                    { label: "Pending Clearance", value: `₹${DEMO_EARNINGS.pending.toLocaleString()}`, color: "text-amber-600", bg: "bg-amber-50" },
-                                    { label: "Last Payout", value: DEMO_EARNINGS.lastPayout, color: "text-slate-600", bg: "bg-slate-50" },
-                                ].map((stat, i) => (
-                                    <div key={i} className={`rounded-2xl border border-slate-200 ${stat.bg} p-4`}>
-                                        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">{stat.label}</p>
-                                        <p className={`text-xl font-black ${stat.color}`}>{stat.value}</p>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Session breakdown */}
-                            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-5">
-                                <h3 className="text-sm font-bold text-slate-900 mb-4">Per-Session Breakdown</h3>
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-sm">
-                                        <thead>
-                                            <tr className="border-b border-slate-100">
-                                                <th className="text-left text-[10px] font-bold uppercase tracking-wider text-slate-400 pb-3">Student</th>
-                                                <th className="text-left text-[10px] font-bold uppercase tracking-wider text-slate-400 pb-3">Topic</th>
-                                                <th className="text-right text-[10px] font-bold uppercase tracking-wider text-slate-400 pb-3">Paid</th>
-                                                <th className="text-right text-[10px] font-bold uppercase tracking-wider text-slate-400 pb-3">Your Share</th>
-                                                <th className="text-right text-[10px] font-bold uppercase tracking-wider text-slate-400 pb-3">Date</th>
-                                                <th className="text-right text-[10px] font-bold uppercase tracking-wider text-slate-400 pb-3">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {DEMO_EARNINGS.sessions.map(s => (
-                                                <tr key={s.id} className="border-b border-slate-50">
-                                                    <td className="py-3 font-semibold text-slate-700">{s.student_name}</td>
-                                                    <td className="py-3 text-slate-500 text-xs">{s.topic}</td>
-                                                    <td className="py-3 text-right">₹{s.amount}</td>
-                                                    <td className="py-3 text-right font-bold text-emerald-600">₹{s.payout}</td>
-                                                    <td className="py-3 text-right text-xs text-slate-400">{s.date}</td>
-                                                    <td className="py-3 text-right">
-                                                        <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-emerald-100 text-emerald-700">{s.status}</span>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 flex items-start gap-2">
-                                <AlertCircle size={16} className="text-amber-600 mt-0.5 shrink-0" />
-                                <p className="text-xs text-amber-700">Payouts are processed 24 hours after session completion. You receive <strong>80%</strong> of the session fee. Phase 2 will enable automated bank transfers via Razorpay.</p>
+                            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-5 text-center">
+                                <TrendingUp size={32} className="mx-auto text-emerald-600 mb-3" />
+                                <h3 className="text-lg font-bold text-slate-900">Earnings Dashboard</h3>
+                                <p className="text-sm text-slate-500 mt-1">Earnings tracking will be available once Razorpay integration is set up.</p>
+                                <p className="text-xs text-slate-400 mt-2">You receive <strong>80%</strong> of each paid session (₹64 per ₹80 session).</p>
                             </div>
                         </motion.div>
                     )}
@@ -212,7 +359,7 @@ export default function MentorDashboard() {
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                             <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-5">
                                 <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2"><Calendar size={16} className="text-indigo-600" /> Manage Your Availability</h3>
-                                <p className="text-xs text-slate-500 mb-6">Click on time slots to toggle them. Changes apply to future bookings only. Slots within 2 hours cannot be modified.</p>
+                                <p className="text-xs text-slate-500 mb-6">Click on time slots to toggle them. Changes apply to future bookings only.</p>
 
                                 <div className="grid grid-cols-7 gap-2">
                                     {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(day => (
@@ -220,7 +367,7 @@ export default function MentorDashboard() {
                                             <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">{day}</p>
                                             <div className="space-y-1.5">
                                                 {["9:00 AM", "10:30 AM", "2:00 PM", "4:00 PM", "6:30 PM"].map(time => {
-                                                    const isActive = Math.random() > 0.4 // demo randomization
+                                                    const isActive = Math.random() > 0.4
                                                     return (
                                                         <button key={time}
                                                             className={`w-full px-1 py-2 rounded-lg text-[10px] font-bold transition ${isActive
@@ -248,22 +395,23 @@ export default function MentorDashboard() {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div><label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Bio</label>
-                                        <textarea defaultValue="Secured AIR 342 in JEE Advanced. I help students build foolproof strategies..."
+                                        <textarea defaultValue=""
+                                            placeholder="Tell students about your experience, exam scores, and mentoring style..."
                                             className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm outline-none resize-none h-24 focus:border-indigo-500 focus:bg-white transition" /></div>
                                     <div><label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Specializations</label>
-                                        <input type="text" defaultValue="Physics, Maths, JEE Strategy"
+                                        <input type="text" placeholder="e.g., Physics, Maths, JEE Strategy"
                                             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:bg-white transition" /></div>
                                     <div><label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Languages</label>
-                                        <input type="text" defaultValue="Hindi, English"
+                                        <input type="text" placeholder="e.g., Hindi, English"
                                             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:bg-white transition" /></div>
-                                    <div><label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Intro Note</label>
-                                        <input type="text" defaultValue="I make JEE Physics feel like a breeze 💨"
+                                    <div><label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">LinkedIn URL</label>
+                                        <input type="text" placeholder="https://linkedin.com/in/yourname"
                                             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:bg-white transition" /></div>
                                 </div>
 
                                 <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 flex items-start gap-2">
                                     <AlertCircle size={14} className="text-amber-600 mt-0.5 shrink-0" />
-                                    <p className="text-xs text-amber-700"><strong>Rate changes</strong> take effect after a 24-hour delay. Existing bookings keep the rate locked at the time of booking.</p>
+                                    <p className="text-xs text-amber-700">Session pricing is fixed at <strong>₹80 per 10 min</strong>. First session is always free for new students.</p>
                                 </div>
 
                                 <button className="rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-6 py-2.5 text-sm font-semibold shadow-sm hover:shadow-md transition">

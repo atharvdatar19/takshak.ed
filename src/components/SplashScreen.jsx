@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 
 /**
  * Splash Screen — first thing a user sees.
@@ -10,6 +10,17 @@ export default function SplashScreen({ children }) {
     const [showSplash, setShowSplash] = useState(() => {
         return !sessionStorage.getItem("mb_splash_done")
     })
+
+    const particles = useMemo(() =>
+        Array.from({ length: 20 }, () => ({
+            width: Math.random() * 6 + 2,
+            height: Math.random() * 6 + 2,
+            left: Math.random() * 100,
+            top: Math.random() * 100,
+            duration: 3 + Math.random() * 2,
+            delay: Math.random() * 2,
+        }))
+    , [])
 
     useEffect(() => {
         if (showSplash) {
@@ -37,24 +48,24 @@ export default function SplashScreen({ children }) {
                     >
                         {/* Particle dots background */}
                         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                            {Array.from({ length: 20 }).map((_, i) => (
+                            {particles.map((p, i) => (
                                 <motion.div
                                     key={i}
                                     className="absolute rounded-full bg-white/20"
                                     style={{
-                                        width: Math.random() * 6 + 2,
-                                        height: Math.random() * 6 + 2,
-                                        left: `${Math.random() * 100}%`,
-                                        top: `${Math.random() * 100}%`,
+                                        width: p.width,
+                                        height: p.height,
+                                        left: `${p.left}%`,
+                                        top: `${p.top}%`,
                                     }}
                                     animate={{
                                         y: [0, -30, 0],
                                         opacity: [0.2, 0.6, 0.2],
                                     }}
                                     transition={{
-                                        duration: 3 + Math.random() * 2,
+                                        duration: p.duration,
                                         repeat: Infinity,
-                                        delay: Math.random() * 2,
+                                        delay: p.delay,
                                     }}
                                 />
                             ))}
@@ -112,11 +123,7 @@ export default function SplashScreen({ children }) {
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            {/* Always render children underneath */}
-            <div style={{ visibility: showSplash ? "hidden" : "visible" }}>
-                {children}
-            </div>
+            {!showSplash && children}
         </>
     )
 }

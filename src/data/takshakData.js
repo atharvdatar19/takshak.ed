@@ -122,41 +122,41 @@ export const takshakCourses = [
 export const takshakDeadlines = [
     {
         id: 'dl_1',
-        title: 'GATE 2025 Registration',
+        title: 'JEE Main Session 2 Registration',
         type: 'Exam',
-        organizingBody: 'IIT Roorkee',
-        description: 'Last date to register for GATE 2025 without late fee.',
-        date: '2025-09-30',
+        organizingBody: 'NTA',
+        description: 'Last date to apply for JEE Main 2026 Session 2 without late fee.',
+        date: '2026-04-10',
         prizeOrStipend: 'N/A',
-        link: 'https://gate.iitr.ac.in/'
+        link: 'https://jeemain.nta.ac.in/'
     },
     {
         id: 'dl_2',
-        title: 'Flipkart GRiD 6.0',
+        title: 'Smart India Hackathon 2026',
         type: 'Hackathon',
-        organizingBody: 'Flipkart',
-        description: 'National level hackathon for engineering students.',
-        date: '2025-10-15',
-        prizeOrStipend: '₹1.5 Lakhs + PPI',
-        link: 'https://unstop.com/'
+        organizingBody: 'MoE India',
+        description: 'National-level hackathon open to all UG/PG engineering students.',
+        date: '2026-05-01',
+        prizeOrStipend: '₹1 Lakh per team',
+        link: 'https://www.sih.gov.in/'
     },
     {
         id: 'dl_3',
-        title: 'KVPY Scholarship',
-        type: 'Scholarship',
-        organizingBody: 'IISc Bangalore',
-        description: 'Kishore Vaigyanik Protsahan Yojana for basic sciences.',
-        date: '2025-08-20',
-        prizeOrStipend: '₹5000 - ₹7000/month',
-        link: 'http://kvpy.iisc.ernet.in/'
+        title: 'NEET UG 2026 Registration',
+        type: 'Exam',
+        organizingBody: 'NTA',
+        description: 'Apply for NEET UG 2026 before the deadline to secure your seat.',
+        date: '2026-04-20',
+        prizeOrStipend: 'N/A',
+        link: 'https://neet.nta.nic.in/'
     },
     {
         id: 'dl_4',
-        title: 'Google STEP Internship 2025',
+        title: 'Google STEP Internship 2026',
         type: 'Internship',
         organizingBody: 'Google',
-        description: 'Summer Trainee Engineering Program for 1st/2nd year students.',
-        date: '2025-11-10',
+        description: 'Summer Trainee Engineering Program for 1st/2nd year CS students.',
+        date: '2026-05-15',
         prizeOrStipend: 'Industry Standard',
         link: 'https://careers.google.com/students/'
     }

@@ -10,6 +10,7 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-framer': ['framer-motion'],
           'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
         }
       }
     },
