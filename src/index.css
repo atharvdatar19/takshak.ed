@@ -11,26 +11,28 @@
    ═══════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Takshak Obsidian Design Tokens ── */
-  --obsidian-bg: #0b1326;
-  --obsidian-surface: #0f1930;
-  --obsidian-surface-high: #141f38;
-  --obsidian-surface-highest: #192540;
-  --obsidian-surface-variant: #2d3449;
-  --obsidian-primary: #4edea3;
-  --obsidian-primary-container: #10b981;
-  --obsidian-secondary: #c0c1ff;
-  --obsidian-secondary-container: #3131c0;
-  --obsidian-tertiary: #ff6f7e;
-  --obsidian-on-surface: #dee5ff;
-  --obsidian-on-surface-variant: #a3aac4;
-  --obsidian-outline: #6d758c;
-  --obsidian-outline-variant: #40485d;
+  /* ── Takshak Obsidian Design Tokens (Light Mode Core) ── */
+  --obsidian-bg: #f8fafc; /* Crisp blue-slate background */
+  --obsidian-surface: #ffffff; /* Pure white surface */
+  --obsidian-surface-high: #f1f5f9; /* Off-white elevated surface */
+  --obsidian-surface-highest: #e2e8f0; /* Deepest light surface */
+  --obsidian-surface-variant: #cbd5e1; /* Slate variant */
+  
+  --obsidian-primary: #10b981; /* Emerald-500 (Vibrant but legible on white) */
+  --obsidian-primary-container: #059669; /* Emerald-600 */
+  --obsidian-secondary: #6366f1; /* Indigo-500 */
+  --obsidian-secondary-container: #4f46e5; /* Indigo-600 */
+  --obsidian-tertiary: #f43f5e; /* Rose-500 */
+  
+  --obsidian-on-surface: #0f172a; /* Near black (slate-900) */
+  --obsidian-on-surface-variant: #475569; /* Slate-600 */
+  --obsidian-outline: rgba(0, 0, 0, 0.08); /* Subtle dark border */
+  --obsidian-outline-variant: rgba(0, 0, 0, 0.04);
 
   /* ── Semantic Glass Colors ── */
-  --bg-glass: rgba(45, 52, 73, 0.4);
-  --border-glass: rgba(64, 72, 93, 0.15);
-  --shadow-glass: rgba(0, 0, 0, 0.3);
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  --border-glass: rgba(0, 0, 0, 0.06);
+  --shadow-glass: rgba(0, 0, 0, 0.04);
 
   /* ── Animation Easing ── */
   --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
@@ -38,14 +40,36 @@
   --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
 
   /* ── Accent Glows ── */
-  --accent-glow: rgba(78, 222, 163, 0.15);
-  --accent-glow-intense: rgba(78, 222, 163, 0.25);
+  --accent-glow: rgba(16, 185, 129, 0.15); /* Emerald glow */
+  --accent-glow-intense: rgba(16, 185, 129, 0.3);
 }
 
 html.dark {
-  --bg-glass: rgba(15, 15, 18, 0.6);
+  /* ── Takshak Obsidian Design Tokens (Dark Mode) ── */
+  --obsidian-bg: #030712; /* Deep space black/blue */
+  --obsidian-surface: #0b1121; /* Slightly lighter surface */
+  --obsidian-surface-high: #111827; /* gray-900 */
+  --obsidian-surface-highest: #1f2937; /* gray-800 */
+  --obsidian-surface-variant: #374151; /* gray-700 */
+  
+  --obsidian-primary: #00e599; /* Electric Neon Emerald */
+  --obsidian-primary-container: #00a466;
+  --obsidian-secondary: #8b5cf6; /* Vibrant Violet */
+  --obsidian-secondary-container: #6d28d9;
+  --obsidian-tertiary: #ff2a5f; /* Neon Pink/Red */
+  
+  --obsidian-on-surface: #f8fafc; /* Crisp white-slate */
+  --obsidian-on-surface-variant: #94a3b8; /* Crisp slate-gray */
+  --obsidian-outline: rgba(255, 255, 255, 0.12); /* Clean translucent borders */
+  --obsidian-outline-variant: rgba(255, 255, 255, 0.06);
+
+  /* ── Semantic Glass Colors ── */
+  --bg-glass: rgba(11, 17, 33, 0.6);
   --border-glass: rgba(255, 255, 255, 0.08);
-  --shadow-glass: rgba(0, 0, 0, 0.4);
+  --shadow-glass: rgba(0, 0, 0, 0.5);
+
+  --accent-glow: rgba(0, 229, 153, 0.15); 
+  --accent-glow-intense: rgba(0, 229, 153, 0.25);
 }
 
 /* ── Global Defaults ── */
@@ -62,29 +86,8 @@ body {
   color: var(--obsidian-on-surface);
 }
 
-/* Smooth transitions for Dark Mode toggle across structural elements */
-body,
-div,
-nav,
-header,
-aside,
-section,
-main,
-span,
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-input,
-button,
-textarea {
-  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 400ms;
-}
+/* Global Dark Mode transition removed to fix severe React/FramerMotion animation lag */
+/* Transitions should be applied explicitly to specific interactive classes */
 
 /* ── Main Background ── */
 .bg-app {
@@ -349,6 +352,8 @@ textarea {
   opacity: 0.3;
   animation: float-orb 15s ease-in-out infinite;
   pointer-events: none;
+  will-change: transform;
+  transform: translateZ(0); /* Hardware acceleration */
 }
 
 .orb-indigo {

@@ -27,9 +27,10 @@ import {
 import ChatbotAssistant from "./chatbot/ChatbotAssistant"
 import CommandPalette from "./CommandPalette"
 import CursorTrail from "./CursorTrail"
-import PageTransition from "./PageTransition"
 import ThemeToggle from "./ThemeToggle"
 import LeadCaptureModal from "./LeadCaptureModal"
+import AnimatedPage from "./motion/AnimatedPage"
+import { useScrollProgress } from "../hooks/useScrollProgress"
 
 const FloatingBackground = lazy(() => import("./3d/FloatingBackground"))
 
@@ -101,7 +102,7 @@ function SidebarContent({ onNavigate }) {
       {/* Brand */}
       <div className="flex items-center gap-3 px-5 py-5">
         <img src="/takshak_logo.jpg" alt="TAKSHAK" className="h-10 w-auto rounded-xl" />
-        <span className="font-bold text-sm hidden md:block" style={{ color: '#dee5ff' }}>TAKSHAK</span>
+        <span className="font-bold text-sm hidden md:block" style={{ color: 'var(--obsidian-on-surface)' }}>TAKSHAK</span>
       </div>
 
       {/* Nav Sections */}
@@ -110,7 +111,7 @@ function SidebarContent({ onNavigate }) {
           const SIcon = section.icon
           return (
             <div key={section.title}>
-              <p className="mb-1.5 flex items-center gap-1.5 px-2 text-[11px] font-bold uppercase tracking-wider" style={{ color: '#6d758c' }}>
+              <p className="mb-1.5 flex items-center gap-1.5 px-2 text-[11px] font-bold uppercase tracking-wider" style={{ color: 'var(--obsidian-on-surface-variant)' }}>
                 <SIcon size={11} /> {section.title}
               </p>
               <nav className="space-y-0.5">
@@ -128,7 +129,7 @@ function SidebarContent({ onNavigate }) {
                           : "hover:bg-white/5"
                         }`
                       }
-                      style={({ isActive }) => (isActive ? {} : { color: '#a3aac4' })}
+                      style={({ isActive }) => (isActive ? {} : { color: 'var(--obsidian-on-surface-variant)' })}
                     >
                       <Icon size={16} className="shrink-0" />
                       <span className="truncate">{link.label}</span>
@@ -143,7 +144,7 @@ function SidebarContent({ onNavigate }) {
         {/* Admin link — only visible to admins */}
         {isAdmin && (
           <div>
-            <p className="mb-1.5 flex items-center gap-1.5 px-2 text-[11px] font-bold uppercase tracking-wider" style={{ color: '#6d758c' }}>
+            <p className="mb-1.5 flex items-center gap-1.5 px-2 text-[11px] font-bold uppercase tracking-wider" style={{ color: 'var(--obsidian-on-surface-variant)' }}>
               <ShieldCheck size={11} /> Admin
             </p>
             <nav>
@@ -153,7 +154,7 @@ function SidebarContent({ onNavigate }) {
                 className={({ isActive }) =>
                   `group flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-200 ${isActive ? "nav-active" : "hover:bg-white/5"}`
                 }
-                style={{ color: '#a3aac4' }}
+                style={{ color: 'var(--obsidian-on-surface-variant)' }}
               >
                 <ShieldCheck size={16} className="shrink-0" />
                 <span className="truncate">Admin Control</span>
@@ -205,6 +206,7 @@ export default function AppLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
+  const { scrollY, isScrolled } = useScrollProgress()
 
   return (
     <div className="relative flex min-h-screen bg-app">
@@ -221,10 +223,26 @@ export default function AppLayout() {
       </aside>
 
       {/* ── Mobile Top Bar ── */}
-      <div className="fixed inset-x-0 top-0 z-30 flex items-center justify-between border-b border-slate-200/60 bg-white/90 px-4 py-3 backdrop-blur-xl md:hidden">
+      <div
+        className="fixed inset-x-0 top-0 z-30 flex items-center justify-between px-4 py-3 md:hidden"
+        style={{
+          background: isScrolled
+            ? 'var(--bg-glass)'
+            : 'transparent',
+          backdropFilter: isScrolled ? 'blur(20px) saturate(180%)' : 'blur(8px)',
+          WebkitBackdropFilter: isScrolled ? 'blur(20px) saturate(180%)' : 'blur(8px)',
+          borderBottom: isScrolled
+            ? '1px solid var(--border-glass)'
+            : '1px solid transparent',
+          boxShadow: isScrolled ? '0 1px 0 var(--shadow-glass)' : 'none',
+          paddingTop: isScrolled ? '10px' : '12px',
+          paddingBottom: isScrolled ? '10px' : '12px',
+          transition: 'all 0.4s var(--ease-out-expo)',
+        }}
+      >
         <div className="flex items-center gap-2">
           <img src="/takshak_logo.jpg" alt="TAKSHAK" className="h-8 w-auto rounded-lg" />
-          <span className="font-bold text-slate-800 text-sm">TAKSHAK</span>
+          <span className="font-bold text-sm" style={{ color: 'var(--obsidian-on-surface)' }}>TAKSHAK</span>
         </div>
         <button
           type="button"
@@ -275,29 +293,31 @@ export default function AppLayout() {
 
       {/* ── Main Content ── */}
       <main className="perspective-scroll relative z-10 flex-1 overflow-y-auto p-5 pt-20 md:p-8 md:pt-8">
-        <PageTransition>
-          {location.pathname !== "/" && (
-            <button
-              onClick={() => navigate(-1)}
-              className="mb-4 flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-600 transition focus:outline-none"
-            >
-              <ArrowLeft size={16} /> Back
-            </button>
-          )}
-          <Outlet />
+        <AnimatePresence mode="wait">
+          <AnimatedPage key={location.pathname} routeKey={location.pathname}>
+            {location.pathname !== "/" && (
+              <button
+                onClick={() => navigate(-1)}
+                className="mb-4 flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-600 transition focus:outline-none"
+              >
+                <ArrowLeft size={16} /> Back
+              </button>
+            )}
+            <Outlet />
 
-          {/* ── Global Footer ── */}
-          <footer className="mt-20 border-t border-slate-200/60 pt-8 pb-12">
-            <div className="flex flex-col items-center justify-center gap-2">
-              <p className="text-sm font-medium text-slate-500">
-                Made with ❤️ by <span className="font-bold text-indigo-600">TAKSHAK</span>
-              </p>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400 font-bold">
-                TAKSHAK — Empowering Students since 2024
-              </p>
-            </div>
-          </footer>
-        </PageTransition>
+            {/* ── Global Footer ── */}
+            <footer className="mt-20 border-t border-slate-200/60 pt-8 pb-12">
+              <div className="flex flex-col items-center justify-center gap-2">
+                <p className="text-sm font-medium text-slate-500">
+                  Made with ❤️ by <span className="font-bold text-indigo-600">TAKSHAK</span>
+                </p>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400 font-bold">
+                  TAKSHAK — Empowering Students since 2024
+                </p>
+              </div>
+            </footer>
+          </AnimatedPage>
+        </AnimatePresence>
       </main>
 
       {/* Global Overlays */}

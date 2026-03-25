@@ -19,9 +19,17 @@ export default function ProtectedRoute({ children, roles = [] }) {
         )
     }
 
-    // Not logged in → redirect to login
+    // Not logged in → show inline restriction instead of forced redirect
     if (!user) {
-        return <Navigate to="/login" state={{ from: location.pathname }} replace />
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
+                <div className="text-6xl mb-4">🔒</div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">Sign-In Required</h2>
+                <p className="text-slate-500 max-w-md">
+                    Please log in or sign up to access this feature.
+                </p>
+            </div>
+        )
     }
 
     // Check role if specified — use the unified `role` from AuthContext (includes isAdmin override)

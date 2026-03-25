@@ -1,61 +1,74 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from 'react'
 
 /**
  * IntersectionObserver-based scroll reveal.
- * Adds `.revealed` class when element enters viewport.
- * CSS handles the opacity/translateY transition.
+ * Returns { ref, isVisible }.
+ * Automatically disabled when prefers-reduced-motion: reduce is set.
  *
- * Usage:
- *   const ref = useScrollReveal()
- *   <div ref={ref} className="reveal">...</div>
+ * @param {object} options
+ * @param {number} options.threshold - default 0.18
+ * @param {boolean} options.once    - default true (trigger once and stop observing)
+ * @param {string}  options.rootMargin - default "-40px"
  */
-export function useScrollReveal(options = {}) {
-    const ref = useRef(null)
+export function useScrollReveal({ threshold = 0.18, once = true, rootMargin = '-40px' } = {}) {
+  const ref = useRef(null)
+  const [isVisible, setIsVisible] = useState(false)
 
-    useEffect(() => {
-        const el = ref.current
-        if (!el) return
+  useEffect(() => {
+    // Respect prefers-reduced-motion
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setIsVisible(true)
+      return
+    }
 
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add("revealed")
-                    observer.unobserve(entry.target) // only animate once
-                }
-            },
-            { threshold: options.threshold || 0.15, rootMargin: options.rootMargin || "0px 0px -40px 0px" }
-        )
+    const el = ref.current
+    if (!el) return
 
-        observer.observe(el)
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          if (once) observer.unobserve(el)
+        } else if (!once) {
+          setIsVisible(false)
+        }
+      },
+      { threshold, rootMargin }
+    )
 
-        return () => observer.disconnect()
-    }, [])
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [threshold, once, rootMargin])
 
-    return ref
+  return { ref, isVisible }
 }
 
-/**
- * Auto-reveal all .reveal elements within a container.
- * Call once in a page component.
- */
+// Keep the old API for legacy usage: useAutoReveal
 export function useAutoReveal() {
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("revealed")
-                        observer.unobserve(entry.target)
-                    }
-                })
-            },
-            { threshold: 0.12, rootMargin: "0px 0px -30px 0px" }
-        )
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('revealed'))
+      return
+    }
 
-        // Observe all .reveal elements
-        const elements = document.querySelectorAll(".reveal:not(.revealed)")
-        elements.forEach(el => observer.observe(el))
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed')
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -30px 0px' }
+    )
 
-        return () => observer.disconnect()
-    }, [])
+    const elements = document.querySelectorAll('.reveal:not(.revealed)')
+    elements.forEach(el => observer.observe(el))
+
+    return () => observer.disconnect()
+  }, [])
 }
+
+// Legacy default export
+export default useScrollReveal

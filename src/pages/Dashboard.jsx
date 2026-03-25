@@ -30,9 +30,11 @@ import { Bookmark, ShieldCheck, PlayCircle } from "lucide-react"
 import AnimatedCounter from "../components/animations/AnimatedCounter"
 import TextReveal from "../components/animations/TextReveal"
 import TypewriterText from "../components/animations/TypewriterText"
-import ParticleField from "../components/animations/ParticleField"
 import MagneticCard from "../components/animations/MagneticCard"
 import { StaggerContainer, StaggerItem, FloatingElement, PulseGlow, SlideIn } from "../components/animations/AnimationUtils"
+import RevealSection from "../components/motion/RevealSection"
+import CountUp from "../components/motion/CountUp"
+import SearchBar from "../components/search/SearchBar"
 
 const MOTIVATIONAL_QUOTES = [
   "Your future is shaped by the actions you take today.",
@@ -118,60 +120,124 @@ export default function Dashboard() {
         <meta name="description" content="View your college admission progress, track study sessions, and access personalized mentoring on the TAKSHAK dashboard." />
       </Helmet>
 
-      {/* ═══ HERO — Particles + Text Reveal + Typewriter ═══ */}
+      {/* ═══ HERO — Search-First Layout (Edura-inspired, Takshak dark) ═══ */}
       <motion.section
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="relative overflow-hidden rounded-[32px] hero-gradient px-8 py-10 text-white md:px-12 md:py-16"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
+        style={{ position: 'relative', overflow: 'hidden', padding: '48px 0 32px' }}
       >
-        {/* Particle constellation */}
-        <ParticleField count={40} color="rgba(255,255,255,0.6)" lineColor="rgba(255,255,255,0.12)" maxDist={100} />
         {/* Floating orbs */}
-        <div className="orb orb-purple w-40 h-40 -top-10 -right-10" />
-        <div className="orb orb-blue w-32 h-32 bottom-0 left-10" />
+        <div className="orb orb-indigo" style={{ width: 360, height: 360, top: -80, right: -80, opacity: 0.18 }} />
+        <div className="orb orb-purple" style={{ width: 280, height: 280, bottom: -40, left: -60, opacity: 0.12 }} />
 
-        <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div className="max-w-lg">
-            <SlideIn direction="down" delay={0.2}>
-              <span className="pill pill-glass text-xs mb-4">{dayName}</span>
-            </SlideIn>
+        <div style={{ position: 'relative', zIndex: 10, maxWidth: 720, margin: '0 auto' }}>
 
-            {/* Character-by-character reveal */}
-            <h1 className="text-display text-3xl md:text-5xl lg:text-6xl mt-3">
-              <TextReveal
-                text={`Welcome back, ${bundle?.profile?.full_name || "Student"}`}
-                mode="word"
-                stagger={0.08}
-                delay={0.3}
-              />
-            </h1>
+          {/* 1 — Animated badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: [0.19, 1, 0.22, 1] }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 20 }}
+          >
+            <span style={{
+              padding: '6px 16px',
+              borderRadius: 9999,
+              fontSize: 13,
+              fontWeight: 700,
+              background: 'var(--accent-glow)',
+              border: '1px solid var(--accent-glow-intense)',
+              color: 'var(--obsidian-primary)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+            }}>
+              ✦ AI-Powered Exam &amp; College Discovery
+            </span>
+          </motion.div>
 
-            {/* Typewriter motivational quote */}
-            <div className="mt-4 h-12">
-              <TypewriterText
-                texts={MOTIVATIONAL_QUOTES}
-                speed={40}
-                deleteSpeed={20}
-                pauseMs={3000}
-                className="text-indigo-100/80 text-sm md:text-base"
-              />
-            </div>
-          </div>
+          {/* 2 — Staggered headline */}
+          <motion.h1
+            initial="hidden"
+            animate="visible"
+            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
+            style={{ fontSize: 'clamp(28px, 5vw, 52px)', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.04em', marginBottom: 16 }}
+          >
+            {['Find', 'Your', 'Perfect', 'College'].map((word) => (
+              <motion.span
+                key={word}
+                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.19,1,0.22,1] } } }}
+                style={{ color: 'var(--obsidian-on-surface)', marginRight: '0.25em', display: 'inline-block' }}
+              >
+                {word}
+              </motion.span>
+            ))}
+            <br />
+            {['Without', 'the', 'Confusion'].map((word) => (
+              <motion.span
+                key={word}
+                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.19,1,0.22,1] } } }}
+                style={{
+                  marginRight: '0.25em',
+                  display: 'inline-block',
+                  background: 'linear-gradient(90deg, #4edea3, #c0c1ff)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                {word}
+              </motion.span>
+            ))}
+          </motion.h1>
 
-          <SlideIn direction="right" delay={0.5}>
-            <div className="flex flex-col items-end gap-3 shrink-0">
+          {/* 3 — Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1], delay: 0.4 }}
+            style={{ fontSize: 16, color: 'var(--obsidian-on-surface-variant)', marginBottom: 28, lineHeight: 1.7 }}
+          >
+            Discover, compare, and choose exams, colleges, &amp; mentors for your journey. No confusion, no missed deadlines.
+          </motion.p>
+
+          {/* 4+5 — Search bar + popular tags */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1], delay: 0.6 }}
+          >
+            <SearchBar
+              popularTags={['JEE', 'NEET', 'GATE', 'CUET', 'UPSC', 'CAT']}
+            />
+          </motion.div>
+
+          {/* 6 — Stats row with CountUp */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1], delay: 1.0 }}
+            style={{ display: 'flex', alignItems: 'center', gap: 32, marginTop: 28, flexWrap: 'wrap' }}
+          >
+            {[
+              { target: 10000, suffix: '+', label: 'Students' },
+              { target: 500, suffix: '+', label: 'Colleges' },
+              { target: 50, suffix: '+', label: 'Mentors' },
+            ].map(({ target, suffix, label }) => (
+              <div key={label} style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                <CountUp
+                  target={target}
+                  suffix={suffix}
+                  className="stat-number"
+                  duration={1800}
+                />
+                <span style={{ fontSize: 13, color: '#a3aac4', fontWeight: 600 }}>{label}</span>
+              </div>
+            ))}
+            <div style={{ marginLeft: 'auto' }}>
               <NotificationBell unreadCount={computed.unreadCount + computed.deadlineAlerts.length} />
-              <PulseGlow color="rgba(129, 140, 248, 0.3)" className="rounded-2xl">
-                <div className="rounded-2xl glass-panel px-6 py-4 text-center ring-1 ring-white/20">
-                  <p className="text-xs text-indigo-900/60 dark:text-indigo-200 uppercase tracking-widest font-bold">XP / Level</p>
-                  <p className="stat-number text-3xl mt-1 text-indigo-950 dark:text-white">
-                    <AnimatedCounter value={computed.xp} /> <span className="text-lg text-indigo-800 dark:text-indigo-200">· L{computed.level}</span>
-                  </p>
-                </div>
-              </PulseGlow>
             </div>
-          </SlideIn>
+          </motion.div>
         </div>
       </motion.section>
 
