@@ -11,7 +11,7 @@ BEGIN
     -- Check if the request comes from the authenticated client role
     -- and if the email of the caller is NOT in the admin list.
     IF auth.role() = 'authenticated' AND (
-      auth.jwt() ->> 'email' NOT IN ('admin@mentorbhaiyaaa.com', 'atharvd10166@gmail.com')
+      auth.jwt() ->> 'email' NOT IN ('admin@mentorbhaiyaaa.com', 'atharvd10166@gmail.com', 'punyatirthasahoo@gmail.com')
     ) THEN
       RAISE EXCEPTION 'Security Exception: Cannot artificially escalate user roles. Request denied.';
     END IF;
