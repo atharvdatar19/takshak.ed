@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { Search, X } from 'lucide-react'
 import SearchDropdown from './SearchDropdown'
+import { useNavigate } from 'react-router-dom'
 
 /**
  * Full-width hero search bar — Edura-inspired, Takshak dark theme.
@@ -12,12 +13,23 @@ export default function SearchBar({ popularTags = [], onNavigate }) {
   const [query, setQuery] = useState('')
   const [focused, setFocused] = useState(false)
   const inputRef = useRef(null)
+  const navigate = useNavigate()
 
-  const showDropdown = focused && query.trim().length >= 2
+  const showDropdown = focused
 
   const handleTagClick = (tag) => {
-    setQuery(tag)
-    inputRef.current?.focus()
+    let path = '/'
+    if (tag === 'JEE' || tag === 'NEET') path = `/cutoff?exam=${tag}`
+    else if (tag === 'GATE') path = `/timeline`
+    else if (tag === 'CUET') path = `/colleges`
+    else if (tag === 'UPSC' || tag === 'CAT') path = `/resources`
+    
+    navigate(path)
+  }
+
+  const handleSearchCommit = () => {
+    if (!query.trim()) return
+    navigate(`/colleges?search=${encodeURIComponent(query.trim())}`)
   }
 
   const handleClear = () => {
@@ -67,6 +79,12 @@ export default function SearchBar({ popularTags = [], onNavigate }) {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleSearchCommit();
+            }
+          }}
           placeholder="Search exams, colleges, educators..."
           style={{
             flex: 1,
@@ -107,7 +125,7 @@ export default function SearchBar({ popularTags = [], onNavigate }) {
         {/* Search pill button */}
         <button
           type="button"
-          onClick={() => {}}
+          onClick={handleSearchCommit}
           style={{
             flexShrink: 0,
             height: '36px',

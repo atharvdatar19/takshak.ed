@@ -45,19 +45,22 @@ export default function AnimatedPage({ children, routeKey }) {
       </AnimatePresence>
 
       {/* Page content */}
-      <motion.div
-        key={routeKey}
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0 }}
-        transition={{
-          duration: 0.3,
-          ease: [0.19, 1, 0.22, 1],
-          exit: { duration: 0.18 },
-        }}
-      >
-        {children}
-      </motion.div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={routeKey}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{
+            duration: 0.3,
+            ease: [0.19, 1, 0.22, 1],
+            exit: { duration: 0.18 },
+          }}
+          className="relative w-full"
+        >
+          {children}
+        </motion.div>
+      </AnimatePresence>
     </>
   )
 }

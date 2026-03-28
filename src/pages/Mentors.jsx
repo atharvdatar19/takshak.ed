@@ -3,17 +3,22 @@ import { Helmet } from "react-helmet-async"
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import { Search, Filter, Star, GraduationCap, MapPin, CheckCircle, Zap, Shield, Sparkles, ChevronRight, X } from "lucide-react"
 import { getMentors } from "../services/api"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import LoadingSkeleton from "../components/LoadingSkeleton"
 
-const STREAMS = ["All", "Engineering", "Medical", "Design", "Commerce", "Arts"]
+const STREAMS = ["All", "JEE", "NEET", "Defence", "CUET", "CBSE Boards", "Programming"]
 
 export default function Mentors() {
     const navigate = useNavigate()
+    const [searchParams, setSearchParams] = useSearchParams()
+    
+    const initialSearch = searchParams.get("search") || ""
+    const initialStream = searchParams.get("stream") || "All"
+
     const [mentors, setMentors] = useState([])
     const [loading, setLoading] = useState(true)
-    const [searchQuery, setSearchQuery] = useState("")
-    const [activeStream, setActiveStream] = useState("All")
+    const [searchQuery, setSearchQuery] = useState(initialSearch)
+    const [activeStream, setActiveStream] = useState(initialStream)
     const [hoveredCard, setHoveredCard] = useState(null)
     const containerRef = useRef(null)
 
@@ -26,22 +31,25 @@ export default function Mentors() {
     const yParallax2 = useTransform(scrollYProgress, [0, 1], [0, -200])
 
     useEffect(() => {
-        setLoading(true)
-        getMentors()
-            .then((data) => { setMentors(data); setLoading(false) })
-            .catch(() => setLoading(false))
-    }, [])
+        const handler = setTimeout(() => {
+            setLoading(true)
+            getMentors({ search: searchQuery, stream: activeStream })
+                .then((data) => { setMentors(data); setLoading(false) })
+                .catch(() => setLoading(false))
+        }, 300)
+        return () => clearTimeout(handler)
+    }, [searchQuery, activeStream])
 
-    const filteredMentors = useMemo(() => {
-        return mentors.filter(m => {
-            const matchesSearch =
-                m.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                m.college?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                m.exam_focus?.some(e => e.toLowerCase().includes(searchQuery.toLowerCase()))
-            const matchesStream = activeStream === "All" || (m.subjects || []).includes(activeStream)
-            return matchesSearch && matchesStream
-        })
-    }, [mentors, searchQuery, activeStream])
+    useEffect(() => {
+        const params = new URLSearchParams(searchParams)
+        if (searchQuery) params.set("search", searchQuery)
+        else params.delete("search")
+
+        if (activeStream !== "All") params.set("stream", activeStream)
+        else params.delete("stream")
+
+        setSearchParams(params, { replace: true })
+    }, [searchQuery, activeStream, setSearchParams])
 
     // Container Animation
     const staggerAnim = {
@@ -146,7 +154,7 @@ export default function Mentors() {
                             <div key={i} className="rounded-[2rem] h-[450px] bg-white/5 animate-pulse border border-white/10" />
                         ))}
                     </div>
-                ) : filteredMentors.length === 0 ? (
+                ) : mentors.length === 0 ? (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-24 text-center">
                         <div className="relative w-24 h-24 mb-6">
                             <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl" />
@@ -160,7 +168,7 @@ export default function Mentors() {
                     </motion.div>
                 ) : (
                     <motion.div variants={staggerAnim} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                        {filteredMentors.map((mentor) => {
+                        {mentors.map((mentor) => {
                             const initials = (mentor.full_name || mentor.name || "M").split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()
                             const isHovered = hoveredCard === mentor.id
 
@@ -232,13 +240,18 @@ export default function Mentors() {
                                                     <h3 className="text-xl font-extrabold text-white tracking-tight leading-tight group-hover:text-indigo-300 transition-colors">
                                                         {(mentor.full_name || mentor.name || "Mentor Name")}
                                                     </h3>
-                                                    <p className="text-xs text-[#a3aac4] flex items-center gap-1.5 mt-1">
-                                                        <GraduationCap size={14} className="text-indigo-400" />
+                                                    {mentor.headline && (
+                                                        <p className="text-sm font-semibold text-indigo-300 mt-1.5 line-clamp-1">
+                                                            {mentor.headline}
+                                                        </p>
+                                                    )}
+                                                    <p className="text-xs text-[#a3aac4] flex items-center gap-1.5 mt-1.5">
+                                                        <GraduationCap size={14} className="text-indigo-400 shrink-0" />
                                                         <span className="truncate">{mentor.college}</span>
                                                     </p>
                                                     {mentor.city_origin && (
                                                         <p className="text-[10px] text-[#6d758c] flex items-center gap-1 font-medium mt-1">
-                                                            <MapPin size={10} /> {mentor.city_origin}
+                                                            <MapPin size={10} shrink-0 /> {mentor.city_origin}
                                                         </p>
                                                     )}
                                                 </div>

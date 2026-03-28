@@ -1,16 +1,36 @@
 import supabase from "../supabaseClient"
 
+/** Race a promise against a timeout — returns fallback on timeout */
+function withTimeout(promise, ms = 8000, fallback = null) {
+  return Promise.race([
+    promise,
+    new Promise((resolve) => setTimeout(() => {
+      console.warn(`[TAKSHAK] Query timed out after ${ms}ms, using fallback`)
+      resolve(fallback)
+    }, ms)),
+  ])
+}
+
 async function safeQuery(queryBuilder, fallback = []) {
   if (!queryBuilder) return fallback
-  const { data, error } = await queryBuilder
-  if (error) return fallback
-  return data ?? fallback
+  try {
+    const { data, error } = await withTimeout(queryBuilder, 8000, { data: null, error: 'timeout' })
+    if (error) return fallback
+    return data ?? fallback
+  } catch {
+    return fallback
+  }
 }
 
 export async function getCurrentUser() {
   if (!supabase) return null
-  const { data } = await supabase.auth.getUser()
-  return data?.user || null
+  try {
+    const result = await withTimeout(supabase.auth.getUser(), 6000, { data: null })
+    return result?.data?.user || null
+  } catch {
+    console.warn('[TAKSHAK] getCurrentUser failed, returning null')
+    return null
+  }
 }
 
 export async function getCurrentUserProfile() {

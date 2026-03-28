@@ -293,31 +293,29 @@ export default function AppLayout() {
 
       {/* ── Main Content ── */}
       <main className="perspective-scroll relative z-10 flex-1 overflow-y-auto p-5 pt-20 md:p-8 md:pt-8">
-        <AnimatePresence mode="wait">
-          <AnimatedPage key={location.pathname} routeKey={location.pathname}>
-            {location.pathname !== "/" && (
-              <button
-                onClick={() => navigate(-1)}
-                className="mb-4 flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-600 transition focus:outline-none"
-              >
-                <ArrowLeft size={16} /> Back
-              </button>
-            )}
-            <Outlet />
+        <AnimatedPage routeKey={location.pathname}>
+          {location.pathname !== "/" && (
+            <button
+              onClick={() => navigate(-1)}
+              className="mb-4 flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-600 transition focus:outline-none"
+            >
+              <ArrowLeft size={16} /> Back
+            </button>
+          )}
+          <Outlet />
 
-            {/* ── Global Footer ── */}
-            <footer className="mt-20 border-t border-slate-200/60 pt-8 pb-12">
-              <div className="flex flex-col items-center justify-center gap-2">
-                <p className="text-sm font-medium text-slate-500">
-                  Made with ❤️ by <span className="font-bold text-indigo-600">TAKSHAK</span>
-                </p>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400 font-bold">
-                  TAKSHAK — Empowering Students since 2024
-                </p>
-              </div>
-            </footer>
-          </AnimatedPage>
-        </AnimatePresence>
+          {/* ── Global Footer ── */}
+          <footer className="mt-20 border-t border-slate-200/60 pt-8 pb-12">
+            <div className="flex flex-col items-center justify-center gap-2">
+              <p className="text-sm font-medium text-slate-500">
+                Made with ❤️ by <span className="font-bold text-indigo-600">TAKSHAK</span>
+              </p>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400 font-bold">
+                TAKSHAK — Empowering Students since 2024
+              </p>
+            </div>
+          </footer>
+        </AnimatedPage>
       </main>
 
       {/* Global Overlays */}

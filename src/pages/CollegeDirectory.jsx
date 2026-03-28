@@ -17,7 +17,7 @@ import {
   Wifi,
 } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useSearchParams } from "react-router-dom"
 import { useToast } from "../components/Toast"
 import DataState from "../components/DataState"
 import LoadingSkeleton from "../components/LoadingSkeleton"
@@ -37,10 +37,14 @@ export default function CollegeDirectory() {
   const [error, setError] = useState("")
   const [total, setTotal] = useState(0)
   const [showFilters, setShowFilters] = useState(false)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialSearch = searchParams.get("search") || ""
+  const initialStream = searchParams.get("stream") || ""
+
   const [filters, setFilters] = useState({
-    search: "",
+    search: initialSearch,
     state: "",
-    stream: "",
+    stream: initialStream,
     admissionMode: "",
     status: "open",
     page: 1,
@@ -52,14 +56,33 @@ export default function CollegeDirectory() {
     async function hydrate() {
       const userProfile = await getCurrentUserProfile()
       setProfile(userProfile)
-      setFilters(previous => ({ ...previous, stream: userProfile?.stream || "" }))
+      if (!initialStream) {
+        setFilters(previous => ({ ...previous, stream: userProfile?.stream || "" }))
+      }
     }
     hydrate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    loadColleges()
-  }, [filters])
+    const params = new URLSearchParams(searchParams)
+    if (filters.search) params.set("search", filters.search)
+    else params.delete("search")
+
+    if (filters.stream) params.set("stream", filters.stream)
+    else params.delete("stream")
+
+    setSearchParams(params, { replace: true })
+  }, [filters.search, filters.stream, setSearchParams])
+
+  useEffect(() => {
+    // Only fetch immediately on mount or if pagination changes, otherwise debounce
+    const handler = setTimeout(() => {
+      loadColleges()
+    }, 400)
+
+    return () => clearTimeout(handler)
+  }, [filters.search, filters.state, filters.stream, filters.admissionMode, filters.status, filters.page])
 
   const loadColleges = useCallback(async () => {
     setLoading(true)
@@ -133,6 +156,8 @@ export default function CollegeDirectory() {
           <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
             <GraduationCap size={16} className="text-slate-400" />
             <input
+              value={filters.stream || ""}
+              onChange={event => updateFilter("stream", event.target.value)}
               placeholder="Search by program (e.g., B.Tech, MBBS)"
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
             />

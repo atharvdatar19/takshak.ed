@@ -1,5 +1,16 @@
 import supabase, { isDemoMode } from "../supabaseClient"
 
+/** Race a promise against a timeout — returns fallback on timeout */
+function withTimeout(promise, ms = 8000, fallback = null) {
+  return Promise.race([
+    promise,
+    new Promise((resolve) => setTimeout(() => {
+      console.warn(`[TAKSHAK API] Query timed out after ${ms}ms, using fallback`)
+      resolve(fallback)
+    }, ms)),
+  ])
+}
+
 // --- DEMO FALLBACK DATA ---
 const DEMO_COLLEGES = [
   {
@@ -84,10 +95,65 @@ const DEMO_EXAMS = [
 ]
 
 const DEMO_MENTORS = [
-  { id: "m1", name: "Arjun K.", college: "IIT Delhi", company: "Google", role: "Software Engineer", rating: 4.9, sessions: 120, price: 500, stream: "PCM", image: "https://i.pravatar.cc/150?u=a" },
-  { id: "m2", name: "Priya S.", college: "AIIMS Delhi", company: "Safdarjung Hospital", role: "Junior Resident", rating: 4.8, sessions: 85, price: 450, stream: "PCB", image: "https://i.pravatar.cc/150?u=b" },
-  { id: "m3", name: "Rahul M.", college: "BITS Pilani", company: "Microsoft", role: "Product Manager", rating: 4.7, sessions: 60, price: 400, stream: "PCM", image: "https://i.pravatar.cc/150?u=c" }
+  {
+    id: "6952a42984ee384882831a4e", full_name: "Paarth Ainchwar", photo_url: "https://base44.app/api/apps/68b276d48626205b99d1f6d7/files/public/68b276d48626205b99d1f6d7/6522ad2f1_52893.webp",
+    headline: "Medico student", college: "Venkateshwara Institute of Medical Sciences, Delhi", bio: "Medico — 2nd year, studying at Venkateshwara Institute of Medical Sciences Delhi.",
+    exam_focus: ["NEET"], subjects: ["Biology"], rating: 5, total_sessions: 0, experience_years: 4, languages: ["English", "Hindi"], is_verified: true
+  },
+  {
+    id: "6949477ad49d0b8a0ed52a51", full_name: "Anshika Pathak", photo_url: "https://base44.app/api/apps/68b276d48626205b99d1f6d7/files/public/68b276d48626205b99d1f6d7/095b9f551_IMG-20251213-WA0013.jpg",
+    headline: "CBSE 10th & 12th Board Exam Specialist | JEE Mentor", college: "VIT Bhopal, B.Tech CSE (AI&ML)", bio: "I'm Anshika Pathak, pursuing B.Tech in CS with specialization in AI & ML at VIT Bhopal. District Topper with 95.2% in class 12th CBSE Board. Passionate about mentoring JEE and NEET aspirants with academics, exam strategies, and personal guidance.",
+    exam_focus: ["JEE", "CBSE Boards"], subjects: ["Physics", "Chemistry", "Mathematics", "English", "Python"], rating: 5, total_sessions: 0, experience_years: 1, languages: ["English", "Hindi"], is_verified: true,
+    achievements: ["91.2% in Class 10th CBSE", "District Topper 95.2% in Class 12th CBSE", "MISHAN SHAKTI AWARD for excellence"]
+  },
+  {
+    id: "69402a8915f9e59b7fd259b1", full_name: "Shagufta Behlim", photo_url: "https://via.placeholder.com/150",
+    headline: "JEE Expert", college: "St. Thomas Sr. Sec. School", bio: "BTech student in CSE with AI specialization. District Topper in Science Stream (96.2% in Class 12th). Focuses on clear, structured concept-building in Physics and Chemistry with a supportive mentoring approach.",
+    exam_focus: ["JEE"], subjects: ["Physics", "Chemistry"], rating: 5, total_sessions: 0, experience_years: 1, languages: ["English", "Hindi"], is_verified: true,
+    achievements: ["District Topper Science Stream 96.2% in Class 12th"]
+  },
+  {
+    id: "6906ea816383975166ea99a6", full_name: "Navdeep Singh", photo_url: "https://via.placeholder.com/150",
+    headline: "JEE Expert", college: "NIT Jalandhar", bio: "Hi, I am Navdeep Singh from NIT Jalandhar and I am a Maths and Physics expert.",
+    exam_focus: ["JEE"], subjects: ["Mathematics", "Physics"], rating: 5, total_sessions: 0, experience_years: 0, languages: ["English", "Hindi"], is_verified: true
+  },
+  {
+    id: "69065527f82212ede602a539", full_name: "Abhinay Yadav", photo_url: "https://i.postimg.cc/7ZZFj8q1/abhinay.jpg",
+    headline: "Defence Mentor", college: "Thapar University", bio: "Currently pursuing B-Tech from Thapar University. Cleared NDA written twice and attended 3 SSBs (including NDA, TES, NAVY TECH entries).",
+    exam_focus: ["NDA", "Defence"], subjects: ["NDA Subjects"], rating: 5, total_sessions: 0, experience_years: 1, languages: ["English", "Hindi"], is_verified: true,
+    achievements: ["NDA Written cleared 2 times", "Attended 3 SSBs"]
+  },
+  {
+    id: "68e94d80a458b3378c74b08e", full_name: "Soham Kakkar", photo_url: "https://base44.app/api/apps/68b276d48626205b99d1f6d7/files/public/68b276d48626205b99d1f6d7/4332a6dff_1000045161.jpg",
+    headline: "Developer | IIT Undergraduate", college: "IIT Jammu", bio: "Programmer and 2nd year undergraduate at IIT Jammu. Worked on professional web development projects, Coding Club Coordinator. AIR 8k in JEE Advanced. Got a frontend internship in first year.",
+    exam_focus: ["JEE", "Programming"], subjects: ["Programming", "Web Development"], rating: 5, total_sessions: 0, experience_years: 2, languages: ["English", "Hindi"], is_verified: true,
+    achievements: ["AIR 8k in JEE Advanced", "Coding Club Coordinator at IIT Jammu", "Frontend internship in first year"]
+  },
+  {
+    id: "68de292208138b652d85034d", full_name: "Anvesha Joshi", photo_url: "https://i.postimg.cc/sX8bQn6s/IMG-20251003-120318-168.jpg",
+    headline: "Humanities Expert for 12th CBSE Boards", college: "Banasthali Vidyapeeth", bio: "BBA student at Banasthali Vidyapeeth with 91% in Class 12 Humanities. Cleared CUET and attempted IPMAT. Mentor for English proficiency in board exams and competitive entrance tests. Passionate about counselling and personality development.",
+    exam_focus: ["CUET", "CBSE Boards"], subjects: ["English", "History", "Economics"], rating: 5, total_sessions: 0, experience_years: 3, languages: ["English", "Hindi"], is_verified: true,
+    achievements: ["12th Boards Topper", "Proficiency in Bharatnatyam", "Content Writer at Banasthali Vidyapeeth"]
+  },
+  {
+    id: "68bfa6a94f766b498f945488", full_name: "Raghav Mishra", photo_url: "https://i.postimg.cc/8k7jnMdB/IMG-20250906-WA0146.jpg",
+    headline: "NDA Written Exam & SSB Interview Coach", college: "Kendriya Vidyalaya", bio: "A seasoned mentor with firsthand experience clearing the NDA written exam and multiple SSB interviews. Specializes in breaking down complex mathematical concepts and preparing candidates for the psychological and GKT portions of the SSB.",
+    exam_focus: ["NDA", "SSB Interview", "Defence"], subjects: ["Mathematics", "GAT"], rating: 5, total_sessions: 0, experience_years: 3, languages: ["English", "Hindi"], is_verified: true
+  },
+  {
+    id: "68bfa388d0e04e2fbf156334", full_name: "Hemant Singh Bhadoriya", photo_url: "https://i.postimg.cc/B6qxmc37/IMG-20250921-WA0005.jpg",
+    headline: "NDA Written + SSB Interview Guidance Expert", college: "Army Public School, Patiala", bio: "Cleared NDA written 5 times, SSB recommended (AIR 371). Mentored 50+ students for NDA written and taken 30+ SSB mock interviews. Helps candidates with SSB Interview and NDA written examination guidance.",
+    exam_focus: ["NDA", "SSB Interview", "Defence"], subjects: ["NDA Written (Mathematics + GAT)", "SSB Interview Guidance"], rating: 5, total_sessions: 0, experience_years: 2, languages: ["English", "Hindi"], is_verified: true,
+    achievements: ["RECOMMENDED FROM 19 SSB PRAYAGRAJ", "AIR 371"]
+  },
+  {
+    id: "68bc5fd1d0f9370c13cedf89", full_name: "Priyanka Nihalani", photo_url: "https://i.postimg.cc/QtnXj7Kk/pri.jpg",
+    headline: "Academic and Skill Development Mentor", college: "IET DAVV, Indore", bio: "B.Tech IT student at IET DAVV, Indore. CBSE District Topper (97.6% in Class 10) and 89.4% in Class 12. Mentor for Board exams (PCM, CS, English) and CUET preparation. Active in Google Developer Groups.",
+    exam_focus: ["CUET", "CBSE Boards", "JEE"], subjects: ["Python", "Mathematics", "Web Development", "English", "PCM"], rating: 4.9, total_sessions: 0, experience_years: 1, languages: ["English", "Hindi"], is_verified: true,
+    achievements: ["District Topper 97.6% Class 10th", "89.4% in Class 12th"]
+  },
 ]
+
 
 const EMPTY_RESULT = { records: DEMO_COLLEGES, total: DEMO_COLLEGES.length, page: 1, pageSize: 8 }
 
@@ -144,25 +210,35 @@ export async function getColleges(params = {}) {
   const from = (page - 1) * pageSize
   const to = from + pageSize - 1
 
-  const { data, error, count } = await query
-    .order("is_featured", { ascending: false })
-    .order("application_end", { ascending: true })
-    .range(from, to)
+  try {
+    const result = await withTimeout(
+      query.order("is_featured", { ascending: false })
+        .order("application_end", { ascending: true })
+        .range(from, to),
+      8000,
+      null
+    )
 
-  if (error) {
-    console.warn("Supabase colleges error, returning mock schema", error)
+    if (!result || result.error) {
+      console.warn("Supabase colleges error, returning demo data", result?.error)
+      return EMPTY_RESULT
+    }
+
+    const { data, count } = result
+
+    if (!data || data.length === 0) {
+      return EMPTY_RESULT
+    }
+
+    return {
+      records: data,
+      total: count || data.length,
+      page,
+      pageSize,
+    }
+  } catch (err) {
+    console.warn("Supabase colleges exception, returning demo data", err)
     return EMPTY_RESULT
-  }
-
-  if (!data || data.length === 0) {
-    return EMPTY_RESULT // Fallback if table is just clean-installed and empty
-  }
-
-  return {
-    records: data,
-    total: count || data.length,
-    page,
-    pageSize,
   }
 }
 
@@ -193,18 +269,38 @@ export async function getExamsTimeline(params = {}) {
 }
 
 export async function getMentors(params = {}) {
-  if (!supabase || isDemoMode) return DEMO_MENTORS
+  const { search = "", stream = "All" } = params
+
+  const applyFilters = (data) => {
+    return data.filter(m => {
+      const ms = search.toLowerCase()
+      const matchesSearch = !search ||
+        (m.full_name || "").toLowerCase().includes(ms) ||
+        (m.college || "").toLowerCase().includes(ms) ||
+        (m.exam_focus || []).some(e => typeof e === 'string' && e.toLowerCase().includes(ms))
+      
+      const matchesStream = stream === "All" || (m.subjects || []).includes(stream)
+      
+      return matchesSearch && matchesStream
+    })
+  }
+
+  if (!supabase || isDemoMode) return applyFilters(DEMO_MENTORS)
 
   let query = supabase.from("mentors").select("*").order("rating", { ascending: false })
-  // Stream is not a column in the currently audited mentors table, omitting filter to prevent error
-  // if (params.stream) query = query.eq("stream", params.stream)
-
-  const { data, error } = await query
-
-  if (error || !data || data.length === 0) {
-    return DEMO_MENTORS
+  
+  if (search) {
+      query = query.or(`full_name.ilike.%${search}%,college.ilike.%${search}%`)
   }
-  return data
+
+  const result = await withTimeout(query, 8000, null)
+
+  if (!result || result.error || !result.data || result.data.length === 0) {
+    if (result?.error) console.warn("Supabase getMentors error/timeout, using fallback", result.error)
+    return applyFilters(DEMO_MENTORS)
+  }
+  
+  return applyFilters(result.data)
 }
 
 export async function getStats() {

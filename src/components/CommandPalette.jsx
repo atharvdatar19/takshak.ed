@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { Command, Search, X } from "lucide-react"
+import { Command, Search, X, Users, Building, GraduationCap } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { getMentors, getColleges } from "../services/api"
 
 const COMMANDS = [
     { id: "dashboard", label: "Go to Dashboard", path: "/dashboard", keywords: "home overview metrics" },
@@ -23,6 +24,8 @@ export default function CommandPalette() {
     const [open, setOpen] = useState(false)
     const [query, setQuery] = useState("")
     const [selected, setSelected] = useState(0)
+    const [dynamicData, setDynamicData] = useState([])
+    const hasFetched = useRef(false)
     const inputRef = useRef(null)
     const navigate = useNavigate()
 
@@ -43,16 +46,42 @@ export default function CommandPalette() {
             setQuery("")
             setSelected(0)
             setTimeout(() => inputRef.current?.focus(), 50)
+            
+            if (!hasFetched.current) {
+                hasFetched.current = true
+                Promise.all([
+                    getMentors(),
+                    getColleges({ page: 1, pageSize: 30 })
+                ]).then(([mentorsData, collegesData]) => {
+                    const mappedMentors = (mentorsData || []).map(m => ({
+                        id: `mentor-${m.id}`,
+                        label: `Mentor: ${m.full_name}`,
+                        path: `/mentors/${m.id}`,
+                        keywords: `${m.full_name} ${m.headline || ''} ${m.college || ''} mentor guide educator`,
+                        icon: Users
+                    }))
+                    
+                    const mappedColleges = (collegesData.records || []).map(c => ({
+                        id: `coll-${c.id}`,
+                        label: `College: ${c.name}`,
+                        path: `/colleges?search=${encodeURIComponent(c.name)}`,
+                        keywords: `${c.name} ${c.city || ''} ${c.state || ''} college university`,
+                        icon: Building
+                    }))
+                    setDynamicData([...mappedMentors, ...mappedColleges])
+                }).catch(err => console.error("Error fetching cmd palette data", err))
+            }
         }
     }, [open])
 
     const filtered = useMemo(() => {
-        if (!query.trim()) return COMMANDS
+        const ALL_COMMANDS = [...COMMANDS, ...dynamicData]
+        if (!query.trim()) return ALL_COMMANDS
         const lower = query.toLowerCase()
-        return COMMANDS.filter(
-            cmd => cmd.label.toLowerCase().includes(lower) || cmd.keywords.includes(lower),
+        return ALL_COMMANDS.filter(
+            cmd => cmd.label.toLowerCase().includes(lower) || cmd.keywords.toLowerCase().includes(lower),
         )
-    }, [query])
+    }, [query, dynamicData])
 
     useEffect(() => {
         setSelected(0)
@@ -129,7 +158,10 @@ export default function CommandPalette() {
                                                 : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                                                 }`}
                                         >
-                                            <Command size={14} className={i === selected ? "text-white/70" : "text-slate-400"} />
+                                            {cmd.icon 
+                                                ? <cmd.icon size={14} className={i === selected ? "text-white/70" : "text-slate-400"} />
+                                                : <Command size={14} className={i === selected ? "text-white/70" : "text-slate-400"} />
+                                            }
                                             {cmd.label}
                                         </button>
                                     </li>

@@ -54,12 +54,6 @@ const PRICING_PLANS = [
         cta: "Book Free Session", btnStyle: "bg-white/10 text-white hover:bg-white/20"
     },
     {
-        id: "session", name: "Written Exam Mentorship", price: "₹99", priceNote: "per session", highlight: false,
-        color: "border-indigo-500/30", gradient: "from-indigo-500/10 to-transparent", badge: null,
-        features: ["30-min 1:1 video session", "Subject-wise strategy", "Previous year paper analysis", "Curated study material", "Mock test review"],
-        cta: "Book Session — ₹99", mentor: "Raghav Mishra", btnStyle: "bg-indigo-600 text-white hover:bg-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.4)]"
-    },
-    {
         id: "ssb", name: "SSB Interview Prep", price: "₹699", priceNote: "complete plan", highlight: true,
         color: "border-amber-500/50", gradient: "from-amber-500/20 to-[#0f1930]", badge: "MOST POPULAR",
         features: ["3× live 1:1 sessions (45 min each)", "Mock SSB Simulation (OIR, PPDT, TAT)", "GTO Tasks Walkthrough", "2× Mock Personal Interview", "5-Day SSB Blueprint"],
@@ -159,9 +153,7 @@ export default function DefenceAspirants() {
                         <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="group rounded-[2rem] bg-[#0f1930] border border-white/10 overflow-hidden hover:border-indigo-500/50 transition-all shadow-xl">
                             <div className="bg-gradient-to-r from-indigo-900/40 to-purple-900/40 border-b border-white/5 p-6 md:p-8">
                                 <div className="flex items-center gap-5">
-                                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[1.5rem] bg-indigo-500/20 border border-indigo-500/30 text-3xl font-black text-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
-                                        RM
-                                    </div>
+                                    <img src="https://i.postimg.cc/8k7jnMdB/IMG-20250906-WA0146.jpg" alt="Raghav Mishra" className="h-20 w-20 shrink-0 rounded-[1.5rem] object-cover border border-indigo-500/30 shadow-[0_0_20px_rgba(99,102,241,0.2)]" />
                                     <div>
                                         <h3 className="text-2xl font-bold text-white tracking-tight">Raghav Mishra</h3>
                                         <p className="text-[#a3aac4] font-medium mt-1">Written Exam Specialist</p>
@@ -182,7 +174,7 @@ export default function DefenceAspirants() {
                                     <span className="flex items-center gap-1.5"><Users size={14} /> 3 yr exp</span>
                                 </div>
                                 <button onClick={() => navigate("/sessions")} className="w-full rounded-xl bg-indigo-600 px-4 py-4 text-sm font-bold text-white shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:bg-indigo-500 transition-colors uppercase tracking-wider">
-                                    Book 1:1 Session — ₹99
+                                    Book 1:1 Session — ₹49
                                 </button>
                             </div>
                         </motion.div>
@@ -191,9 +183,7 @@ export default function DefenceAspirants() {
                         <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="group rounded-[2rem] bg-[#0f1930] border border-white/10 overflow-hidden hover:border-emerald-500/50 transition-all shadow-xl">
                             <div className="bg-gradient-to-r from-emerald-900/40 to-teal-900/40 border-b border-white/5 p-6 md:p-8">
                                 <div className="flex items-center gap-5">
-                                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[1.5rem] bg-emerald-500/20 border border-emerald-500/30 text-3xl font-black text-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.2)]">
-                                        HS
-                                    </div>
+                                    <img src="https://i.postimg.cc/B6qxmc37/IMG-20250921-WA0005.jpg" alt="Hemant Singh Bhadoriya" className="h-20 w-20 shrink-0 rounded-[1.5rem] object-cover border border-emerald-500/30 shadow-[0_0_20px_rgba(52,211,153,0.2)]" />
                                     <div>
                                         <h3 className="text-2xl font-bold text-white tracking-tight">Hemant Bhadoriya</h3>
                                         <div className="flex items-center gap-3 mt-1">
@@ -217,9 +207,14 @@ export default function DefenceAspirants() {
                                     <span className="flex items-center gap-1.5"><Users size={14} /> 50+ students</span>
                                     <span className="flex items-center gap-1.5"><Award size={14} className="text-emerald-400" /> 5× Written</span>
                                 </div>
-                                <button onClick={() => navigate("/sessions")} className="w-full rounded-xl bg-emerald-600 px-4 py-4 text-sm font-bold text-white shadow-[0_0_20px_rgba(5,150,105,0.3)] hover:bg-emerald-500 transition-colors uppercase tracking-wider">
-                                    Enroll SSB Prep — ₹699
-                                </button>
+                                <div className="flex flex-col gap-3">
+                                    <button onClick={() => navigate("/sessions")} className="w-full rounded-xl bg-emerald-600 px-4 py-4 text-sm font-bold text-white shadow-[0_0_20px_rgba(5,150,105,0.3)] hover:bg-emerald-500 transition-colors uppercase tracking-wider">
+                                        Enroll SSB Prep — ₹699
+                                    </button>
+                                    <button onClick={() => navigate("/sessions")} className="w-full rounded-xl bg-indigo-600/80 px-4 py-3 text-sm font-bold text-white shadow-[0_0_15px_rgba(79,70,229,0.25)] hover:bg-indigo-500 transition-colors uppercase tracking-wider border border-indigo-500/30">
+                                        📝 Written Exam Guide — ₹49
+                                    </button>
+                                </div>
                             </div>
                         </motion.div>
                     </div>
@@ -232,7 +227,7 @@ export default function DefenceAspirants() {
                         <p className="text-[#a3aac4] text-sm uppercase tracking-widest font-bold">Start free, upgrade when ready</p>
                     </div>
 
-                    <div className="grid lg:grid-cols-3 gap-8">
+                    <div className="grid lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
                         {PRICING_PLANS.map((plan, idx) => (
                             <motion.div key={plan.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }} className={`relative rounded-[2rem] border bg-gradient-to-b ${plan.gradient} ${plan.color} overflow-hidden shadow-2xl transition-all ${plan.highlight ? "ring-2 ring-amber-500/50 lg:-translate-y-4" : ""} bg-[#0f1930]`}>
                                 {plan.badge && (

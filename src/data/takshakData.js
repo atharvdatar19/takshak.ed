@@ -22,7 +22,7 @@ export const takshakEducators = [
         subject: 'Physics',
         level: 'Beginner',
         teachingStyle: 'Conceptual',
-        rating: 4.9,
+        rating: 5,
         reach: '15M+',
         tags: ['Physics', 'Conceptual Teaching', 'Engaging']
     },
