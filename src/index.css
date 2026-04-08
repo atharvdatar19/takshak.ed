@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,300;0,600;0,700;0,900;1,700;1,900&family=Manrope:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { font-family: 'Manrope', sans-serif; }
+  body {
+    background-color: #1d100c;
+    color: #f7ddd6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #1d100c; }
+  ::-webkit-scrollbar-thumb { background: #524340; border-radius: 9999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #a08c89; }
+  ::selection { background: rgba(255, 180, 165, 0.3); color: #f7ddd6; }
+}
+
+@layer components {
+  /* ══════════ GLASS SYSTEM ══════════ */
+  .glass {
+    background: rgba(65, 49, 44, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(82, 67, 64, 0.2);
+  }
+  .glass-low {
+    background: rgba(42, 28, 24, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  /* ══════════ NOISE OVERLAY ══════════ */
+  .noise-overlay {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  /* ══════════ BUTTONS ══════════ */
+  .btn-primary {
+    background-color: #ffb4a5;
+    color: #522218;
+    border-radius: 9999px;
+    padding: 0.75rem 2rem;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    box-shadow: 0 0 20px rgba(255, 180, 165, 0.15);
+    transition: transform 400ms ease-out, box-shadow 400ms ease-out;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 32px rgba(255, 180, 165, 0.25);
+  }
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-ghost {
+    background: rgba(65, 49, 44, 0.5);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(82, 67, 64, 0.2);
+    color: #f7ddd6;
+    border-radius: 9999px;
+    padding: 0.75rem 2rem;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: transform 400ms ease-out;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+  .btn-ghost:hover { transform: scale(1.02); }
+
+  .btn-danger {
+    background: rgba(255, 180, 171, 0.15);
+    color: #ffb4ab;
+    border-radius: 9999px;
+    padding: 0.5rem 1.5rem;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 400ms ease-out;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-danger:hover { background: #ffb4ab; color: #690005; }
+
+  /* ══════════ TYPOGRAPHY ══════════ */
+  .display-headline {
+    font-family: 'Noto Serif', serif;
+    font-weight: 900;
+    color: #f7ddd6;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .section-title {
+    font-family: 'Noto Serif', serif;
+    font-weight: 700;
+    color: #f7ddd6;
+    font-style: italic;
+    letter-spacing: -0.02em;
+  }
+
+  /* ══════════ ATMOSPHERIC GLOWS ══════════ */
+  .atmo-glow-primary {
+    width: 400px; height: 400px;
+    background: rgba(255, 180, 165, 0.04);
+    filter: blur(120px);
+    border-radius: 9999px;
+    pointer-events: none;
+    position: absolute;
+  }
+
+  .atmo-glow-secondary {
+    width: 480px; height: 480px;
+    background: rgba(235, 189, 162, 0.04);
+    filter: blur(140px);
+    border-radius: 9999px;
+    pointer-events: none;
+    position: absolute;
+  }
+
+  /* ══════════ STAT NUMBER ══════════ */
+  .stat-number {
+    font-family: 'Noto Serif', serif;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    line-height: 1;
+  }
+
+  /* ══════════ NAV ACTIVE ══════════ */
+  .nav-active {
+    color: #ffb4a5;
+    font-weight: 600;
+    border-bottom: 2px solid #ffb4a5;
+    padding-bottom: 2px;
+  }
+
+  /* ══════════ SCROLLBAR DARK ══════════ */
+  .bg-app {
+    background: #1d100c;
+    min-height: 100vh;
+  }
+
+  /* ══════════ LOADING SHIMMER ══════════ */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .shimmer {
+    background: linear-gradient(90deg, #2a1c18 25%, #352722 50%, #2a1c18 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+}
