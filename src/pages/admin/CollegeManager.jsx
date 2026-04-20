@@ -93,7 +93,7 @@ export default function CollegeManager() {
         return (
             <div className="space-y-3">
                 {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-16 animate-pulse rounded-lg bg-slate-200" />
+                    <div key={i} className="h-16 animate-pulse rounded-lg bg-surface-container-high" />
                 ))}
             </div>
         )
@@ -102,7 +102,7 @@ export default function CollegeManager() {
     return (
         <div className="space-y-4">
             {error && (
-                <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">
+                <div className="rounded-lg border border-error/20 bg-error/10 px-4 py-2 text-sm text-error">
                     {error}
                 </div>
             )}
@@ -113,26 +113,26 @@ export default function CollegeManager() {
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     placeholder="Search colleges..."
-                    className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500"
+                    className="flex-1 rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary"
                 />
                 <button
                     type="button"
                     onClick={() => setEditing({ ...EMPTY_COLLEGE })}
-                    className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
+                    className="inline-flex items-center gap-1 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary/100"
                 >
                     <Plus size={14} /> Add College
                 </button>
             </div>
 
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-on-surface-variant">
                 Showing {filtered.length} of {colleges.length} colleges
             </p>
 
             {/* ── Table ── */}
-            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-x-auto rounded-xl border border-outline-variant/20 glass shadow-sm">
                 <table className="w-full text-sm">
                     <thead>
-                        <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold text-slate-600">
+                        <tr className="border-b border-outline-variant/20 bg-surface-container-low text-left text-xs font-semibold text-on-surface-variant">
                             <th className="px-4 py-3">Name</th>
                             <th className="px-4 py-3">Location</th>
                             <th className="px-4 py-3">Mode</th>
@@ -143,16 +143,16 @@ export default function CollegeManager() {
                     </thead>
                     <tbody>
                         {filtered.map(college => (
-                            <tr key={college.id} className="border-b border-slate-100 hover:bg-slate-50">
-                                <td className="px-4 py-3 font-medium text-slate-900">{college.name}</td>
-                                <td className="px-4 py-3 text-slate-600">{college.city}, {college.state}</td>
-                                <td className="px-4 py-3 text-slate-600">{college.admission_mode || "—"}</td>
-                                <td className="px-4 py-3 text-slate-600">{college.application_end || "—"}</td>
+                            <tr key={college.id} className="border-b border-outline-variant/10 hover:bg-surface-container-low">
+                                <td className="px-4 py-3 font-medium text-on-surface">{college.name}</td>
+                                <td className="px-4 py-3 text-on-surface-variant">{college.city}, {college.state}</td>
+                                <td className="px-4 py-3 text-on-surface-variant">{college.admission_mode || "—"}</td>
+                                <td className="px-4 py-3 text-on-surface-variant">{college.application_end || "—"}</td>
                                 <td className="px-4 py-3 text-center">
                                     <button
                                         type="button"
                                         onClick={() => handleToggleFeatured(college.id, college.is_featured)}
-                                        className={`rounded-full p-1 transition ${college.is_featured ? "text-amber-500 hover:text-amber-600" : "text-slate-300 hover:text-amber-400"}`}
+                                        className={`rounded-full p-1 transition ${college.is_featured ? "text-tertiary hover:text-amber-600" : "text-on-surface-variant/40 hover:text-tertiary"}`}
                                         title={college.is_featured ? "Remove featured" : "Mark as featured"}
                                     >
                                         <Star size={16} fill={college.is_featured ? "currentColor" : "none"} />
@@ -168,14 +168,14 @@ export default function CollegeManager() {
                                                     ? college.streams_supported.join(", ")
                                                     : college.streams_supported || "",
                                             })}
-                                            className="rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-indigo-600"
+                                            className="rounded-lg p-1 text-on-surface-variant/60 transition hover:bg-surface-container hover:text-primary"
                                         >
                                             <Pencil size={14} />
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => handleDelete(college.id)}
-                                            className="rounded-lg p-1 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
+                                            className="rounded-lg p-1 text-on-surface-variant/60 transition hover:bg-error/10 hover:text-error"
                                         >
                                             <Trash2 size={14} />
                                         </button>
@@ -185,7 +185,7 @@ export default function CollegeManager() {
                         ))}
                         {filtered.length === 0 && (
                             <tr>
-                                <td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-400">
+                                <td colSpan={6} className="px-4 py-8 text-center text-sm text-on-surface-variant/60">
                                     No colleges found.
                                 </td>
                             </tr>
@@ -197,12 +197,12 @@ export default function CollegeManager() {
             {/* ── Edit Modal ── */}
             {editing !== null && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="relative mx-4 w-full max-w-lg space-y-4 rounded-2xl bg-white p-6 shadow-xl">
+                    <div className="relative mx-4 w-full max-w-lg space-y-4 rounded-2xl glass p-6 shadow-xl">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-semibold text-slate-900">
+                            <h3 className="text-lg font-semibold text-on-surface">
                                 {editing.id ? "Edit College" : "Add College"}
                             </h3>
-                            <button type="button" onClick={() => setEditing(null)} className="text-slate-400 hover:text-slate-600">
+                            <button type="button" onClick={() => setEditing(null)} className="text-on-surface-variant/60 hover:text-on-surface-variant">
                                 <X size={18} />
                             </button>
                         </div>
@@ -228,7 +228,7 @@ export default function CollegeManager() {
                             <button
                                 type="button"
                                 onClick={() => setEditing(null)}
-                                className="rounded-lg border border-slate-300 px-4 py-2 text-sm transition hover:bg-slate-50"
+                                className="rounded-lg border border-outline-variant/20 px-4 py-2 text-sm transition hover:bg-surface-container-low"
                             >
                                 Cancel
                             </button>
@@ -236,7 +236,7 @@ export default function CollegeManager() {
                                 type="button"
                                 onClick={handleSave}
                                 disabled={saving || !editing.name}
-                                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500 disabled:opacity-50"
+                                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary/100 disabled:opacity-50"
                             >
                                 {saving ? "Saving..." : "Save"}
                             </button>
@@ -251,12 +251,12 @@ export default function CollegeManager() {
 function FormField({ label, value, onChange, type = "text", full = false }) {
     return (
         <label className={full ? "sm:col-span-2" : ""}>
-            <span className="mb-1 block text-xs font-medium text-slate-600">{label}</span>
+            <span className="mb-1 block text-xs font-medium text-on-surface-variant">{label}</span>
             <input
                 type={type}
                 value={value || ""}
                 onChange={e => onChange(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500"
+                className="w-full rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary"
             />
         </label>
     )

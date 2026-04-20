@@ -72,29 +72,29 @@ export default function AdminEducators() {
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
                     <h1 className="text-2xl font-black text-white tracking-tight">Educator CMS</h1>
-                    <p className="text-[11px] text-slate-600 mt-1">{educators.length} educators</p>
+                    <p className="text-[11px] text-on-surface-variant mt-1">{educators.length} educators</p>
                 </div>
                 <div className="flex gap-2">
                     <button onClick={startNew}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold hover:bg-indigo-500/15 transition">
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/100/10 border border-primary/20 text-primary/70 text-xs font-bold hover:bg-primary/100/15 transition">
                         <Plus size={14} /> Add Educator
                     </button>
                     <button onClick={loadData} disabled={loading}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.05] text-slate-500 hover:text-indigo-400 transition text-xs font-medium">
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl glass/[0.03] border border-white/[0.05] text-on-surface-variant hover:text-primary/70 transition text-xs font-medium">
                         {loading ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />}
                     </button>
                 </div>
             </div>
 
-            {error && <div className="rounded-xl bg-rose-500/8 border border-rose-500/15 px-4 py-3 text-xs text-rose-400">{error}</div>}
+            {error && <div className="rounded-xl bg-error/100/8 border border-rose-500/15 px-4 py-3 text-xs text-error">{error}</div>}
 
             {/* Editor Form */}
             {showForm && (
                 <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                    className="rounded-2xl border border-indigo-500/15 bg-[#0d0e1a] p-5 space-y-4">
+                    className="rounded-2xl border border-primary/15 bg-[#0d0e1a] p-5 space-y-4">
                     <div className="flex items-center justify-between mb-2">
                         <h2 className="text-sm font-bold text-white">{editingId ? "Edit Educator" : "New Educator"}</h2>
-                        <button onClick={() => setShowForm(false)} className="p-1.5 rounded-lg hover:bg-white/[0.04] text-slate-500"><X size={16} /></button>
+                        <button onClick={() => setShowForm(false)} className="p-1.5 rounded-lg hover:glass/[0.04] text-on-surface-variant"><X size={16} /></button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <FormInput label="Name" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} />
@@ -111,34 +111,34 @@ export default function AdminEducators() {
                             onChange={v => setForm(f => ({ ...f, language: v.split(",").map(s => s.trim()).filter(Boolean) }))} />
                     </div>
                     <div>
-                        <label className="text-[9px] text-slate-600 font-black uppercase tracking-wider block mb-1">Curator Note</label>
+                        <label className="text-[9px] text-on-surface-variant font-black uppercase tracking-wider block mb-1">Curator Note</label>
                         <textarea value={form.curator_note} onChange={e => setForm(f => ({ ...f, curator_note: e.target.value }))}
-                            className="w-full rounded-xl border border-white/[0.05] bg-white/[0.02] p-3 text-xs text-slate-300 outline-none resize-none h-16 focus:border-indigo-500/40 transition placeholder:text-slate-700" />
+                            className="w-full rounded-xl border border-white/[0.05] glass/[0.02] p-3 text-xs text-on-surface-variant/40 outline-none resize-none h-16 focus:border-primary/40 transition placeholder:text-on-surface" />
                     </div>
                     {/* Playlist Links */}
                     <div>
                         <div className="flex items-center justify-between mb-2">
-                            <label className="text-[9px] text-slate-600 font-black uppercase tracking-wider">Playlist Links</label>
-                            <button onClick={addPlaylist} className="text-[10px] text-indigo-400 font-bold hover:underline">+ Add Link</button>
+                            <label className="text-[9px] text-on-surface-variant font-black uppercase tracking-wider">Playlist Links</label>
+                            <button onClick={addPlaylist} className="text-[10px] text-primary/70 font-bold hover:underline">+ Add Link</button>
                         </div>
                         <div className="space-y-2">
                             {(form.playlist_links || []).map((pl, idx) => (
                                 <div key={idx} className="flex gap-2 items-center">
                                     <input value={pl.title} onChange={e => updatePlaylist(idx, "title", e.target.value)} placeholder="Title"
-                                        className="flex-1 rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2 text-xs text-slate-300 outline-none focus:border-indigo-500/40" />
+                                        className="flex-1 rounded-lg border border-white/[0.05] glass/[0.02] px-3 py-2 text-xs text-on-surface-variant/40 outline-none focus:border-primary/40" />
                                     <input value={pl.url} onChange={e => updatePlaylist(idx, "url", e.target.value)} placeholder="URL"
-                                        className="flex-[2] rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2 text-xs text-slate-300 outline-none focus:border-indigo-500/40" />
-                                    <button onClick={() => removePlaylist(idx)} className="p-1.5 rounded-lg hover:bg-rose-500/10 text-slate-600 hover:text-rose-400"><Trash2 size={13} /></button>
+                                        className="flex-[2] rounded-lg border border-white/[0.05] glass/[0.02] px-3 py-2 text-xs text-on-surface-variant/40 outline-none focus:border-primary/40" />
+                                    <button onClick={() => removePlaylist(idx)} className="p-1.5 rounded-lg hover:bg-error/100/10 text-on-surface-variant hover:text-error"><Trash2 size={13} /></button>
                                 </div>
                             ))}
                         </div>
                     </div>
-                    <label className="flex items-center gap-2 text-xs text-slate-500 cursor-pointer">
+                    <label className="flex items-center gap-2 text-xs text-on-surface-variant cursor-pointer">
                         <input type="checkbox" checked={form.is_famous} onChange={e => setForm(f => ({ ...f, is_famous: e.target.checked }))} className="accent-indigo-500" />
                         Mark as Famous
                     </label>
                     <button onClick={handleSave} disabled={saving}
-                        className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-5 py-2.5 text-xs font-bold hover:bg-emerald-500/15 transition flex items-center gap-2 disabled:opacity-50">
+                        className="rounded-xl bg-tertiary/100/10 border border-tertiary/20 text-tertiary px-5 py-2.5 text-xs font-bold hover:bg-tertiary/100/15 transition flex items-center gap-2 disabled:opacity-50">
                         {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} {editingId ? "Update" : "Create"} Educator
                     </button>
                 </motion.div>
@@ -146,41 +146,41 @@ export default function AdminEducators() {
 
             {/* Table */}
             {loading && educators.length === 0 ? (
-                <div className="space-y-2">{[1, 2, 3].map(i => <div key={i} className="h-14 rounded-xl bg-white/[0.02] animate-pulse" />)}</div>
+                <div className="space-y-2">{[1, 2, 3].map(i => <div key={i} className="h-14 rounded-xl glass/[0.02] animate-pulse" />)}</div>
             ) : (
-                <div className="rounded-2xl border border-white/[0.04] bg-[#0d0e1a] overflow-hidden">
+                <div className="rounded-2xl border border-outline-variant/10 bg-[#0d0e1a] overflow-hidden">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-white/[0.04]">
+                            <tr className="border-b border-outline-variant/10">
                                 {["Educator", "Subject", "Platform", "Playlists", "Upvotes", "Actions"].map(h => (
-                                    <th key={h} className="text-left text-[9px] font-black uppercase tracking-wider text-slate-600 px-5 py-3">{h}</th>
+                                    <th key={h} className="text-left text-[9px] font-black uppercase tracking-wider text-on-surface-variant px-5 py-3">{h}</th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
                             {educators.map((edu, i) => (
-                                <tr key={edu.id} className={`border-b border-white/[0.02] ${i % 2 === 0 ? "bg-white/[0.01]" : ""} hover:bg-white/[0.03] transition`}>
+                                <tr key={edu.id} className={`border-b border-white/[0.02] ${i % 2 === 0 ? "glass/[0.01]" : ""} hover:glass/[0.03] transition`}>
                                     <td className="px-5 py-3">
                                         <p className="text-xs font-semibold text-white">{edu.name}</p>
-                                        <p className="text-[10px] text-slate-600">{edu.tagline}</p>
+                                        <p className="text-[10px] text-on-surface-variant">{edu.tagline}</p>
                                     </td>
-                                    <td className="px-5 py-3 text-xs text-slate-400">{edu.subject}</td>
+                                    <td className="px-5 py-3 text-xs text-on-surface-variant/60">{edu.subject}</td>
                                     <td className="px-5 py-3">
-                                        <span className="px-2 py-0.5 rounded-full text-[8px] font-black bg-indigo-500/10 text-indigo-400 border border-indigo-500/15">{edu.platform}</span>
+                                        <span className="px-2 py-0.5 rounded-full text-[8px] font-black bg-primary/100/10 text-primary/70 border border-primary/15">{edu.platform}</span>
                                     </td>
-                                    <td className="px-5 py-3 text-xs text-slate-500">{(edu.playlist_links || []).length} links</td>
-                                    <td className="px-5 py-3 text-xs font-bold text-amber-400">{edu.upvotes || 0}</td>
+                                    <td className="px-5 py-3 text-xs text-on-surface-variant">{(edu.playlist_links || []).length} links</td>
+                                    <td className="px-5 py-3 text-xs font-bold text-tertiary">{edu.upvotes || 0}</td>
                                     <td className="px-5 py-3">
                                         <div className="flex items-center gap-1">
-                                            <button onClick={() => startEdit(edu)} className="p-1.5 rounded-lg hover:bg-indigo-500/10 text-slate-600 hover:text-indigo-400 transition"><Pencil size={13} /></button>
-                                            <button onClick={() => handleDelete(edu.id)} className="p-1.5 rounded-lg hover:bg-rose-500/10 text-slate-600 hover:text-rose-400 transition"><Trash2 size={13} /></button>
-                                            {edu.primary_link && <a href={edu.primary_link} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg hover:bg-white/[0.04] text-slate-600 hover:text-slate-300 transition"><ExternalLink size={13} /></a>}
+                                            <button onClick={() => startEdit(edu)} className="p-1.5 rounded-lg hover:bg-primary/100/10 text-on-surface-variant hover:text-primary/70 transition"><Pencil size={13} /></button>
+                                            <button onClick={() => handleDelete(edu.id)} className="p-1.5 rounded-lg hover:bg-error/100/10 text-on-surface-variant hover:text-error transition"><Trash2 size={13} /></button>
+                                            {edu.primary_link && <a href={edu.primary_link} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg hover:glass/[0.04] text-on-surface-variant hover:text-on-surface-variant/40 transition"><ExternalLink size={13} /></a>}
                                         </div>
                                     </td>
                                 </tr>
                             ))}
                             {educators.length === 0 && (
-                                <tr><td colSpan={6} className="px-5 py-12 text-center text-xs text-slate-600">No educators yet</td></tr>
+                                <tr><td colSpan={6} className="px-5 py-12 text-center text-xs text-on-surface-variant">No educators yet</td></tr>
                             )}
                         </tbody>
                     </table>
@@ -193,9 +193,9 @@ export default function AdminEducators() {
 function FormInput({ label, value, onChange, placeholder }) {
     return (
         <div>
-            <label className="text-[9px] text-slate-600 font-black uppercase tracking-wider block mb-1">{label}</label>
+            <label className="text-[9px] text-on-surface-variant font-black uppercase tracking-wider block mb-1">{label}</label>
             <input type="text" value={value || ""} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-                className="w-full rounded-xl border border-white/[0.05] bg-white/[0.02] px-3 py-2 text-xs text-slate-300 outline-none focus:border-indigo-500/40 transition placeholder:text-slate-700" />
+                className="w-full rounded-xl border border-white/[0.05] glass/[0.02] px-3 py-2 text-xs text-on-surface-variant/40 outline-none focus:border-primary/40 transition placeholder:text-on-surface" />
         </div>
     )
 }
@@ -203,9 +203,9 @@ function FormInput({ label, value, onChange, placeholder }) {
 function FormSelect({ label, value, options, onChange }) {
     return (
         <div>
-            <label className="text-[9px] text-slate-600 font-black uppercase tracking-wider block mb-1">{label}</label>
+            <label className="text-[9px] text-on-surface-variant font-black uppercase tracking-wider block mb-1">{label}</label>
             <select value={value} onChange={e => onChange(e.target.value)}
-                className="w-full rounded-xl border border-white/[0.05] bg-white/[0.02] px-3 py-2 text-xs text-slate-300 outline-none focus:border-indigo-500/40 transition appearance-none">
+                className="w-full rounded-xl border border-white/[0.05] glass/[0.02] px-3 py-2 text-xs text-on-surface-variant/40 outline-none focus:border-primary/40 transition appearance-none">
                 {options.map(o => <option key={o} value={o}>{o}</option>)}
             </select>
         </div>

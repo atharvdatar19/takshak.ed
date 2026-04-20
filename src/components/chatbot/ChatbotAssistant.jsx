@@ -48,14 +48,12 @@ export default function ChatbotAssistant() {
 
     setInput("")
 
-    // If it's pure logic action without text, we might not show it as user message, but usually we do
     if (userMessage) {
       setMessages(prev => [...prev, { role: "user", content: userMessage }])
     }
 
     setIsResponding(true)
 
-    // Send the actual text or the action key to the engine
     const query = overrideAction || userMessage
     const response = await getAssistantResponse(query, messages)
 
@@ -87,17 +85,17 @@ export default function ChatbotAssistant() {
     const parts = text.split(/(\*\*.*?\*\*|\*.*?\*)/g);
     return parts.map((part, i) => {
       if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={i} className="font-bold text-slate-900">{part.slice(2, -2)}</strong>
+        return <strong key={i} className="font-bold text-on-surface">{part.slice(2, -2)}</strong>
       }
       if (part.startsWith('*') && part.endsWith('*')) {
-        return <em key={i} className="italic text-slate-800">{part.slice(1, -1)}</em>
+        return <em key={i} className="italic text-on-surface">{part.slice(1, -1)}</em>
       }
       return <span key={i}>{part}</span>
     });
   }
 
   return (
-    <div ref={widgetRef} className="fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6">
+    <div ref={widgetRef} className="fixed bottom-4 right-4 z-[90] sm:bottom-8 sm:right-8">
       <AnimatePresence>
         {!isOpen && (
           <motion.button
@@ -106,10 +104,11 @@ export default function ChatbotAssistant() {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
             onClick={() => setIsOpen(true)}
-            className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-xl shadow-indigo-200 transition hover:shadow-2xl hover:scale-105 active:scale-95 group relative"
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-on-primary shadow-[0_0_30px_rgba(255,180,165,0.3)] transition-all duration-400 hover:scale-105 group relative"
           >
-            <Sparkles size={16} className="absolute top-2 right-2 text-yellow-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Sparkles size={14} className="absolute top-2 right-2 text-tertiary opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
             <MessageSquare size={24} />
           </motion.button>
         )}
@@ -119,98 +118,104 @@ export default function ChatbotAssistant() {
         {isOpen && (
           <motion.section
             role="dialog"
-            aria-label="Medha - TAKSHAK assistant"
+            aria-label="AI Counselor - TAKSHAK assistant"
             initial={{ opacity: 0, y: 16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.96 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="w-[calc(100vw-2rem)] max-w-sm sm:w-96 overflow-hidden rounded-[32px] glass-panel shadow-2xl flex flex-col h-[600px] max-h-[85vh] reveal-up"
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="w-[calc(100vw-2rem)] max-w-sm sm:w-96 overflow-hidden rounded-xl glass shadow-[0_40px_80px_rgba(29,16,12,0.2)] flex flex-col h-[520px] max-h-[85vh]"
           >
-            <header className="flex items-center justify-between bg-gradient-to-r from-slate-900 to-indigo-950 px-5 py-4 text-white shrink-0">
+            {/* Header */}
+            <header className="flex items-center justify-between bg-surface-container-high px-6 py-4 shrink-0">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 shadow-inner">
-                    <Bot size={20} className="text-white" />
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-on-primary shadow-[0_0_15px_rgba(255,180,165,0.2)]">
+                    <Bot size={20} />
                   </span>
-                  <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-400 border-2 border-indigo-950"></span>
+                  <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-tertiary border-2 border-surface-container-high"></span>
                 </div>
                 <div>
-                  <p className="text-sm font-bold tracking-wide flex items-center gap-1.5">
-                    Medha AI <Sparkles size={12} className="text-yellow-400" />
+                  <p className="font-headline font-bold italic text-on-surface text-sm flex items-center gap-1.5">
+                    AI Counselor <Sparkles size={12} className="text-tertiary" />
                   </p>
-                  <p className="text-xs text-indigo-200">Online & ready to help</p>
+                  <p className="text-[10px] font-label uppercase tracking-wider text-on-surface-variant/60">Online & ready</p>
                 </div>
               </div>
               <button
                 type="button"
                 aria-label="Close chatbot assistant"
                 onClick={() => setIsOpen(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 active:scale-95"
+                className="flex h-8 w-8 items-center justify-center rounded-full glass text-on-surface-variant hover:text-on-surface hover:bg-surface-bright transition-all duration-400"
               >
                 <X size={16} />
               </button>
             </header>
 
-            <div className="flex-1 overflow-y-auto bg-slate-50/30 p-5 scrollbar-thin">
-              <div className="space-y-5">
-                {messages.map((message, index) => (
-                  <div key={`${message.role}-${index}`} className="space-y-3">
-                    <div className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}>
-                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${message.role === "user" ? "bg-indigo-600 shadow-md" : "bg-gradient-to-br from-indigo-100 to-purple-100 border border-indigo-200 shadow-sm"}`}>
-                        {message.role === "user" ? <User size={14} className="text-white" /> : <Bot size={14} className="text-indigo-600" />}
-                      </div>
-                      <div
-                        className={`max-w-[80%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${message.role === "user"
-                          ? "bg-indigo-600 text-white rounded-tr-sm"
-                          : "border border-slate-200 bg-white text-slate-600 rounded-tl-sm"
-                          }`}
-                      >
-                        {message.role === "user" ? message.content : renderMessageContent(message.content)}
-                      </div>
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {messages.map((message, index) => (
+                <div key={`${message.role}-${index}`} className="space-y-3">
+                  <div className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}>
+                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                      message.role === "user"
+                        ? "bg-primary text-on-primary"
+                        : "bg-surface-container text-primary"
+                    }`}>
+                      {message.role === "user" ? <User size={14} /> : <Bot size={14} />}
                     </div>
-
-                    {/* Render Quick Replies if this is the last message and from assistant */}
-                    {message.role === "assistant" && message.quickReplies && index === messages.length - 1 && (
-                      <div className="flex flex-wrap gap-2 pl-11 pt-1">
-                        {message.quickReplies.map((reply, i) => (
-                          <button
-                            key={i}
-                            onClick={() => handleQuickReply(reply)}
-                            className="text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1 active:scale-95"
-                          >
-                            {reply.label} {reply.path && <ChevronRight size={12} />}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-
-                {isResponding && (
-                  <div className="flex gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 border border-indigo-200">
-                      <Bot size={14} className="text-indigo-600" />
-                    </div>
-                    <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm flex items-center gap-1">
-                      <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.4 }} className="h-1.5 w-1.5 bg-slate-400 rounded-full" />
-                      <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.4, delay: 0.2 }} className="h-1.5 w-1.5 bg-slate-400 rounded-full" />
-                      <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.4, delay: 0.4 }} className="h-1.5 w-1.5 bg-slate-400 rounded-full" />
+                    <div
+                      className={`max-w-[85%] whitespace-pre-wrap rounded-lg px-4 py-3 text-sm leading-relaxed ${
+                        message.role === "user"
+                          ? "bg-primary/20 rounded-br-sm text-on-surface ml-auto"
+                          : "bg-surface-container rounded-bl-sm text-on-surface font-light"
+                      }`}
+                    >
+                      {message.role === "user" ? message.content : renderMessageContent(message.content)}
                     </div>
                   </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
+
+                  {/* Quick Replies */}
+                  {message.role === "assistant" && message.quickReplies && index === messages.length - 1 && (
+                    <div className="flex flex-wrap gap-2 pl-11 pt-1">
+                      {message.quickReplies.map((reply, i) => (
+                        <button
+                          key={i}
+                          onClick={() => handleQuickReply(reply)}
+                          className="text-[10px] font-label font-bold uppercase tracking-wider text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full transition-all duration-400 flex items-center gap-1"
+                        >
+                          {reply.label} {reply.path && <ChevronRight size={10} />}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {isResponding && (
+                <div className="flex gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-container text-primary">
+                    <Bot size={14} />
+                  </div>
+                  <div className="bg-surface-container rounded-lg rounded-bl-sm px-4 py-3 flex items-center gap-1.5">
+                    <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.4 }} className="h-1.5 w-1.5 bg-on-surface-variant/40 rounded-full" />
+                    <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.4, delay: 0.2 }} className="h-1.5 w-1.5 bg-on-surface-variant/40 rounded-full" />
+                    <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.4, delay: 0.4 }} className="h-1.5 w-1.5 bg-on-surface-variant/40 rounded-full" />
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
             </div>
 
-            <footer className="shrink-0 border-t border-slate-200/50 bg-white/40 backdrop-blur-md p-4">
-              <div className="flex items-end gap-2 bg-slate-50 border border-slate-200 rounded-2xl p-1.5 focus-within:border-indigo-400 focus-within:bg-white transition-colors shadow-sm">
+            {/* Input bar */}
+            <footer className="shrink-0 bg-surface-container-high p-4 border-t border-outline-variant/10">
+              <div className="flex items-end gap-3">
                 <textarea
                   aria-label="Type your message"
                   value={input}
                   onChange={event => setInput(event.target.value)}
                   onKeyDown={handleInputKeyDown}
-                  placeholder="Ask Medha anything..."
-                  className="w-full max-h-32 min-h-[44px] resize-none bg-transparent px-3 py-2.5 text-sm text-slate-800 outline-none placeholder:text-slate-400 scrollbar-hide"
+                  placeholder="Ask anything..."
+                  className="w-full max-h-32 min-h-[44px] resize-none bg-transparent border-0 border-b border-outline-variant/40 rounded-none px-0 py-2.5 text-sm text-on-surface font-light outline-none placeholder:text-on-surface-variant/40 focus:border-primary transition-all duration-400"
                   rows={1}
                 />
                 <button
@@ -218,12 +223,12 @@ export default function ChatbotAssistant() {
                   aria-label="Send message"
                   onClick={() => handleSend()}
                   disabled={!input.trim() || isResponding}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 active:scale-95"
+                  className="btn-primary px-4 py-2.5 text-xs shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  <Send size={16} />
+                  <Send size={14} />
                 </button>
               </div>
-              <p className="mt-3 text-center text-[10px] uppercase tracking-wider font-bold text-slate-400">
+              <p className="mt-3 text-center text-[9px] uppercase tracking-wider font-label font-bold text-on-surface-variant/30">
                 AI can make mistakes. Verify critical info.
               </p>
             </footer>

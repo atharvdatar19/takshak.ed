@@ -66,39 +66,39 @@ export default function NotificationBroadcaster() {
     return (
         <div className="space-y-5">
             {error && (
-                <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">{error}</div>
+                <div className="rounded-lg border border-error/20 bg-error/10 px-4 py-2 text-sm text-error">{error}</div>
             )}
             {success && (
-                <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">{success}</div>
+                <div className="rounded-lg border border-tertiary/20 bg-tertiary/10 px-4 py-2 text-sm text-tertiary">{success}</div>
             )}
 
-            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="mb-4 flex items-center gap-2 text-base font-semibold text-slate-900">
-                    <Megaphone size={16} className="text-indigo-600" />
+            <div className="rounded-xl border border-outline-variant/20 glass p-5 shadow-sm">
+                <h3 className="mb-4 flex items-center gap-2 text-base font-semibold text-on-surface">
+                    <Megaphone size={16} className="text-primary" />
                     Compose Notification
                 </h3>
 
                 <div className="space-y-4">
                     {/* Message */}
                     <label>
-                        <span className="mb-1 block text-xs font-medium text-slate-600">Message</span>
+                        <span className="mb-1 block text-xs font-medium text-on-surface-variant">Message</span>
                         <textarea
                             value={message}
                             onChange={e => setMessage(e.target.value)}
                             rows={3}
                             placeholder="Type your notification message..."
-                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500"
+                            className="w-full rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary"
                         />
                     </label>
 
                     {/* Type & Target */}
                     <div className="grid gap-4 sm:grid-cols-3">
                         <label>
-                            <span className="mb-1 block text-xs font-medium text-slate-600">Type</span>
+                            <span className="mb-1 block text-xs font-medium text-on-surface-variant">Type</span>
                             <select
                                 value={type}
                                 onChange={e => setType(e.target.value)}
-                                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                                className="w-full rounded-lg border border-outline-variant/20 px-3 py-2 text-sm"
                             >
                                 <option value="info">ℹ️ Info</option>
                                 <option value="alert">🚨 Alert</option>
@@ -108,11 +108,11 @@ export default function NotificationBroadcaster() {
                         </label>
 
                         <label>
-                            <span className="mb-1 block text-xs font-medium text-slate-600">Send To</span>
+                            <span className="mb-1 block text-xs font-medium text-on-surface-variant">Send To</span>
                             <select
                                 value={target}
                                 onChange={e => setTarget(e.target.value)}
-                                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                                className="w-full rounded-lg border border-outline-variant/20 px-3 py-2 text-sm"
                             >
                                 <option value="all">All Users</option>
                                 <option value="premium">Premium Only</option>
@@ -122,11 +122,11 @@ export default function NotificationBroadcaster() {
 
                         {target === "stream" && (
                             <label>
-                                <span className="mb-1 block text-xs font-medium text-slate-600">Stream</span>
+                                <span className="mb-1 block text-xs font-medium text-on-surface-variant">Stream</span>
                                 <select
                                     value={targetStream}
                                     onChange={e => setTargetStream(e.target.value)}
-                                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                                    className="w-full rounded-lg border border-outline-variant/20 px-3 py-2 text-sm"
                                 >
                                     <option value="">Select stream</option>
                                     <option value="PCM">PCM</option>
@@ -141,14 +141,14 @@ export default function NotificationBroadcaster() {
 
                     {/* Footer */}
                     <div className="flex items-center justify-between pt-2">
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-on-surface-variant">
                             {loading ? "Loading users..." : `${recipientCount} recipient${recipientCount !== 1 ? "s" : ""}`}
                         </p>
                         <button
                             type="button"
                             onClick={handleSend}
                             disabled={sending || !message.trim() || recipientCount === 0}
-                            className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-indigo-500 disabled:opacity-50"
+                            className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2 text-sm font-medium text-white transition hover:bg-primary/100 disabled:opacity-50"
                         >
                             <Send size={14} />
                             {sending ? "Sending..." : "Broadcast"}

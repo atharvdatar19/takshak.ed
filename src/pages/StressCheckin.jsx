@@ -79,9 +79,9 @@ export default function StressCheckin() {
             <motion.section
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-3xl bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 p-8 text-center text-white shadow-xl md:p-10"
+                className="rounded-lg bg-gradient-to-br from-pink-500 via-rose-500 to-secondary p-8 text-center text-white shadow-xl md:p-10"
             >
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 shadow-lg">
+                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl glass/20 shadow-lg">
                     <Heart size={40} />
                 </div>
                 <h1 className="text-4xl font-extrabold md:text-5xl">Wellness Check-in</h1>
@@ -94,9 +94,9 @@ export default function StressCheckin() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="rounded-3xl border border-slate-200/60 bg-white p-6 shadow-card space-y-5"
+                    className="rounded-lg border border-outline-variant/20/60 glass p-6 shadow-[0_0_20px_rgba(255,180,165,0.08)] space-y-5"
                 >
-                    <h2 className="text-lg font-bold text-slate-900">How are you feeling today?</h2>
+                    <h2 className="text-lg font-bold text-on-surface">How are you feeling today?</h2>
 
                     {/* Mood Picker */}
                     <div className="flex justify-around gap-2">
@@ -105,19 +105,19 @@ export default function StressCheckin() {
                                 key={m.value}
                                 type="button"
                                 onClick={() => setSelectedMood(m.value)}
-                                className={`flex flex-col items-center gap-1 rounded-2xl p-3 transition-all ${selectedMood === m.value ? "bg-indigo-50 ring-2 ring-indigo-400 scale-110" : "hover:bg-slate-50"}`}
+                                className={`flex flex-col items-center gap-1 rounded-2xl p-3 transition-all ${selectedMood === m.value ? "bg-primary/10 ring-2 ring-indigo-400 scale-110" : "hover:bg-surface-container-low"}`}
                             >
                                 <span className="text-4xl">{m.emoji}</span>
-                                <span className="text-xs font-medium text-slate-600">{m.label}</span>
+                                <span className="text-xs font-medium text-on-surface-variant">{m.label}</span>
                             </button>
                         ))}
                     </div>
 
                     {/* Stress Slider */}
                     <div>
-                        <label className="mb-2 flex items-center justify-between text-sm font-medium text-slate-700">
+                        <label className="mb-2 flex items-center justify-between text-sm font-medium text-on-surface">
                             <span>Stress Level</span>
-                            <span className="text-indigo-600 font-bold">{stressLevel}/5</span>
+                            <span className="text-primary font-bold">{stressLevel}/5</span>
                         </label>
                         <input
                             type="range"
@@ -127,7 +127,7 @@ export default function StressCheckin() {
                             onChange={e => setStressLevel(Number(e.target.value))}
                             className="w-full accent-indigo-500"
                         />
-                        <div className="mt-1 flex justify-between text-xs text-slate-400">
+                        <div className="mt-1 flex justify-between text-xs text-on-surface-variant/60">
                             <span>Calm</span><span>Moderate</span><span>Very Stressed</span>
                         </div>
                     </div>
@@ -138,14 +138,14 @@ export default function StressCheckin() {
                         onChange={e => setNote(e.target.value)}
                         placeholder="Optional: What's on your mind? (stays private)"
                         rows={3}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-indigo-400"
+                        className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm outline-none focus:border-primary/40"
                     />
 
                     <button
                         type="button"
                         onClick={handleSubmit}
                         disabled={!selectedMood}
-                        className="w-full rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50"
+                        className="w-full rounded-xl bg-gradient-to-r from-pink-500 to-secondary py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50"
                     >
                         Save Check-in ✨
                     </button>
@@ -154,11 +154,11 @@ export default function StressCheckin() {
                 <motion.section
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6 text-center"
+                    className="rounded-lg border border-tertiary/20 bg-tertiary/10 p-6 text-center"
                 >
                     <p className="text-4xl">✅</p>
-                    <p className="mt-2 text-lg font-bold text-emerald-800">Check-in logged for today!</p>
-                    <p className="text-sm text-emerald-600">Come back tomorrow to continue your streak.</p>
+                    <p className="mt-2 text-lg font-bold text-tertiary">Check-in logged for today!</p>
+                    <p className="text-sm text-tertiary">Come back tomorrow to continue your streak.</p>
                 </motion.section>
             )}
 
@@ -167,13 +167,13 @@ export default function StressCheckin() {
                 <motion.section
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="rounded-3xl border border-indigo-100 bg-indigo-50 p-5 shadow-card"
+                    className="rounded-lg border border-primary/10 bg-primary/10 p-5 shadow-[0_0_20px_rgba(255,180,165,0.08)]"
                 >
                     <h3 className="mb-3 text-sm font-bold text-indigo-900">💡 Tips for you right now</h3>
                     <ul className="space-y-2">
                         {tips.map((tip, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm text-indigo-800">
-                                <span className="mt-0.5 text-indigo-400">•</span> {tip}
+                            <li key={i} className="flex items-start gap-2 text-sm text-primary">
+                                <span className="mt-0.5 text-primary/70">•</span> {tip}
                             </li>
                         ))}
                     </ul>
@@ -185,9 +185,9 @@ export default function StressCheckin() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="rounded-3xl border border-slate-200/60 bg-white p-6 shadow-card"
+                className="rounded-lg border border-outline-variant/20/60 glass p-6 shadow-[0_0_20px_rgba(255,180,165,0.08)]"
             >
-                <h2 className="mb-4 text-lg font-bold text-slate-900">📈 7-Day Mood Trend</h2>
+                <h2 className="mb-4 text-lg font-bold text-on-surface">📈 7-Day Mood Trend</h2>
                 <div className="flex items-end justify-between gap-2">
                     {weekData.map((day, i) => {
                         const moodObj = MOODS.find(m => m.value === day.mood)
@@ -196,10 +196,10 @@ export default function StressCheckin() {
                             <div key={i} className="flex flex-1 flex-col items-center gap-1">
                                 <span title={moodObj?.label}>{moodObj?.emoji || "—"}</span>
                                 <div
-                                    className={`w-full rounded-t-lg transition-all ${day.mood ? "bg-indigo-400" : "bg-slate-100"}`}
+                                    className={`w-full rounded-t-lg transition-all ${day.mood ? "bg-indigo-400" : "bg-surface-container"}`}
                                     style={{ height }}
                                 />
-                                <span className="text-[10px] text-slate-500">{day.label}</span>
+                                <span className="text-[10px] text-on-surface-variant">{day.label}</span>
                             </div>
                         )
                     })}

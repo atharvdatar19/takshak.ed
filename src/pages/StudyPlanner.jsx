@@ -92,8 +92,8 @@ export default function StudyPlanner() {
         if (plan) savePlan({ ...plan, checkedTasks: updated })
     }
 
-    const colorMap = { indigo: "border-indigo-200 bg-indigo-50", amber: "border-amber-200 bg-amber-50", emerald: "border-emerald-200 bg-emerald-50" }
-    const badgeMap = { indigo: "bg-indigo-100 text-indigo-700", amber: "bg-amber-100 text-amber-700", emerald: "bg-emerald-100 text-emerald-700" }
+    const colorMap = { indigo: "border-primary/20 bg-primary/10", amber: "border-amber-200 bg-tertiary/10", emerald: "border-tertiary/20 bg-tertiary/10" }
+    const badgeMap = { indigo: "bg-primary/15 text-primary", amber: "bg-tertiary/15 text-amber-700", emerald: "bg-tertiary/15 text-tertiary" }
 
     return (
         <div className="space-y-6">
@@ -101,9 +101,9 @@ export default function StudyPlanner() {
             <motion.section
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="hero-gradient rounded-3xl p-8 text-center text-white shadow-xl md:p-10"
+                className="glass rounded-lg p-8 text-center text-white shadow-xl md:p-10"
             >
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 shadow-lg">
+                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl glass/20 shadow-lg">
                     <BookOpen size={40} />
                 </div>
                 <h1 className="text-4xl font-extrabold md:text-5xl">Smart Study Planner</h1>
@@ -115,23 +115,23 @@ export default function StudyPlanner() {
                 <motion.section
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="rounded-3xl border border-slate-200/60 bg-white p-6 shadow-card space-y-5"
+                    className="rounded-lg border border-outline-variant/20/60 glass p-6 shadow-[0_0_20px_rgba(255,180,165,0.08)] space-y-5"
                 >
-                    <h2 className="text-lg font-bold text-slate-900">⚙️ Configure Your Study Plan</h2>
+                    <h2 className="text-lg font-bold text-on-surface">⚙️ Configure Your Study Plan</h2>
                     <div className="grid gap-4 md:grid-cols-3">
                         <div>
-                            <label className="mb-1 block text-xs font-medium text-slate-600">Target Exam</label>
-                            <select value={exam} onChange={e => setExam(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
+                            <label className="mb-1 block text-xs font-medium text-on-surface-variant">Target Exam</label>
+                            <select value={exam} onChange={e => setExam(e.target.value)} className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm">
                                 {EXAMS.map(e => <option key={e} value={e}>{e}</option>)}
                             </select>
                         </div>
                         <div>
-                            <label className="mb-1 block text-xs font-medium text-slate-600">Exam Date</label>
-                            <input type="date" value={examDate} onChange={e => setExamDate(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm" />
+                            <label className="mb-1 block text-xs font-medium text-on-surface-variant">Exam Date</label>
+                            <input type="date" value={examDate} onChange={e => setExamDate(e.target.value)} className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm" />
                         </div>
                         <div>
-                            <label className="mb-1 flex items-center justify-between text-xs font-medium text-slate-600">
-                                <span>Hours/Day</span><span className="font-bold text-indigo-600">{hoursPerDay}h</span>
+                            <label className="mb-1 flex items-center justify-between text-xs font-medium text-on-surface-variant">
+                                <span>Hours/Day</span><span className="font-bold text-primary">{hoursPerDay}h</span>
                             </label>
                             <input type="range" min={2} max={12} value={hoursPerDay} onChange={e => setHoursPerDay(Number(e.target.value))} className="mt-2 w-full accent-indigo-500" />
                         </div>
@@ -140,7 +140,7 @@ export default function StudyPlanner() {
                         type="button"
                         onClick={generatePlan}
                         disabled={!examDate}
-                        className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50"
+                        className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-secondary px-6 py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50"
                     >
                         <Sparkles size={16} /> Generate My Study Plan
                     </button>
@@ -150,18 +150,18 @@ export default function StudyPlanner() {
                     {/* Plan Header */}
                     <div className="flex items-center justify-between">
                         <div>
-                            <h2 className="text-xl font-bold text-slate-900">{plan.exam} — {plan.weeksLeft} weeks left</h2>
-                            <p className="text-sm text-slate-500">Exam date: {new Date(plan.examDate).toLocaleDateString("en-IN")} · {plan.hoursPerDay}h/day</p>
+                            <h2 className="text-xl font-bold text-on-surface">{plan.exam} — {plan.weeksLeft} weeks left</h2>
+                            <p className="text-sm text-on-surface-variant">Exam date: {new Date(plan.examDate).toLocaleDateString("en-IN")} · {plan.hoursPerDay}h/day</p>
                         </div>
-                        <button type="button" onClick={() => { setPlan(null); savePlan(null); setStep("form") }} className="flex items-center gap-1.5 rounded-xl border border-slate-300 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">
+                        <button type="button" onClick={() => { setPlan(null); savePlan(null); setStep("form") }} className="flex items-center gap-1.5 rounded-xl border border-outline-variant/20 px-4 py-2 text-sm text-on-surface-variant hover:bg-surface-container-low">
                             <Sparkles size={14} /> Regenerate
                         </button>
                     </div>
 
                     {/* Phases */}
                     {plan.phases.map((phase, pi) => (
-                        <div key={pi} className={`rounded-3xl border p-5 ${colorMap[phase.color]}`}>
-                            <h3 className="mb-3 flex items-center gap-2 font-bold text-slate-900">
+                        <div key={pi} className={`rounded-lg border p-5 ${colorMap[phase.color]}`}>
+                            <h3 className="mb-3 flex items-center gap-2 font-bold text-on-surface">
                                 <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${badgeMap[phase.color]}`}>{phase.weeks > 0 ? `${phase.weeks} weeks` : "Final sprint"}</span>
                                 {phase.phase}
                             </h3>
@@ -169,13 +169,13 @@ export default function StudyPlanner() {
                                 {phase.tasks.map((task, ti) => {
                                     const key = `${pi}_${ti}`
                                     return (
-                                        <div key={ti} onClick={() => toggleTask(key)} className={`flex cursor-pointer items-center gap-3 rounded-2xl border border-white bg-white p-3.5 shadow-sm transition hover:shadow-md ${checked[key] ? "opacity-60" : ""}`}>
-                                            <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ${checked[key] ? "bg-emerald-500 text-white" : "border-2 border-slate-300"}`}>
+                                        <div key={ti} onClick={() => toggleTask(key)} className={`flex cursor-pointer items-center gap-3 rounded-2xl border border-white glass p-3.5 shadow-sm transition hover:shadow-md ${checked[key] ? "opacity-60" : ""}`}>
+                                            <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ${checked[key] ? "bg-tertiary/100 text-white" : "border-2 border-outline-variant/20"}`}>
                                                 {checked[key] && <Check size={12} strokeWidth={3} />}
                                             </div>
                                             <div className="flex-1">
-                                                <p className={`text-sm font-medium ${checked[key] ? "line-through text-slate-400" : "text-slate-900"}`}>{task.task}</p>
-                                                <p className="text-xs text-slate-500">{task.subject} · ~{Math.round(task.hours)}h total</p>
+                                                <p className={`text-sm font-medium ${checked[key] ? "line-through text-on-surface-variant/60" : "text-on-surface"}`}>{task.task}</p>
+                                                <p className="text-xs text-on-surface-variant">{task.subject} · ~{Math.round(task.hours)}h total</p>
                                             </div>
                                         </div>
                                     )

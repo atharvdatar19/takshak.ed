@@ -34,7 +34,7 @@ export default function AdminDashboard() {
         return (
             <div className="grid gap-4 md:grid-cols-3">
                 {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="h-28 animate-pulse rounded-xl bg-slate-200" />
+                    <div key={i} className="h-28 animate-pulse rounded-xl bg-surface-container-high" />
                 ))}
             </div>
         )
@@ -42,7 +42,7 @@ export default function AdminDashboard() {
 
     if (error) {
         return (
-            <div className="rounded-xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-700">
+            <div className="rounded-xl border border-error/20 bg-error/10 p-5 text-sm text-error">
                 {error}
             </div>
         )
@@ -70,18 +70,18 @@ export default function AdminDashboard() {
     ]
 
     const severityClasses = {
-        ok: "bg-emerald-50 text-emerald-700 border-emerald-200",
-        info: "bg-blue-50 text-blue-700 border-blue-200",
-        warn: "bg-amber-50 text-amber-700 border-amber-200",
+        ok: "bg-tertiary/10 text-tertiary border-tertiary/20",
+        info: "bg-primary/10 text-blue-700 border-blue-200",
+        warn: "bg-tertiary/10 text-amber-700 border-amber-200",
     }
 
     const colorMap = {
-        indigo: "bg-indigo-100 text-indigo-700",
-        blue: "bg-blue-100 text-blue-700",
-        emerald: "bg-emerald-100 text-emerald-700",
+        indigo: "bg-primary/15 text-primary",
+        blue: "bg-primary/15 text-blue-700",
+        emerald: "bg-tertiary/15 text-tertiary",
         violet: "bg-violet-100 text-violet-700",
-        amber: "bg-amber-100 text-amber-700",
-        rose: "bg-rose-100 text-rose-700",
+        amber: "bg-tertiary/15 text-amber-700",
+        rose: "bg-error/15 text-error",
     }
 
     return (
@@ -89,19 +89,19 @@ export default function AdminDashboard() {
             {/* ── Total Metrics ── */}
             <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {totalMetrics.map(metric => (
-                    <article key={metric.label} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <article key={metric.label} className="rounded-xl border border-outline-variant/20 glass p-5 shadow-sm">
                         <div className={`mb-3 inline-flex rounded-lg p-2 ${colorMap[metric.color]}`}>
                             <metric.icon size={16} />
                         </div>
-                        <p className="text-sm text-slate-500">{metric.label}</p>
-                        <p className="mt-1 text-2xl font-semibold text-slate-900">{metric.value}</p>
+                        <p className="text-sm text-on-surface-variant">{metric.label}</p>
+                        <p className="mt-1 text-2xl font-semibold text-on-surface">{metric.value}</p>
                     </article>
                 ))}
             </section>
 
             {/* ── Data Health ── */}
-            <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="mb-4 flex items-center gap-2 text-base font-semibold text-slate-900">
+            <section className="rounded-xl border border-outline-variant/20 glass p-5 shadow-sm">
+                <h3 className="mb-4 flex items-center gap-2 text-base font-semibold text-on-surface">
                     <AlertTriangle size={16} className="text-amber-600" />
                     Data Health Monitor
                 </h3>
@@ -134,26 +134,26 @@ function DistributionCard({ title, data, color }) {
     const max = entries.length > 0 ? Math.max(...entries.map(e => e[1])) : 1
 
     const barColor = {
-        indigo: "bg-indigo-500",
-        emerald: "bg-emerald-500",
+        indigo: "bg-primary/100",
+        emerald: "bg-tertiary/100",
         violet: "bg-violet-500",
-        amber: "bg-amber-500",
+        amber: "bg-tertiary/100",
     }
 
     return (
-        <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h4 className="mb-4 text-sm font-semibold text-slate-900">{title}</h4>
+        <article className="rounded-xl border border-outline-variant/20 glass p-5 shadow-sm">
+            <h4 className="mb-4 text-sm font-semibold text-on-surface">{title}</h4>
             {entries.length === 0 ? (
-                <p className="text-sm text-slate-400">No data available.</p>
+                <p className="text-sm text-on-surface-variant/60">No data available.</p>
             ) : (
                 <ul className="space-y-2">
                     {entries.slice(0, 8).map(([key, count]) => (
                         <li key={key}>
-                            <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
+                            <div className="mb-1 flex items-center justify-between text-xs text-on-surface-variant">
                                 <span>{key}</span>
                                 <span className="font-medium">{count}</span>
                             </div>
-                            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                            <div className="h-2 w-full overflow-hidden rounded-full bg-surface-container">
                                 <div
                                     className={`h-full rounded-full ${barColor[color]}`}
                                     style={{ width: `${(count / max) * 100}%` }}

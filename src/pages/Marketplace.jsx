@@ -87,21 +87,21 @@ export default function Marketplace() {
             {/* ── HEADER ── */}
             <div className="flex flex-col md:flex-row justify-between md:items-end gap-4">
                 <div>
-                    <div className="inline-flex items-center gap-2 rounded-full bg-rose-100 px-3 py-1 text-xs font-bold text-rose-600 mb-3 border border-rose-200">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-error/15 px-3 py-1 text-xs font-bold text-error mb-3 border border-error/20">
                         <ShoppingBag size={14} /> P2P Materials & Official Courses
                     </div>
-                    <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900">
+                    <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-on-surface">
                         Unified Marketplace
                     </h1>
-                    <p className="mt-2 text-lg text-slate-500 max-w-3xl">
+                    <p className="mt-2 text-lg text-on-surface-variant max-w-3xl">
                         Buy expensive coaching modules from verified seniors or purchase official Live/Recorded courses from top providers like PhysicsWallah and Unacademy.
                     </p>
                 </div>
                 <div className="flex gap-3">
-                    <button onClick={() => setActiveTab("buy")} className={`px-5 py-2.5 rounded-xl font-bold border transition ${activeTab === "buy" ? "bg-slate-900 text-white border-slate-900 shadow-md" : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"}`}>
+                    <button onClick={() => setActiveTab("buy")} className={`px-5 py-2.5 rounded-xl font-bold border transition ${activeTab === "buy" ? "bg-surface-container-highest text-white border-slate-900 shadow-md" : "glass text-on-surface border-outline-variant/20 hover:bg-surface-container-low"}`}>
                         Buy Materials
                     </button>
-                    <button onClick={() => setActiveTab("sell")} className={`px-5 py-2.5 rounded-xl font-bold border transition flex items-center gap-2 ${activeTab === "sell" ? "bg-rose-500 text-white border-rose-500 shadow-md shadow-rose-200" : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"}`}>
+                    <button onClick={() => setActiveTab("sell")} className={`px-5 py-2.5 rounded-xl font-bold border transition flex items-center gap-2 ${activeTab === "sell" ? "bg-error/100 text-white border-rose-500 shadow-md shadow-rose-200" : "glass text-on-surface border-outline-variant/20 hover:bg-surface-container-low"}`}>
                         <Tag size={18} /> Sell Item
                     </button>
                 </div>
@@ -110,15 +110,15 @@ export default function Marketplace() {
             {activeTab === "buy" ? (
                 <>
                     {/* ── SEARCH & FILTERS ── */}
-                    <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between sticky top-4 z-10 transition-all">
+                    <div className="glass p-4 rounded-2xl border border-outline-variant/20 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between sticky top-4 z-10 transition-all">
                         <div className="relative w-full md:w-96 shrink-0">
-                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60" />
                             <input
                                 type="text"
                                 placeholder="Search 'PhysicsWallah', 'Allen Modules'..."
                                 value={searchQuery}
                                 onChange={e => setSearchQuery(e.target.value)}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 font-medium text-slate-700"
+                                className="w-full bg-surface-container-low border border-outline-variant/20 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 font-medium text-on-surface"
                             />
                         </div>
 
@@ -128,28 +128,28 @@ export default function Marketplace() {
                                     key={'exam-' + filter}
                                     onClick={() => setSelectedExam(filter)}
                                     className={`shrink-0 px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 ${selectedExam === filter
-                                        ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
-                                        : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                                        ? "bg-primary text-white shadow-md shadow-indigo-200"
+                                        : "glass text-on-surface-variant border border-outline-variant/20 hover:bg-surface-container-low"
                                         }`}
                                 >
                                     {filter}
                                 </button>
                             ))}
-                            <div className="h-8 w-px bg-slate-200 mx-2 shrink-0"></div>
+                            <div className="h-8 w-px bg-surface-container-high mx-2 shrink-0"></div>
                             {["All Materials", "Course", "Books", "Modules"].map(filter => (
                                 <button
                                     key={'cat-' + filter}
                                     onClick={() => setSelectedCategory(filter)}
                                     className={`shrink-0 px-4 py-2 rounded-lg text-sm font-semibold transition ${selectedCategory === filter
-                                        ? "bg-rose-500 text-white shadow-md shadow-rose-200"
-                                        : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                                        ? "bg-error/100 text-white shadow-md shadow-rose-200"
+                                        : "glass text-on-surface-variant border border-outline-variant/20 hover:bg-surface-container-low"
                                         }`}
                                 >
                                     {filter}
                                 </button>
                             ))}
 
-                            <div className="h-8 w-px bg-slate-200 mx-2 shrink-0"></div>
+                            <div className="h-8 w-px bg-surface-container-high mx-2 shrink-0"></div>
 
                             {["All Modes", "Live", "Recorded", "Hybrid"].map(filter => (
                                 <button
@@ -157,7 +157,7 @@ export default function Marketplace() {
                                     onClick={() => setSelectedMode(filter)}
                                     className={`shrink-0 px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 ${selectedMode === filter
                                         ? "bg-teal-600 text-white shadow-md shadow-teal-200"
-                                        : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                                        : "glass text-on-surface-variant border border-outline-variant/20 hover:bg-surface-container-low"
                                         }`}
                                 >
                                     {filter === "Live" && <PlayCircle size={14} />}
@@ -179,25 +179,25 @@ export default function Marketplace() {
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.9 }}
                                     transition={{ duration: 0.2 }}
-                                    className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden group flex flex-col relative"
+                                    className="glass rounded-lg border border-outline-variant/20 shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden group flex flex-col relative"
                                 >
                                     {/* Image Container */}
-                                    <div className="relative h-48 overflow-hidden bg-slate-100">
+                                    <div className="relative h-48 overflow-hidden bg-surface-container">
                                         <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
 
                                         <div className="absolute top-3 left-3 flex gap-2">
-                                            <div className="bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-md text-xs font-bold text-slate-700 shadow-sm border border-white/50">
+                                            <div className="glass/90 backdrop-blur-sm px-2.5 py-1 rounded-md text-xs font-bold text-on-surface shadow-sm border border-white/50">
                                                 {item.exam}
                                             </div>
                                             {item.type === "Course" && (
-                                                <div className="bg-indigo-600/90 backdrop-blur-sm px-2.5 py-1 rounded-md text-xs font-bold text-white shadow-sm flex items-center gap-1 border border-indigo-400/50">
+                                                <div className="bg-primary/90 backdrop-blur-sm px-2.5 py-1 rounded-md text-xs font-bold text-white shadow-sm flex items-center gap-1 border border-primary/40/50">
                                                     <PlayCircle size={12} /> Course
                                                 </div>
                                             )}
                                         </div>
 
-                                        <div className={`absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider shadow-sm ${item.condition === 'Excellent' || item.condition === 'Like New' || item.condition === 'New' ? 'bg-emerald-500 text-white' :
-                                            item.condition === 'Good' ? 'bg-blue-500 text-white' : 'bg-amber-500 text-white'
+                                        <div className={`absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider shadow-sm ${item.condition === 'Excellent' || item.condition === 'Like New' || item.condition === 'New' ? 'bg-tertiary/100 text-white' :
+                                            item.condition === 'Good' ? 'bg-primary/100 text-white' : 'bg-tertiary/100 text-white'
                                             }`}>
                                             {item.condition}
                                         </div>
@@ -206,51 +206,51 @@ export default function Marketplace() {
                                     {/* Details */}
                                     <div className="p-5 flex-1 flex flex-col">
                                         {item.provider && (
-                                            <p className="text-[10px] uppercase tracking-wider font-extrabold text-indigo-600 mb-1">
+                                            <p className="text-[10px] uppercase tracking-wider font-extrabold text-primary mb-1">
                                                 Partner: {item.provider}
                                             </p>
                                         )}
 
-                                        <h3 className="font-bold text-slate-900 text-lg leading-tight mb-2 line-clamp-2" title={item.title}>
+                                        <h3 className="font-bold text-on-surface text-lg leading-tight mb-2 line-clamp-2" title={item.title}>
                                             {item.title}
                                         </h3>
 
                                         <div className="flex justify-between items-center mb-4">
-                                            <p className="text-slate-500 text-xs flex items-center gap-1.5 line-clamp-1">
+                                            <p className="text-on-surface-variant text-xs flex items-center gap-1.5 line-clamp-1">
                                                 <MapPin size={14} className="shrink-0" /> {item.location}
                                             </p>
 
                                             {item.mode && (
-                                                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200">
+                                                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-surface-container text-on-surface-variant border border-outline-variant/20">
                                                     {item.mode}
                                                 </span>
                                             )}
                                         </div>
 
                                         {item.rating && (
-                                            <div className="flex items-center gap-1 mb-3 text-xs font-bold text-amber-500">
+                                            <div className="flex items-center gap-1 mb-3 text-xs font-bold text-tertiary">
                                                 <Star size={12} fill="currentColor" /> {item.rating} Rating
                                             </div>
                                         )}
 
-                                        <div className="mt-auto pt-4 border-t border-slate-100">
+                                        <div className="mt-auto pt-4 border-t border-outline-variant/10">
                                             <div className="flex justify-between items-end mb-4">
                                                 <div>
-                                                    {item.mrp && <p className="text-xs text-slate-400 line-through">MRP ₹{item.mrp}</p>}
-                                                    <p className="font-black text-2xl text-slate-900">₹{item.price}</p>
+                                                    {item.mrp && <p className="text-xs text-on-surface-variant/60 line-through">MRP ₹{item.mrp}</p>}
+                                                    <p className="font-black text-2xl text-on-surface">₹{item.price}</p>
                                                 </div>
                                                 {item.mrp && item.price && (
-                                                    <div className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
+                                                    <div className="text-xs font-bold text-tertiary bg-tertiary/10 px-2 py-1 rounded-md">
                                                         {Math.round(((item.mrp - item.price) / item.mrp) * 100)}% OFF
                                                     </div>
                                                 )}
                                             </div>
 
                                             <div className="flex gap-2">
-                                                <button className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition shadow-sm text-sm active:scale-95">
+                                                <button className="flex-1 bg-surface-container-highest hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition shadow-sm text-sm active:scale-95">
                                                     {item.type === "Course" ? "Enroll Now" : "Buy Now"}
                                                 </button>
-                                                <button className="flex items-center justify-center p-2.5 bg-slate-100 hover:bg-rose-100 hover:text-rose-600 text-slate-600 rounded-xl transition active:scale-95" title="Contact Seller/Provider">
+                                                <button className="flex items-center justify-center p-2.5 bg-surface-container hover:bg-error/15 hover:text-error text-on-surface-variant rounded-xl transition active:scale-95" title="Contact Seller/Provider">
                                                     <MessageSquare size={20} />
                                                 </button>
                                             </div>
@@ -261,34 +261,34 @@ export default function Marketplace() {
                         </AnimatePresence>
                     </div>
                     {filteredListings.length === 0 && (
-                        <div className="text-center py-20 bg-white rounded-3xl border border-slate-200">
-                            <ShoppingBag size={48} className="mx-auto text-slate-300 mb-4" />
-                            <h3 className="text-xl font-bold text-slate-900 mb-2">No matching materials found</h3>
-                            <p className="text-slate-500 text-sm">Try adjusting your filters or search query.</p>
+                        <div className="text-center py-20 glass rounded-lg border border-outline-variant/20">
+                            <ShoppingBag size={48} className="mx-auto text-on-surface-variant/40 mb-4" />
+                            <h3 className="text-xl font-bold text-on-surface mb-2">No matching materials found</h3>
+                            <p className="text-on-surface-variant text-sm">Try adjusting your filters or search query.</p>
                         </div>
                     )}
                 </>
             ) : (
                 /* ── SELL FORM ── */
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-xl mx-auto bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm">
-                    <h2 className="text-2xl font-bold text-slate-900 mb-6">List an Item for Sale</h2>
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-xl mx-auto glass p-6 md:p-8 rounded-lg border border-outline-variant/20 shadow-sm">
+                    <h2 className="text-2xl font-bold text-on-surface mb-6">List an Item for Sale</h2>
                     <form onSubmit={handleSellSubmit} className="space-y-5">
                         <div>
-                            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Title</label>
-                            <input required type="text" placeholder="e.g. HC Verma Concepts of Physics Vol 1" value={sellForm.title} onChange={e => setSellForm({ ...sellForm, title: e.target.value })} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-rose-400 focus:bg-white" />
+                            <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Title</label>
+                            <input required type="text" placeholder="e.g. HC Verma Concepts of Physics Vol 1" value={sellForm.title} onChange={e => setSellForm({ ...sellForm, title: e.target.value })} className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm outline-none focus:border-rose-400 focus:glass" />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Category</label>
-                                <select value={sellForm.category} onChange={e => setSellForm({ ...sellForm, category: e.target.value })} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-rose-400 focus:bg-white">
+                                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Category</label>
+                                <select value={sellForm.category} onChange={e => setSellForm({ ...sellForm, category: e.target.value })} className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm outline-none focus:border-rose-400 focus:glass">
                                     <option value="Books">Books</option>
                                     <option value="Notes">Notes / Modules</option>
                                     <option value="Devices">Devices / Calculators</option>
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Exam</label>
-                                <select value={sellForm.exam} onChange={e => setSellForm({ ...sellForm, exam: e.target.value })} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-rose-400 focus:bg-white">
+                                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Exam</label>
+                                <select value={sellForm.exam} onChange={e => setSellForm({ ...sellForm, exam: e.target.value })} className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm outline-none focus:border-rose-400 focus:glass">
                                     <option value="JEE">JEE</option>
                                     <option value="NEET">NEET</option>
                                     <option value="UPSC">UPSC</option>
@@ -298,19 +298,19 @@ export default function Marketplace() {
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Condition</label>
-                                <select value={sellForm.condition} onChange={e => setSellForm({ ...sellForm, condition: e.target.value })} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-rose-400 focus:bg-white">
+                                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Condition</label>
+                                <select value={sellForm.condition} onChange={e => setSellForm({ ...sellForm, condition: e.target.value })} className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm outline-none focus:border-rose-400 focus:glass">
                                     <option value="Like New">Like New</option>
                                     <option value="Good">Good</option>
                                     <option value="Acceptable">Acceptable</option>
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Price (₹)</label>
-                                <input required type="number" min="0" placeholder="e.g. 500" value={sellForm.price} onChange={e => setSellForm({ ...sellForm, price: e.target.value })} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-rose-400 focus:bg-white" />
+                                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Price (₹)</label>
+                                <input required type="number" min="0" placeholder="e.g. 500" value={sellForm.price} onChange={e => setSellForm({ ...sellForm, price: e.target.value })} className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm outline-none focus:border-rose-400 focus:glass" />
                             </div>
                         </div>
-                        <button type="submit" className="w-full py-3.5 mt-4 rounded-xl bg-rose-500 text-white font-bold shadow-md shadow-rose-200 hover:bg-rose-600 hover:shadow-lg transition">
+                        <button type="submit" className="w-full py-3.5 mt-4 rounded-xl bg-error/100 text-white font-bold shadow-md shadow-rose-200 hover:bg-rose-600 hover:shadow-lg transition">
                             Post Listing
                         </button>
                     </form>

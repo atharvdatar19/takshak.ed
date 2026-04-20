@@ -51,13 +51,13 @@ const AdminTeamAccess = lazy(() => import("./admin/pages/AdminTeamAccess"))
 /* ── Loading fallback ── */
 function PageLoader() {
   return (
-    <div className="flex items-center justify-center min-h-[60vh]">
+    <div className="flex items-center justify-center min-h-[60vh] bg-background">
       <div className="flex flex-col items-center gap-4">
         <div className="relative h-12 w-12">
-          <div className="absolute inset-0 rounded-full border-4 border-indigo-100" />
-          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-600 animate-spin" />
+          <div className="absolute inset-0 rounded-full border-4 border-surface-container-high" />
+          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-spin" />
         </div>
-        <p className="text-sm font-medium text-slate-400 animate-pulse">Loading...</p>
+        <p className="text-sm font-medium text-on-surface-variant animate-pulse">Loading...</p>
       </div>
     </div>
   )
@@ -78,18 +78,18 @@ class AppErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex items-center justify-center min-h-[60vh] p-8">
-          <div className="max-w-md text-center space-y-4">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50">
-              <svg className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <div className="flex items-center justify-center min-h-[60vh] p-8 bg-background">
+          <div className="max-w-md text-center space-y-4 glass p-10 rounded-lg">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-error/10">
+              <svg className="h-8 w-8 text-error" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-slate-800">Something went wrong</h2>
-            <p className="text-sm text-slate-500">An unexpected error occurred. Please try refreshing the page.</p>
+            <h2 className="text-xl font-headline font-bold text-on-surface italic">Something went wrong</h2>
+            <p className="text-sm text-on-surface-variant font-light">An unexpected error occurred. Please try refreshing the page.</p>
             <button
               onClick={() => { this.setState({ hasError: false, error: null }); window.location.reload() }}
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition"
+              className="btn-primary"
             >
               Refresh Page
             </button>

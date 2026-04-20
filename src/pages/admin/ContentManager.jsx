@@ -81,7 +81,7 @@ export default function ContentManager() {
         return (
             <div className="space-y-4">
                 {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-20 animate-pulse rounded-xl bg-slate-200" />
+                    <div key={i} className="h-20 animate-pulse rounded-xl bg-surface-container-high" />
                 ))}
             </div>
         )
@@ -89,7 +89,7 @@ export default function ContentManager() {
 
     return (
         <div className="space-y-4">
-            <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-700">
+            <div className="rounded-xl border border-blue-200 bg-primary/10 p-4 text-sm text-blue-700">
                 <AlertTriangle size={14} className="inline mr-1.5" />
                 Changes are saved to your browser immediately and will sync to the database when available.
             </div>
@@ -101,59 +101,59 @@ export default function ContentManager() {
                 const isSaved = saved === section.key
 
                 return (
-                    <div key={section.key} className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                    <div key={section.key} className="rounded-xl border border-outline-variant/20 glass shadow-sm overflow-hidden">
                         {/* Header */}
                         <button
                             onClick={() => setExpanded(isOpen ? null : section.key)}
-                            className="flex items-center gap-3 w-full p-4 text-left hover:bg-slate-50 transition"
+                            className="flex items-center gap-3 w-full p-4 text-left hover:bg-surface-container-low transition"
                         >
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
                                 <Icon size={16} />
                             </div>
                             <div className="flex-1">
-                                <p className="text-sm font-semibold text-slate-900">{section.label}</p>
-                                <p className="text-xs text-slate-500">{section.description}</p>
+                                <p className="text-sm font-semibold text-on-surface">{section.label}</p>
+                                <p className="text-xs text-on-surface-variant">{section.description}</p>
                             </div>
-                            {isOpen ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
+                            {isOpen ? <ChevronUp size={16} className="text-on-surface-variant/60" /> : <ChevronDown size={16} className="text-on-surface-variant/60" />}
                         </button>
 
                         {/* Content */}
                         {isOpen && (
-                            <div className="border-t border-slate-100 p-4 space-y-4">
+                            <div className="border-t border-outline-variant/10 p-4 space-y-4">
                                 {/* ── ANNOUNCEMENTS ── */}
                                 {section.key === "announcements" && (
                                     <>
                                         {(data.announcements || []).map((ann, i) => (
-                                            <div key={i} className="flex gap-3 items-start rounded-lg border border-slate-200 p-3">
+                                            <div key={i} className="flex gap-3 items-start rounded-lg border border-outline-variant/20 p-3">
                                                 <div className="flex-1 space-y-2">
                                                     <input
                                                         value={ann.text}
                                                         onChange={e => updateField("announcements", i, "text", e.target.value)}
-                                                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400"
+                                                        className="w-full rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary/40"
                                                         placeholder="Announcement text..."
                                                     />
                                                     <div className="flex gap-2">
                                                         <select
                                                             value={ann.type}
                                                             onChange={e => updateField("announcements", i, "type", e.target.value)}
-                                                            className="rounded-lg border border-slate-200 px-2 py-1 text-xs"
+                                                            className="rounded-lg border border-outline-variant/20 px-2 py-1 text-xs"
                                                         >
                                                             <option value="info">Info</option>
                                                             <option value="warning">Warning</option>
                                                             <option value="success">Success</option>
                                                         </select>
-                                                        <label className="flex items-center gap-1 text-xs text-slate-600">
+                                                        <label className="flex items-center gap-1 text-xs text-on-surface-variant">
                                                             <input type="checkbox" checked={ann.active} onChange={e => updateField("announcements", i, "active", e.target.checked)} />
                                                             Active
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <button onClick={() => removeItem("announcements", i)} className="text-rose-400 hover:text-rose-600 p-1">
+                                                <button onClick={() => removeItem("announcements", i)} className="text-error hover:text-error p-1">
                                                     <Trash2 size={14} />
                                                 </button>
                                             </div>
                                         ))}
-                                        <button onClick={() => addItem("announcements")} className="flex items-center gap-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-800">
+                                        <button onClick={() => addItem("announcements")} className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary">
                                             <Plus size={14} /> Add Announcement
                                         </button>
                                     </>
@@ -163,43 +163,43 @@ export default function ContentManager() {
                                 {section.key === "defenceMentors" && (
                                     <div className="space-y-5">
                                         {(data.defenceMentors || []).map((mentor, i) => (
-                                            <div key={i} className="rounded-lg border border-slate-200 p-4 space-y-3">
-                                                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Mentor {i + 1}</p>
+                                            <div key={i} className="rounded-lg border border-outline-variant/20 p-4 space-y-3">
+                                                <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Mentor {i + 1}</p>
                                                 <div className="grid sm:grid-cols-2 gap-3">
                                                     <div>
-                                                        <label className="block text-xs font-medium text-slate-600 mb-1">Name</label>
+                                                        <label className="block text-xs font-medium text-on-surface-variant mb-1">Name</label>
                                                         <input value={mentor.name} onChange={e => updateField("defenceMentors", i, "name", e.target.value)}
-                                                            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400" />
+                                                            className="w-full rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary/40" />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-xs font-medium text-slate-600 mb-1">Title</label>
+                                                        <label className="block text-xs font-medium text-on-surface-variant mb-1">Title</label>
                                                         <input value={mentor.title} onChange={e => updateField("defenceMentors", i, "title", e.target.value)}
-                                                            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400" />
+                                                            className="w-full rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary/40" />
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label className="block text-xs font-medium text-slate-600 mb-1">Bio</label>
+                                                    <label className="block text-xs font-medium text-on-surface-variant mb-1">Bio</label>
                                                     <textarea value={mentor.bio} onChange={e => updateField("defenceMentors", i, "bio", e.target.value)} rows={3}
-                                                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400" />
+                                                        className="w-full rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary/40" />
                                                 </div>
                                                 <div className="grid sm:grid-cols-2 gap-3">
                                                     <div>
-                                                        <label className="block text-xs font-medium text-slate-600 mb-1">Email</label>
+                                                        <label className="block text-xs font-medium text-on-surface-variant mb-1">Email</label>
                                                         <input value={mentor.email} onChange={e => updateField("defenceMentors", i, "email", e.target.value)}
-                                                            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400" />
+                                                            className="w-full rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary/40" />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-xs font-medium text-slate-600 mb-1">Rating</label>
+                                                        <label className="block text-xs font-medium text-on-surface-variant mb-1">Rating</label>
                                                         <input type="number" step="0.1" min="0" max="5" value={mentor.rating}
                                                             onChange={e => updateField("defenceMentors", i, "rating", parseFloat(e.target.value))}
-                                                            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400" />
+                                                            className="w-full rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary/40" />
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label className="block text-xs font-medium text-slate-600 mb-1">Tags (comma-separated)</label>
+                                                    <label className="block text-xs font-medium text-on-surface-variant mb-1">Tags (comma-separated)</label>
                                                     <input value={(mentor.tags || []).join(", ")}
                                                         onChange={e => updateField("defenceMentors", i, "tags", e.target.value.split(",").map(t => t.trim()).filter(Boolean))}
-                                                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400" />
+                                                        className="w-full rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary/40" />
                                                 </div>
                                             </div>
                                         ))}
@@ -210,14 +210,14 @@ export default function ContentManager() {
                                 {section.key === "defencePricing" && (
                                     <div className="space-y-3">
                                         {(data.defencePricing || []).map((plan, i) => (
-                                            <div key={i} className="flex items-center gap-3 rounded-lg border border-slate-200 p-3">
+                                            <div key={i} className="flex items-center gap-3 rounded-lg border border-outline-variant/20 p-3">
                                                 <div className="flex-1 grid sm:grid-cols-3 gap-2">
                                                     <input value={plan.name} onChange={e => updateField("defencePricing", i, "name", e.target.value)}
-                                                        className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400" placeholder="Plan name" />
+                                                        className="rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary/40" placeholder="Plan name" />
                                                     <input value={plan.price} onChange={e => updateField("defencePricing", i, "price", e.target.value)}
-                                                        className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400" placeholder="Price" />
+                                                        className="rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary/40" placeholder="Price" />
                                                     <input value={plan.priceNote} onChange={e => updateField("defencePricing", i, "priceNote", e.target.value)}
-                                                        className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400" placeholder="Note" />
+                                                        className="rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary/40" placeholder="Note" />
                                                 </div>
                                             </div>
                                         ))}
@@ -239,33 +239,33 @@ export default function ContentManager() {
                                                             return copy
                                                         })
                                                     }}
-                                                    className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400" />
-                                                <button onClick={() => removeItem("motivationalQuotes", i)} className="text-rose-400 hover:text-rose-600 p-1">
+                                                    className="flex-1 rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary/40" />
+                                                <button onClick={() => removeItem("motivationalQuotes", i)} className="text-error hover:text-error p-1">
                                                     <Trash2 size={14} />
                                                 </button>
                                             </div>
                                         ))}
-                                        <button onClick={() => addItem("motivationalQuotes")} className="flex items-center gap-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-800">
+                                        <button onClick={() => addItem("motivationalQuotes")} className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary">
                                             <Plus size={14} /> Add Quote
                                         </button>
                                     </>
                                 )}
 
                                 {/* Action Buttons */}
-                                <div className="flex gap-2 pt-2 border-t border-slate-100">
+                                <div className="flex gap-2 pt-2 border-t border-outline-variant/10">
                                     <button
                                         onClick={() => handleSave(section.key)}
                                         disabled={isSaving}
                                         className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold transition ${isSaved
-                                                ? "bg-emerald-100 text-emerald-700"
-                                                : "bg-indigo-600 text-white hover:bg-indigo-700"
+                                                ? "bg-tertiary/15 text-tertiary"
+                                                : "bg-primary text-white hover:bg-primary"
                                             }`}
                                     >
                                         {isSaved ? <><CheckCircle2 size={13} /> Saved!</> : <><Save size={13} /> {isSaving ? "Saving..." : "Save Changes"}</>}
                                     </button>
                                     <button
                                         onClick={() => handleReset(section.key)}
-                                        className="flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition"
+                                        className="flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-medium text-on-surface-variant border border-outline-variant/20 hover:bg-surface-container-low transition"
                                     >
                                         <RotateCcw size={13} /> Reset to Default
                                     </button>

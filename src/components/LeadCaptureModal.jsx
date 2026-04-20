@@ -54,18 +54,18 @@ export default function LeadCaptureModal() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-container-highest/60 backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            className="relative w-full max-w-lg overflow-hidden bg-white shadow-2xl rounded-3xl"
+            className="relative w-full max-w-lg overflow-hidden glass shadow-2xl rounded-lg"
           >
-            <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
+            <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary via-purple-500 to-pink-500" />
             
             <button
               onClick={handleDismiss}
-              className="absolute p-2 text-slate-400 transition-colors top-4 right-4 hover:text-slate-600 hover:bg-slate-100 rounded-xl"
+              className="absolute p-2 text-on-surface-variant/60 transition-colors top-4 right-4 hover:text-on-surface-variant hover:bg-surface-container rounded-xl"
             >
               <X size={20} />
             </button>
@@ -73,19 +73,19 @@ export default function LeadCaptureModal() {
             <div className="p-8">
               {!submitted ? (
                 <>
-                  <div className="flex items-center justify-center w-12 h-12 mb-6 bg-indigo-100 rounded-2xl text-indigo-600">
+                  <div className="flex items-center justify-center w-12 h-12 mb-6 bg-primary/15 rounded-2xl text-primary">
                     <Sparkles size={24} />
                   </div>
                   
-                  <h3 className="mb-2 text-2xl font-bold text-slate-800">Unlock Premium Tools</h3>
-                  <p className="mb-6 text-slate-500">
+                  <h3 className="mb-2 text-2xl font-bold text-on-surface">Unlock Premium Tools</h3>
+                  <p className="mb-6 text-on-surface-variant">
                     Get free access to our college cutoff predictors, study planners, and scholarship databases.
                   </p>
 
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
-                      <div className="flex items-center gap-3 px-4 py-3 transition bg-slate-50 border border-slate-200 rounded-xl focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 focus-within:bg-white">
-                        <Mail size={18} className="text-slate-400" />
+                      <div className="flex items-center gap-3 px-4 py-3 transition bg-surface-container-low border border-outline-variant/20 rounded-xl focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-indigo-100 focus-within:glass">
+                        <Mail size={18} className="text-on-surface-variant/60" />
                         <input
                           type="email"
                           placeholder="Email Address"
@@ -97,8 +97,8 @@ export default function LeadCaptureModal() {
                     </PulseGlow>
 
                     <PulseGlow color="rgba(79, 70, 229, 0.1)" activeOnHover>
-                      <div className="flex items-center gap-3 px-4 py-3 transition bg-slate-50 border border-slate-200 rounded-xl focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 focus-within:bg-white">
-                        <Phone size={18} className="text-slate-400" />
+                      <div className="flex items-center gap-3 px-4 py-3 transition bg-surface-container-low border border-outline-variant/20 rounded-xl focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-indigo-100 focus-within:glass">
+                        <Phone size={18} className="text-on-surface-variant/60" />
                         <input
                           type="tel"
                           placeholder="Phone Number (Optional)"
@@ -113,7 +113,7 @@ export default function LeadCaptureModal() {
                       <select
                         value={interest}
                         onChange={(e) => setInterest(e.target.value)}
-                        className="w-full px-4 py-3 text-sm transition appearance-none bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 focus:bg-white outline-none"
+                        className="w-full px-4 py-3 text-sm transition appearance-none bg-surface-container-low border border-outline-variant/20 rounded-xl focus:border-primary/40 focus:ring-2 focus:ring-indigo-100 focus:glass outline-none"
                       >
                         <option value="">What are you preparing for?</option>
                         <option value="JEE">JEE Main / Advanced</option>
@@ -128,7 +128,7 @@ export default function LeadCaptureModal() {
                     <button
                       type="submit"
                       disabled={loading || (!email && !phone)}
-                      className="flex items-center justify-center w-full gap-2 px-6 py-3.5 mt-2 text-sm font-semibold text-white transition shadow-lg btn-ripple rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50"
+                      className="flex items-center justify-center w-full gap-2 px-6 py-3.5 mt-2 text-sm font-semibold text-white transition shadow-lg btn-ripple rounded-xl bg-gradient-to-r from-primary to-secondary hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50"
                     >
                       {loading ? (
                         <div className="w-5 h-5 border-2 border-white rounded-full border-t-transparent animate-spin" />
@@ -139,7 +139,7 @@ export default function LeadCaptureModal() {
                       )}
                     </button>
                   </form>
-                  <p className="mt-4 text-xs text-center text-slate-400">
+                  <p className="mt-4 text-xs text-center text-on-surface-variant/60">
                     We won't spam you. Unsubscribe anytime.
                   </p>
                 </>
@@ -148,14 +148,14 @@ export default function LeadCaptureModal() {
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="flex items-center justify-center w-20 h-20 mx-auto mb-6 bg-emerald-100 text-emerald-500 rounded-full"
+                    className="flex items-center justify-center w-20 h-20 mx-auto mb-6 bg-tertiary/15 text-tertiary rounded-full"
                   >
                     <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   </motion.div>
-                  <h3 className="mb-2 text-2xl font-bold text-slate-800">You're on the list!</h3>
-                  <p className="text-slate-500">
+                  <h3 className="mb-2 text-2xl font-bold text-on-surface">You're on the list!</h3>
+                  <p className="text-on-surface-variant">
                     Thank you! Check out the predictors and dashboards.
                   </p>
                 </div>

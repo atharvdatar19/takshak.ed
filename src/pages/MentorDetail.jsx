@@ -77,7 +77,7 @@ export default function MentorDetail() {
 
             {/* Profile Header */}
             <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                className="relative z-10 rounded-3xl overflow-hidden"
+                className="relative z-10 rounded-lg overflow-hidden"
                 style={{ background: 'rgba(45, 52, 73, 0.4)', backdropFilter: 'blur(20px)', border: '1px solid rgba(64, 72, 93, 0.2)', boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}
             >
                 {/* Top gradient */}
@@ -336,12 +336,12 @@ export default function MentorDetail() {
                     ) : (
                         <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                             {reviews.map(review => (
-                                <div key={review.id} className="rounded-xl p-4 transition hover:bg-white/5" style={{ background: 'rgba(15, 25, 48, 0.4)', border: '1px solid rgba(64, 72, 93, 0.15)' }}>
+                                <div key={review.id} className="rounded-xl p-4 transition hover:glass/5" style={{ background: 'rgba(15, 25, 48, 0.4)', border: '1px solid rgba(64, 72, 93, 0.15)' }}>
                                     <div className="flex items-center justify-between mb-2">
                                         <span className="text-xs font-bold" style={{ color: '#dee5ff' }}>{review.reviewer_name || "Student"}</span>
                                         <div className="flex items-center gap-0.5">
                                             {Array.from({ length: 5 }).map((_, i) => (
-                                                <Star key={i} size={10} className={i < review.rating ? "text-amber-400 fill-amber-400" : "text-slate-600"} />
+                                                <Star key={i} size={10} className={i < review.rating ? "text-tertiary fill-tertiary" : "text-on-surface-variant"} />
                                             ))}
                                         </div>
                                     </div>

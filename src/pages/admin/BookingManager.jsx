@@ -4,10 +4,10 @@ import { adminGetBookings, adminUpdateBookingStatus } from "../../services/admin
 const STATUS_OPTIONS = ["Pending", "Confirmed", "Completed", "Cancelled"]
 
 const statusColors = {
-    Pending: "bg-amber-100 text-amber-700",
-    Confirmed: "bg-blue-100 text-blue-700",
-    Completed: "bg-emerald-100 text-emerald-700",
-    Cancelled: "bg-slate-100 text-slate-500",
+    Pending: "bg-tertiary/15 text-amber-700",
+    Confirmed: "bg-primary/15 text-blue-700",
+    Completed: "bg-tertiary/15 text-tertiary",
+    Cancelled: "bg-surface-container text-on-surface-variant",
 }
 
 export default function BookingManager() {
@@ -59,7 +59,7 @@ export default function BookingManager() {
         return (
             <div className="space-y-3">
                 {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-16 animate-pulse rounded-lg bg-slate-200" />
+                    <div key={i} className="h-16 animate-pulse rounded-lg bg-surface-container-high" />
                 ))}
             </div>
         )
@@ -68,27 +68,27 @@ export default function BookingManager() {
     return (
         <div className="space-y-4">
             {error && (
-                <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">{error}</div>
+                <div className="rounded-lg border border-error/20 bg-error/10 px-4 py-2 text-sm text-error">{error}</div>
             )}
 
             <div className="flex items-center gap-3">
                 <select
                     value={statusFilter}
                     onChange={e => setStatusFilter(e.target.value)}
-                    className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                    className="rounded-lg border border-outline-variant/20 px-3 py-2 text-sm"
                 >
                     <option value="">All Statuses</option>
                     {STATUS_OPTIONS.map(s => (
                         <option key={s} value={s}>{s}</option>
                     ))}
                 </select>
-                <p className="text-xs text-slate-500">{filtered.length} booking{filtered.length !== 1 ? "s" : ""}</p>
+                <p className="text-xs text-on-surface-variant">{filtered.length} booking{filtered.length !== 1 ? "s" : ""}</p>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-x-auto rounded-xl border border-outline-variant/20 glass shadow-sm">
                 <table className="w-full text-sm">
                     <thead>
-                        <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold text-slate-600">
+                        <tr className="border-b border-outline-variant/20 bg-surface-container-low text-left text-xs font-semibold text-on-surface-variant">
                             <th className="px-4 py-3">User Email</th>
                             <th className="px-4 py-3">Mentor</th>
                             <th className="px-4 py-3">Topic</th>
@@ -99,17 +99,17 @@ export default function BookingManager() {
                     </thead>
                     <tbody>
                         {filtered.map(booking => (
-                            <tr key={booking.id} className="border-b border-slate-100 hover:bg-slate-50">
-                                <td className="px-4 py-3 text-slate-900">{booking.user_email}</td>
-                                <td className="px-4 py-3 text-slate-600">{booking.mentors?.name || "—"}</td>
-                                <td className="px-4 py-3 text-slate-600">{booking.topic || "—"}</td>
-                                <td className="px-4 py-3 text-slate-600">{formatDateTime(booking.requested_datetime)}</td>
-                                <td className="px-4 py-3 text-slate-600">{booking.duration_minutes || 30} min</td>
+                            <tr key={booking.id} className="border-b border-outline-variant/10 hover:bg-surface-container-low">
+                                <td className="px-4 py-3 text-on-surface">{booking.user_email}</td>
+                                <td className="px-4 py-3 text-on-surface-variant">{booking.mentors?.name || "—"}</td>
+                                <td className="px-4 py-3 text-on-surface-variant">{booking.topic || "—"}</td>
+                                <td className="px-4 py-3 text-on-surface-variant">{formatDateTime(booking.requested_datetime)}</td>
+                                <td className="px-4 py-3 text-on-surface-variant">{booking.duration_minutes || 30} min</td>
                                 <td className="px-4 py-3">
                                     <select
                                         value={booking.status}
                                         onChange={e => handleStatusChange(booking.id, e.target.value)}
-                                        className={`rounded-full px-2 py-1 text-xs font-semibold ${statusColors[booking.status] || "bg-slate-100 text-slate-500"}`}
+                                        className={`rounded-full px-2 py-1 text-xs font-semibold ${statusColors[booking.status] || "bg-surface-container text-on-surface-variant"}`}
                                     >
                                         {STATUS_OPTIONS.map(s => (
                                             <option key={s} value={s}>{s}</option>
@@ -120,7 +120,7 @@ export default function BookingManager() {
                         ))}
                         {filtered.length === 0 && (
                             <tr>
-                                <td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-400">No bookings found.</td>
+                                <td colSpan={6} className="px-4 py-8 text-center text-sm text-on-surface-variant/60">No bookings found.</td>
                             </tr>
                         )}
                     </tbody>

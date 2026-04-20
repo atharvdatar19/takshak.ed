@@ -52,10 +52,10 @@ export default function ScholarshipFinder() {
             </Helmet>
 
             {/* ═══ HERO ═══ */}
-            <motion.section {...fadeUp(0)} className="relative overflow-hidden rounded-[32px] card-gradient-orange px-8 py-10 text-white md:px-12 md:py-16">
+            <motion.section {...fadeUp(0)} className="relative overflow-hidden rounded-[32px] glass px-8 py-10 text-white md:px-12 md:py-16">
                 <div className="orb orb-purple w-40 h-40 -top-10 right-10" />
                 <div className="relative z-10 text-center max-w-2xl mx-auto">
-                    <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
+                    <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl glass/20 backdrop-blur-sm">
                         <Award size={32} />
                     </div>
                     <h1 className="text-display text-3xl md:text-5xl">Scholarship Finder</h1>
@@ -64,17 +64,17 @@ export default function ScholarshipFinder() {
             </motion.section>
 
             {/* ═══ FILTERS ═══ */}
-            <motion.section {...fadeUp(0.1)} className="card-bb p-5 md:p-7">
+            <motion.section {...fadeUp(0.1)} className="glass rounded-lg p-5 md:p-7">
                 <div className="grid gap-3 md:grid-cols-3">
-                    <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                        <Search size={16} className="text-slate-400" />
+                    <div className="flex items-center gap-2 rounded-2xl border border-outline-variant/20 bg-surface-container-low px-4 py-3">
+                        <Search size={16} className="text-on-surface-variant/60" />
                         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search scholarships..." className="flex-1 bg-transparent text-sm outline-none" />
                     </div>
-                    <select value={stream} onChange={e => setStream(e.target.value)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
+                    <select value={stream} onChange={e => setStream(e.target.value)} className="rounded-2xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm">
                         <option value="">All Streams</option>
                         {STREAMS.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
-                    <select value={category} onChange={e => setCategory(e.target.value)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
+                    <select value={category} onChange={e => setCategory(e.target.value)} className="rounded-2xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm">
                         <option value="">All Categories</option>
                         {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
@@ -83,28 +83,28 @@ export default function ScholarshipFinder() {
 
             {/* ═══ RESULTS ═══ */}
             <section>
-                <motion.p {...fadeUp(0.15)} className="mb-5 text-sm text-slate-500">Showing <strong className="text-slate-900">{filtered.length}</strong> scholarships</motion.p>
+                <motion.p {...fadeUp(0.15)} className="mb-5 text-sm text-on-surface-variant">Showing <strong className="text-on-surface">{filtered.length}</strong> scholarships</motion.p>
                 <div className="grid gap-4 md:grid-cols-2">
                     {filtered.map((s, i) => {
                         const isExpired = new Date(s.deadline) < new Date()
                         return (
-                            <motion.div key={s.id} {...fadeUp(0.2 + i * 0.05)} className="card-bb overflow-hidden">
+                            <motion.div key={s.id} {...fadeUp(0.2 + i * 0.05)} className="glass rounded-lg overflow-hidden">
                                 <div className="p-5 md:p-7 space-y-3">
                                     <div className="flex items-start justify-between gap-3">
-                                        <h3 className="text-card-title text-base text-slate-900">{s.name}</h3>
+                                        <h3 className="text-card-title text-base text-on-surface">{s.name}</h3>
                                         <span className="shrink-0 pill pill-primary text-xs py-1">{s.amount}</span>
                                     </div>
-                                    <p className="text-sm text-slate-600">{s.eligibility}</p>
+                                    <p className="text-sm text-on-surface-variant">{s.eligibility}</p>
                                     <div className="flex flex-wrap gap-1.5">
                                         {s.streams.map(st => <span key={st} className="pill pill-outline text-[10px] py-0.5 px-2.5">{st}</span>)}
-                                        {s.categories.filter(c => c !== "General").map(c => <span key={c} className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[10px] font-medium text-amber-700">{c}</span>)}
+                                        {s.categories.filter(c => c !== "General").map(c => <span key={c} className="rounded-full border border-amber-200 bg-tertiary/10 px-2.5 py-0.5 text-[10px] font-medium text-amber-700">{c}</span>)}
                                     </div>
-                                    <div className="flex items-center justify-between text-xs text-slate-500">
+                                    <div className="flex items-center justify-between text-xs text-on-surface-variant">
                                         <span className="flex items-center gap-1"><Calendar size={12} /> {s.deadline}</span>
                                         <span>{s.state}</span>
                                     </div>
-                                    {s.income_limit && <p className="text-xs text-slate-500"><DollarSign size={11} className="inline mr-0.5" /> Income limit: ₹{s.income_limit.toLocaleString()}</p>}
-                                    <a href={s.apply_link} target="_blank" rel="noopener noreferrer" className={`flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition ${isExpired ? "bg-slate-100 text-slate-400 cursor-not-allowed" : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md hover:shadow-lg hover:-translate-y-0.5"}`}>
+                                    {s.income_limit && <p className="text-xs text-on-surface-variant"><DollarSign size={11} className="inline mr-0.5" /> Income limit: ₹{s.income_limit.toLocaleString()}</p>}
+                                    <a href={s.apply_link} target="_blank" rel="noopener noreferrer" className={`flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition ${isExpired ? "bg-surface-container text-on-surface-variant/60 cursor-not-allowed" : "bg-gradient-to-r from-primary to-secondary text-white shadow-md hover:shadow-lg hover:-translate-y-0.5"}`}>
                                         <ExternalLink size={14} /> {isExpired ? "Deadline Passed" : "Apply Now"}
                                     </a>
                                 </div>

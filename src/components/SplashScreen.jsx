@@ -1,129 +1,162 @@
-import { motion, AnimatePresence } from "framer-motion"
-import { useState, useEffect, useMemo } from "react"
+import { motion } from "framer-motion"
+import { useState, useEffect, useCallback, useRef } from "react"
 
 /**
- * Splash Screen — first thing a user sees.
- * Logo rocket bounces in, text reveals, then the screen fades up.
+ * SplashScreen — Academic Atelier Split Gate Entry
+ * Full-screen split gate with two panels that slide apart on click/keypress.
  * Only plays once per session (sessionStorage flag).
  */
 export default function SplashScreen({ children }) {
     const [showSplash, setShowSplash] = useState(() => {
         return !sessionStorage.getItem("mb_splash_done")
     })
+    const [gateOpen, setGateOpen] = useState(false)
+    const [childrenVisible, setChildrenVisible] = useState(!showSplash)
+    const triggered = useRef(false)
 
-    const particles = useMemo(() =>
-        Array.from({ length: 20 }, () => ({
-            width: Math.random() * 6 + 2,
-            height: Math.random() * 6 + 2,
-            left: Math.random() * 100,
-            top: Math.random() * 100,
-            duration: 3 + Math.random() * 2,
-            delay: Math.random() * 2,
-        }))
-    , [])
+    const openGate = useCallback(() => {
+        if (triggered.current) return
+        triggered.current = true
+        setGateOpen(true)
+
+        // Fade in children behind the panels
+        setTimeout(() => {
+            setChildrenVisible(true)
+        }, 100)
+
+        // Remove gate and mark session
+        setTimeout(() => {
+            setShowSplash(false)
+            sessionStorage.setItem("mb_splash_done", "1")
+        }, 1300)
+    }, [])
 
     useEffect(() => {
-        if (showSplash) {
-            const timer = setTimeout(() => {
-                setShowSplash(false)
-                sessionStorage.setItem("mb_splash_done", "1")
-            }, 3000)
-            return () => clearTimeout(timer)
-        }
-    }, [showSplash])
+        if (!showSplash) return
+
+        const handleKey = () => openGate()
+        window.addEventListener("keydown", handleKey)
+        return () => window.removeEventListener("keydown", handleKey)
+    }, [showSplash, openGate])
+
+    if (!showSplash) {
+        return <>{children}</>
+    }
 
     return (
         <>
-            <AnimatePresence>
-                {showSplash && (
-                    <motion.div
-                        key="splash"
-                        initial={{ opacity: 1 }}
-                        exit={{ opacity: 0, y: -30 }}
-                        transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-                        className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
-                        style={{
-                            background: "linear-gradient(135deg, #4338ca 0%, #6d28d9 30%, #7c3aed 60%, #6366f1 100%)",
-                        }}
+            {/* Children layer — behind gate */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: childrenVisible ? 1 : 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                style={{
+                    position: "fixed",
+                    inset: 0,
+                    zIndex: 0,
+                    pointerEvents: childrenVisible ? "auto" : "none",
+                }}
+            >
+                {children}
+            </motion.div>
+
+            {/* Atmospheric blobs — behind gate */}
+            <div className="fixed inset-0 z-10 pointer-events-none overflow-hidden">
+                <div className="absolute -top-20 -right-20 w-96 h-96 bg-primary/5 rounded-full" style={{ filter: "blur(120px)" }} />
+                <div className="absolute -bottom-20 -left-20 w-[30rem] h-[30rem] bg-secondary/5 rounded-full" style={{ filter: "blur(140px)" }} />
+            </div>
+
+            {/* Split gate */}
+            <div
+                className="fixed inset-0 z-50 flex cursor-pointer"
+                onClick={openGate}
+            >
+                {/* LEFT PANEL — Warm Terracotta */}
+                <div
+                    className="w-full md:w-1/2 relative overflow-hidden flex flex-col justify-center px-8 md:px-16"
+                    style={{
+                        background: "linear-gradient(to bottom right, #b77466, #9a5e50)",
+                        transform: gateOpen ? "translateX(-100%)" : "translateX(0)",
+                        transition: "transform 1.2s cubic-bezier(0.85, 0, 0.15, 1)",
+                    }}
+                >
+                    {/* Decorative giant "T" */}
+                    <span
+                        className="absolute bottom-[-40px] left-[-20px] font-headline font-black text-on-primary/10 pointer-events-none select-none"
+                        style={{ fontSize: "400px", lineHeight: 1 }}
                     >
-                        {/* Particle dots background */}
-                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                            {particles.map((p, i) => (
-                                <motion.div
-                                    key={i}
-                                    className="absolute rounded-full bg-white/20"
-                                    style={{
-                                        width: p.width,
-                                        height: p.height,
-                                        left: `${p.left}%`,
-                                        top: `${p.top}%`,
-                                    }}
-                                    animate={{
-                                        y: [0, -30, 0],
-                                        opacity: [0.2, 0.6, 0.2],
-                                    }}
-                                    transition={{
-                                        duration: p.duration,
-                                        repeat: Infinity,
-                                        delay: p.delay,
-                                    }}
-                                />
-                            ))}
+                        T
+                    </span>
+
+                    {/* Content */}
+                    <div className="relative z-10">
+                        <p className="font-label text-[10px] uppercase tracking-[0.4em] text-on-primary-fixed/80 mb-4">
+                            YOUR COLLEGE JOURNEY BEGINS
+                        </p>
+                        <h1
+                            className="font-headline font-black text-on-primary-fixed leading-[0.9] tracking-tighter mb-10"
+                            style={{ fontSize: "clamp(60px, 10vw, 120px)" }}
+                        >
+                            Takshak.
+                        </h1>
+                        <div className="flex flex-wrap gap-4">
+                            <button className="btn-primary" onClick={openGate}>
+                                Get Started
+                            </button>
+                            <button className="btn-ghost" onClick={openGate}>
+                                View Dashboard
+                            </button>
                         </div>
+                    </div>
+                </div>
 
-                        {/* Logo rocket — bounces in with rotation */}
-                        <motion.img
-                            src="/takshak_logo.jpg"
-                            alt="TAKSHAK"
-                            className="w-28 h-28 md:w-36 md:h-36 object-contain drop-shadow-2xl"
-                            initial={{ opacity: 0, scale: 0, rotate: -180 }}
-                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                            transition={{
-                                type: "spring",
-                                stiffness: 200,
-                                damping: 15,
-                                delay: 0.2,
-                            }}
-                        />
+                {/* RIGHT PANEL — Dark Surface */}
+                <div
+                    className="hidden md:flex md:w-1/2 relative overflow-hidden flex-col justify-center items-start px-16 bg-surface"
+                    style={{
+                        transform: gateOpen ? "translateX(100%)" : "translateX(0)",
+                        transition: "transform 1.2s cubic-bezier(0.85, 0, 0.15, 1)",
+                    }}
+                >
+                    {/* Editorial stat */}
+                    <div className="relative z-10 mb-10">
+                        <p className="font-headline text-[88px] font-bold text-primary-fixed-dim leading-none">
+                            2,400+
+                        </p>
+                        <p className="font-label text-xs uppercase tracking-widest text-on-surface-variant mt-2">
+                            COLLEGES TRACKED
+                        </p>
+                    </div>
 
-                        {/* Brand name — slides up with stagger */}
-                        <motion.div
-                            className="mt-6 text-center"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.8, duration: 0.5 }}
-                        >
-                            <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-                                <span className="text-gradient-animated">TAKSHAK</span>
-                            </h1>
-                            <motion.p
-                                className="text-indigo-200 text-sm mt-2"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 1.3 }}
-                            >
-                                Your journey to a brighter future starts here
-                            </motion.p>
-                        </motion.div>
+                    {/* 2×2 Bento stat grid */}
+                    <div className="relative z-10 grid grid-cols-2 gap-4 w-full max-w-md">
+                        <div className="glass p-8 rounded-lg">
+                            <p className="font-headline text-3xl text-secondary">94%</p>
+                            <p className="font-label text-[10px] uppercase tracking-wider text-outline mt-2">Admit Rate</p>
+                        </div>
+                        <div className="glass p-8 rounded-lg translate-y-4">
+                            <p className="font-headline text-3xl text-secondary">3.8</p>
+                            <p className="font-label text-[10px] uppercase tracking-wider text-outline mt-2">Avg GPA</p>
+                        </div>
+                        <div className="glass p-8 rounded-lg -translate-y-4">
+                            <p className="font-headline text-3xl text-secondary">12K</p>
+                            <p className="font-label text-[10px] uppercase tracking-wider text-outline mt-2">Students</p>
+                        </div>
+                        <div className="glass p-8 rounded-lg">
+                            <p className="font-headline text-3xl text-secondary">48h</p>
+                            <p className="font-label text-[10px] uppercase tracking-wider text-outline mt-2">Response</p>
+                        </div>
+                    </div>
+                </div>
 
-                        {/* Loading bar */}
-                        <motion.div
-                            className="mt-8 h-1 w-48 rounded-full bg-white/20 overflow-hidden"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 1.5 }}
-                        >
-                            <motion.div
-                                className="h-full bg-white rounded-full"
-                                initial={{ width: 0 }}
-                                animate={{ width: "100%" }}
-                                transition={{ delay: 1.5, duration: 1.3, ease: "easeInOut" }}
-                            />
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-            {!showSplash && children}
+                {/* CENTER INDICATOR — bottom center */}
+                <div className="hidden md:flex absolute bottom-12 left-1/2 -translate-x-1/2 flex-col items-center gap-3 z-[60]">
+                    <span className="font-label text-[10px] uppercase tracking-[0.6em] text-on-surface/40">
+                        ENTER
+                    </span>
+                    <div className="w-px h-16 bg-gradient-to-b from-primary/60 to-transparent" />
+                </div>
+            </div>
         </>
     )
 }

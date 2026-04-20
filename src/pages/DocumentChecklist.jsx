@@ -54,50 +54,69 @@ export default function DocumentChecklist() {
     }, [selectedCollege, checked])
 
     return (
-        <div className="space-y-6">
-            {/* Hero */}
+        <div className="relative z-10 pt-8 pb-24 px-2 md:px-6 max-w-5xl mx-auto space-y-8">
+            {/* Page Header */}
             <motion.section
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="card-gradient-purple rounded-3xl p-8 text-center text-white shadow-xl md:p-10"
+                transition={{ duration: 0.5, ease: "easeOut" }}
             >
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 shadow-lg">
-                    <ClipboardCheck size={40} />
-                </div>
-                <h1 className="text-4xl font-extrabold md:text-5xl">Document Checklist</h1>
-                <p className="mt-3 text-lg text-white/80">Never miss a document — track everything per college</p>
+                <p className="font-label text-[9px] uppercase tracking-[0.4em] text-on-surface-variant/60 mb-2">
+                    ADMISSION TOOLKIT
+                </p>
+                <h1 className="section-title text-[clamp(36px,5vw,56px)]">
+                    Document Checklist
+                </h1>
+                <p className="mt-3 text-on-surface-variant font-light text-base">
+                    Never miss a document — track everything per college
+                </p>
             </motion.section>
 
-            {/* College Selector */}
+            {/* College Selector + Progress */}
             <motion.section
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="rounded-3xl border border-slate-200/60 bg-white p-5 shadow-card"
+                transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
+                className="glass rounded-lg p-6 md:p-8"
             >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-6">
                     <div className="flex-1">
-                        <label className="mb-1 block text-xs font-medium text-slate-600">Select College</label>
-                        <select
-                            value={selectedCollege}
-                            onChange={e => setSelectedCollege(e.target.value)}
-                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm"
-                        >
-                            {COLLEGES_LIST.map(c => <option key={c} value={c}>{c}</option>)}
-                        </select>
+                        <label className="font-label text-[9px] uppercase tracking-widest text-on-surface-variant/60 mb-2 block">
+                            Select College
+                        </label>
+                        <div className="relative">
+                            <select
+                                value={selectedCollege}
+                                onChange={e => setSelectedCollege(e.target.value)}
+                                className="w-full appearance-none border-0 border-b border-outline-variant/40 bg-transparent rounded-none px-0 py-3 text-sm font-light text-on-surface outline-none focus:border-primary transition-all duration-400"
+                            >
+                                {COLLEGES_LIST.map(c => <option key={c} value={c} className="bg-surface-container">{c}</option>)}
+                            </select>
+                            <ChevronDown size={14} className="absolute right-0 bottom-3 text-on-surface-variant/40 pointer-events-none" />
+                        </div>
                     </div>
 
-                    {/* Progress */}
+                    {/* Progress Ring */}
                     <div className="text-center">
                         <div className="relative mx-auto h-16 w-16">
                             <svg className="h-16 w-16 -rotate-90" viewBox="0 0 36 36">
-                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#e2e8f0" strokeWidth="3" />
-                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke={progress.percent === 100 ? "#10b981" : "#6366f1"} strokeWidth="3" strokeDasharray={`${progress.percent}, 100`} strokeLinecap="round" />
+                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#41312c" strokeWidth="3" />
+                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke={progress.percent === 100 ? "#dfc393" : "#ffb4a5"} strokeWidth="3" strokeDasharray={`${progress.percent}, 100`} strokeLinecap="round" />
                             </svg>
-                            <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-slate-900">{progress.percent}%</span>
+                            <span className="absolute inset-0 flex items-center justify-center text-sm font-headline font-bold text-on-surface">{progress.percent}%</span>
                         </div>
-                        <p className="mt-1 text-xs text-slate-500">{progress.done}/{progress.total} required</p>
+                        <p className="mt-1 text-[10px] font-label uppercase tracking-wider text-on-surface-variant/60">{progress.done}/{progress.total} required</p>
                     </div>
+                </div>
+
+                {/* Progress bar */}
+                <div className="mt-6 h-[2px] rounded-full bg-surface-container-high overflow-hidden">
+                    <motion.div
+                        className="h-full rounded-full"
+                        style={{ background: "linear-gradient(to right, #ffb4a5, #dfc393)" }}
+                        animate={{ width: `${progress.percent}%` }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                    />
                 </div>
             </motion.section>
 
@@ -105,10 +124,10 @@ export default function DocumentChecklist() {
             <motion.section
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="rounded-3xl border border-slate-200/60 bg-white shadow-card"
+                transition={{ delay: 0.2, duration: 0.5, ease: "easeOut" }}
+                className="glass rounded-lg p-2 md:p-4"
             >
-                <div className="divide-y divide-slate-100">
+                <div className="space-y-1">
                     {DEFAULT_DOCS.map((doc, i) => {
                         const isDone = checked[key(selectedCollege, doc.name)]
                         return (
@@ -116,22 +135,29 @@ export default function DocumentChecklist() {
                                 key={doc.name}
                                 initial={{ opacity: 0, x: -5 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: i * 0.02 }}
+                                transition={{ delay: i * 0.02, duration: 0.4, ease: "easeOut" }}
                                 onClick={() => toggleDoc(doc.name)}
-                                className={`flex cursor-pointer items-center gap-4 px-5 py-4 transition-colors ${isDone ? "bg-emerald-50/50" : "hover:bg-slate-50"}`}
+                                className={`flex cursor-pointer items-center gap-4 px-4 md:px-6 py-4 rounded-lg transition-all duration-400 ${isDone ? "bg-primary/5" : "hover:bg-surface-container-high/30"}`}
                             >
-                                <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition ${isDone ? "bg-emerald-500 text-white" : "border-2 border-slate-300"}`}>
-                                    {isDone && <Check size={14} strokeWidth={3} />}
+                                {/* Custom checkbox */}
+                                <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition-all duration-400 ${
+                                    isDone
+                                        ? "bg-primary"
+                                        : "border-2 border-outline-variant/40 hover:border-primary"
+                                }`}>
+                                    {isDone && <Check size={12} strokeWidth={3} className="text-on-primary" />}
                                 </div>
+
                                 <div className="flex-1">
-                                    <p className={`text-sm font-medium ${isDone ? "text-emerald-700 line-through" : "text-slate-900"}`}>
+                                    <p className={`text-sm font-medium transition-all duration-400 ${isDone ? "text-on-surface-variant/50 line-through decoration-primary/40" : "text-on-surface"}`}>
                                         {doc.name}
                                     </p>
                                 </div>
+
                                 {doc.required ? (
-                                    <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600">Required</span>
+                                    <span className="bg-error/15 text-error rounded-full px-2 py-0.5 text-[9px] font-label uppercase tracking-widest font-bold">Required</span>
                                 ) : (
-                                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500">Optional</span>
+                                    <span className="bg-outline-variant/20 text-on-surface-variant rounded-full px-2 py-0.5 text-[9px] font-label uppercase tracking-widest">Optional</span>
                                 )}
                             </motion.div>
                         )
@@ -139,15 +165,17 @@ export default function DocumentChecklist() {
                 </div>
             </motion.section>
 
+            {/* Completion banner */}
             {progress.percent === 100 && (
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6 text-center"
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="glass rounded-lg p-8 text-center border-l-4 border-tertiary"
                 >
-                    <CheckCircle2 size={48} className="mx-auto text-emerald-500" />
-                    <p className="mt-3 text-lg font-bold text-emerald-800">All documents ready! 🎉</p>
-                    <p className="mt-1 text-sm text-emerald-600">You're fully prepared for {selectedCollege}</p>
+                    <CheckCircle2 size={48} className="mx-auto text-tertiary" />
+                    <p className="mt-3 font-headline font-bold text-lg text-on-surface italic">All documents ready! 🎉</p>
+                    <p className="mt-1 text-sm text-on-surface-variant font-light">You're fully prepared for {selectedCollege}</p>
                 </motion.div>
             )}
         </div>
