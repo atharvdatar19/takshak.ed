@@ -12,10 +12,10 @@ const ICONS = {
 }
 
 const COLORS = {
-    success: "border-tertiary/20 bg-tertiary/10 text-tertiary dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200",
-    error: "border-error/20 bg-error/10 text-error dark:border-rose-800 dark:bg-rose-950 dark:text-rose-200",
-    info: "border-blue-200 bg-primary/10 text-blue-800 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-200",
-    warning: "border-amber-200 bg-tertiary/10 text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200",
+    success: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200",
+    error: "border-rose-200 bg-rose-50 text-rose-800 dark:border-rose-800 dark:bg-rose-950 dark:text-rose-200",
+    info: "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-200",
+    warning: "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200",
 }
 
 export function ToastProvider({ children }) {

@@ -57,7 +57,7 @@ export default function AdminControl() {
       />
 
       {/* ── Tab Navigation ── */}
-      <nav className="mb-6 flex flex-wrap gap-1 rounded-xl border border-outline-variant/20 glass p-1.5 shadow-sm">
+      <nav className="mb-6 flex flex-wrap gap-1 rounded-xl border border-slate-200 bg-white p-1.5 shadow-sm">
         {TABS.map(tab => {
           const Icon = tab.icon
           const isActive = activeTab === tab.key
@@ -67,8 +67,8 @@ export default function AdminControl() {
               type="button"
               onClick={() => setActiveTab(tab.key)}
               className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${isActive
-                ? "bg-primary text-white shadow-sm"
-                : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
+                ? "bg-indigo-600 text-white shadow-sm"
+                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 }`}
             >
               <Icon size={14} />

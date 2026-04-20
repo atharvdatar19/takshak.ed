@@ -44,7 +44,7 @@ export default function UserManager() {
         return (
             <div className="space-y-3">
                 {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-16 animate-pulse rounded-lg bg-surface-container-high" />
+                    <div key={i} className="h-16 animate-pulse rounded-lg bg-slate-200" />
                 ))}
             </div>
         )
@@ -55,7 +55,7 @@ export default function UserManager() {
     return (
         <div className="space-y-4">
             {error && (
-                <div className="rounded-lg border border-error/20 bg-error/10 px-4 py-2 text-sm text-error">{error}</div>
+                <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">{error}</div>
             )}
 
             <div className="flex flex-wrap items-center gap-3">
@@ -63,12 +63,12 @@ export default function UserManager() {
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     placeholder="Search by name or email..."
-                    className="flex-1 rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary"
+                    className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500"
                 />
                 <select
                     value={streamFilter}
                     onChange={e => setStreamFilter(e.target.value)}
-                    className="rounded-lg border border-outline-variant/20 px-3 py-2 text-sm"
+                    className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
                 >
                     <option value="">All Streams</option>
                     <option value="PCM">PCM</option>
@@ -79,16 +79,16 @@ export default function UserManager() {
                 </select>
             </div>
 
-            <div className="flex gap-4 text-xs text-on-surface-variant">
+            <div className="flex gap-4 text-xs text-slate-500">
                 <span>{filtered.length} user{filtered.length !== 1 ? "s" : ""} shown</span>
                 <span>•</span>
                 <span className="font-medium text-amber-600">{premiumCount} premium</span>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-outline-variant/20 glass shadow-sm">
+            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
                 <table className="w-full text-sm">
                     <thead>
-                        <tr className="border-b border-outline-variant/20 bg-surface-container-low text-left text-xs font-semibold text-on-surface-variant">
+                        <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold text-slate-600">
                             <th className="px-4 py-3">Name</th>
                             <th className="px-4 py-3">Email</th>
                             <th className="px-4 py-3">Stream</th>
@@ -109,20 +109,20 @@ export default function UserManager() {
                                     hidden: { opacity: 0, y: 10 },
                                     visible: { opacity: 1, y: 0 }
                                 }}
-                                className="border-b border-outline-variant/10 hover:bg-surface-container-low"
+                                className="border-b border-slate-100 hover:bg-slate-50"
                             >
-                                <td className="px-4 py-3 font-medium text-on-surface">{user.full_name || "—"}</td>
-                                <td className="px-4 py-3 text-on-surface-variant">{user.email || "—"}</td>
-                                <td className="px-4 py-3 text-on-surface-variant">{user.stream || "—"}</td>
-                                <td className="px-4 py-3 text-on-surface-variant">{user.state || "—"}</td>
-                                <td className="px-4 py-3 text-on-surface-variant">{user.target_exam || "—"}</td>
+                                <td className="px-4 py-3 font-medium text-slate-900">{user.full_name || "—"}</td>
+                                <td className="px-4 py-3 text-slate-600">{user.email || "—"}</td>
+                                <td className="px-4 py-3 text-slate-600">{user.stream || "—"}</td>
+                                <td className="px-4 py-3 text-slate-600">{user.state || "—"}</td>
+                                <td className="px-4 py-3 text-slate-600">{user.target_exam || "—"}</td>
                                 <td className="px-4 py-3 text-center">
                                     <button
                                         type="button"
                                         onClick={() => handleTogglePremium(user.id, user.is_premium)}
                                         className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold transition ${user.is_premium
-                                                ? "bg-tertiary/15 text-amber-700 hover:bg-amber-200"
-                                                : "bg-surface-container text-on-surface-variant/60 hover:bg-surface-container-high"
+                                                ? "bg-amber-100 text-amber-700 hover:bg-amber-200"
+                                                : "bg-slate-100 text-slate-400 hover:bg-slate-200"
                                             }`}
                                     >
                                         <Crown size={12} />
@@ -133,7 +133,7 @@ export default function UserManager() {
                         ))}
                         {filtered.length === 0 && (
                             <tr>
-                                <td colSpan={6} className="px-4 py-8 text-center text-sm text-on-surface-variant/60">No users found.</td>
+                                <td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-400">No users found.</td>
                             </tr>
                         )}
                     </motion.tbody>

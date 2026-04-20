@@ -1,20 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BookOpen, GraduationCap, Users, Building, Shield } from 'lucide-react'
+import { BookOpen, GraduationCap } from 'lucide-react'
 import supabase, { isDemoMode } from '../../supabaseClient'
 import { useNavigate } from 'react-router-dom'
 
 const DEMO_RESULTS = [
-  { id: 1, type: 'exam', title: 'JEE Advanced', subtitle: 'Joint Entrance Examination', slug: 'jee' },
+  { id: 1, type: 'exam', title: 'JEE Advanced', subtitle: 'Joint Entrance Examination Advanced', slug: 'jee-advanced' },
   { id: 2, type: 'exam', title: 'NEET UG', subtitle: 'National Eligibility cum Entrance Test', slug: 'neet' },
   { id: 3, type: 'exam', title: 'GATE 2026', subtitle: 'Graduate Aptitude Test in Engineering', slug: 'gate' },
-  { id: 4, type: 'course', title: 'JEE Complete Course', subtitle: 'Physics Wallah', slug: 'jee-complete' },
-  { id: 5, type: 'mentor', title: 'Paarth Ainchwar', subtitle: 'Medic Student (NEET)', slug: 'paarth' },
-  { id: 6, type: 'mentor', title: 'Anshika Pathak', subtitle: 'CBSE 10th & 12th Expert', slug: 'anshika' },
-  { id: 7, type: 'college', title: 'IIT Bombay', subtitle: 'Indian Institute of Technology', slug: 'iit-bombay' },
-  { id: 8, type: 'college', title: 'NIT Trichy', subtitle: 'National Institute of Technology', slug: 'nit-trichy' },
-  { id: 9, type: 'defence', title: 'NDA Written Exam Prep', subtitle: 'Defence Mentorship', slug: 'nda' },
-  { id: 10, type: 'defence', title: 'SSB Interview Guidance', subtitle: 'Hemant Singh Bhadoriya', slug: 'ssb' },
+  { id: 4, type: 'course', title: 'JEE Complete Course 2026', subtitle: 'Physics Wallah', slug: 'jee-complete' },
+  { id: 5, type: 'course', title: 'NEET Droppers Batch', subtitle: 'Aakash Institute', slug: 'neet-droppers' },
 ]
 
 async function fetchResults(query) {
@@ -64,24 +59,15 @@ async function fetchResults(query) {
  */
 export default function SearchDropdown({ query, visible, onSelect }) {
   const [results, setResults] = useState([])
-  const [recentSearches, setRecentSearches] = useState([])
   const [loading, setLoading] = useState(false)
   const debounceRef = useRef(null)
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (visible && query.trim().length < 2) {
-      try {
-        const saved = JSON.parse(localStorage.getItem('mentorbhaiyaa_recent_searches') || '[]')
-        setRecentSearches(saved)
-      } catch {
-        setRecentSearches([])
-      }
+    if (!visible || query.trim().length < 2) {
       setResults([])
       return
     }
-
-    if (!visible) return
 
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(async () => {
@@ -101,19 +87,7 @@ export default function SearchDropdown({ query, visible, onSelect }) {
   }, [query, visible])
 
   const handleSelect = (item) => {
-    try {
-      const saved = JSON.parse(localStorage.getItem('mentorbhaiyaa_recent_searches') || '[]')
-      const updated = [item, ...saved.filter(i => i.id !== item.id)].slice(0, 5)
-      localStorage.setItem('mentorbhaiyaa_recent_searches', JSON.stringify(updated))
-    } catch {}
-
-    let path = '/'
-    if (item.type === 'exam') path = `/timeline`
-    else if (item.type === 'course') path = `/resources`
-    else if (item.type === 'mentor') path = `/mentors?search=${encodeURIComponent(item.title)}`
-    else if (item.type === 'college') path = `/colleges`
-    else if (item.type === 'defence') path = `/defence`
-
+    const path = item.type === 'exam' ? `/exams/${item.slug}` : `/courses/${item.slug}`
     onSelect(item)
     navigate(path)
   }
@@ -125,13 +99,9 @@ export default function SearchDropdown({ query, visible, onSelect }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [visible, onSelect])
 
-  const showRecents = query.trim().length < 2
-  const displayItems = showRecents ? recentSearches : results
-  const shouldRender = visible && (displayItems.length > 0 || loading || (!loading && !showRecents && results.length === 0))
-
   return (
     <AnimatePresence>
-      {shouldRender && (
+      {visible && (
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -159,51 +129,14 @@ export default function SearchDropdown({ query, visible, onSelect }) {
             </div>
           )}
 
-          {!loading && !showRecents && results.length === 0 && (
+          {!loading && results.length === 0 && (
             <div style={{ padding: '16px 20px', color: 'var(--obsidian-on-surface-variant)', fontSize: '13px' }}>
               No results for &quot;{query}&quot;
             </div>
           )}
 
-          {showRecents && recentSearches.length > 0 && (
-            <div style={{ padding: '8px 16px 4px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--obsidian-on-surface-variant)' }}>
-              Recent Searches
-            </div>
-          )}
-
-          {!loading && displayItems.map((item) => {
-            let Icon = BookOpen
-            let badgeText = 'Course'
-            let colorVar = 'var(--obsidian-primary)'
-            let bgVar = 'var(--accent-glow)'
-            let borderVar = 'var(--accent-glow-intense)'
-
-            if (item.type === 'exam') {
-              Icon = GraduationCap
-              badgeText = 'Exam'
-              colorVar = 'var(--obsidian-secondary)'
-              bgVar = 'rgba(99,102,241,0.1)'
-              borderVar = 'rgba(99,102,241,0.2)'
-            } else if (item.type === 'mentor') {
-              Icon = Users
-              badgeText = 'Mentor'
-              colorVar = 'var(--obsidian-tertiary, #e879f9)'
-              bgVar = 'rgba(232,121,249,0.1)'
-              borderVar = 'rgba(232,121,249,0.2)'
-            } else if (item.type === 'college') {
-              Icon = Building
-              badgeText = 'College'
-              colorVar = '#38bdf8'
-              bgVar = 'rgba(56,189,248,0.1)'
-              borderVar = 'rgba(56,189,248,0.2)'
-            } else if (item.type === 'defence') {
-              Icon = Shield
-              badgeText = 'Defence'
-              colorVar = '#34d399'
-              bgVar = 'rgba(52,211,153,0.1)'
-              borderVar = 'rgba(52,211,153,0.2)'
-            }
-
+          {!loading && results.map((item) => {
+            const isExam = item.type === 'exam'
             return (
               <button
                 key={`${item.type}-${item.id}`}
@@ -239,10 +172,15 @@ export default function SearchDropdown({ query, visible, onSelect }) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
-                    background: bgVar,
+                    background: isExam
+                      ? 'rgba(99,102,241,0.1)'
+                      : 'var(--accent-glow)',
                   }}
                 >
-                  <Icon size={18} style={{ color: colorVar }} />
+                  {isExam
+                    ? <GraduationCap size={18} style={{ color: 'var(--obsidian-secondary)' }} />
+                    : <BookOpen size={18} style={{ color: 'var(--obsidian-primary)' }} />
+                  }
                 </div>
 
                 {/* Text */}
@@ -282,12 +220,14 @@ export default function SearchDropdown({ query, visible, onSelect }) {
                     borderRadius: '9999px',
                     fontSize: '11px',
                     fontWeight: 700,
-                    background: bgVar,
-                    color: colorVar,
-                    border: `1px solid ${borderVar}`,
+                    background: isExam
+                      ? 'rgba(99,102,241,0.1)'
+                      : 'var(--accent-glow)',
+                    color: isExam ? 'var(--obsidian-secondary)' : 'var(--obsidian-primary)',
+                    border: `1px solid ${isExam ? 'rgba(99,102,241,0.2)' : 'var(--accent-glow-intense)'}`,
                   }}
                 >
-                  {badgeText}
+                  {isExam ? 'Exam' : 'Course'}
                 </span>
               </button>
             )

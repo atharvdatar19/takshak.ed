@@ -120,8 +120,8 @@ export default function Timeline() {
                 key={type}
                 onClick={() => setSelectedType(type)}
                 className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition shadow-sm ${selectedType === type
-                    ? "bg-primary text-white shadow-indigo-200"
-                    : "glass text-on-surface-variant border border-outline-variant/20 hover:bg-surface-container-low"
+                    ? "bg-indigo-600 text-white shadow-indigo-200"
+                    : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
                   }`}
               >
                 {type === "All" ? "All Targets" : type + "s"}
@@ -154,9 +154,9 @@ export default function Timeline() {
 
 function TimelineColumn({ title, items, tone }) {
   const toneClasses = {
-    indigo: "bg-primary/15 text-primary",
-    rose: "bg-error/15 text-error",
-    emerald: "bg-tertiary/15 text-tertiary",
+    indigo: "bg-indigo-100 text-indigo-700",
+    rose: "bg-rose-100 text-rose-700",
+    emerald: "bg-emerald-100 text-emerald-700",
   }
 
   // Deduplicate items based on ID to avoid duplicate keys
@@ -166,14 +166,14 @@ function TimelineColumn({ title, items, tone }) {
     <motion.section
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl border border-outline-variant/20 glass p-5 shadow-sm"
+      className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
     >
-      <h3 className="mb-4 text-base font-semibold text-on-surface">
+      <h3 className="mb-4 text-base font-semibold text-slate-900">
         {title}
       </h3>
 
       {uniqueItems.length === 0 ? (
-        <p className="rounded-lg bg-surface-container-low p-4 text-sm text-on-surface-variant">
+        <p className="rounded-lg bg-slate-50 p-4 text-sm text-slate-500">
           No records available.
         </p>
       ) : (
@@ -185,37 +185,37 @@ function TimelineColumn({ title, items, tone }) {
             return (
               <li
                 key={item.id}
-                className="rounded-lg border border-outline-variant/10 bg-surface-container-low p-4 hover:shadow-md transition-shadow relative overflow-hidden group"
+                className="rounded-lg border border-slate-100 bg-slate-50 p-4 hover:shadow-md transition-shadow relative overflow-hidden group"
               >
                 <div className="flex items-start justify-between gap-3 relative z-10">
                   <div className="flex-1">
-                    <p className="font-bold text-on-surface leading-tight">
+                    <p className="font-bold text-slate-900 leading-tight">
                       {item.title || item.exam_name}
                     </p>
 
                     {item.organizingBody && (
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/15 inline-block px-1.5 py-0.5 rounded mt-1.5 mb-1.5 label-tag">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-100 inline-block px-1.5 py-0.5 rounded mt-1.5 mb-1.5 label-tag">
                         By {item.organizingBody}
                       </p>
                     )}
 
-                    <p className="text-xs text-on-surface-variant mb-1.5 leading-relaxed">
+                    <p className="text-xs text-slate-600 mb-1.5 leading-relaxed">
                       {item.description || `${item.event_type || "Exam"} • ${item.stream || "General"}`}
                     </p>
 
                     {item.prizeOrStipend && item.prizeOrStipend !== 'N/A' && (
-                      <div className="flex items-center gap-1 text-xs text-tertiary font-bold bg-tertiary/10 px-2 py-1 rounded inline-flex mb-2">
+                      <div className="flex items-center gap-1 text-xs text-emerald-700 font-bold bg-emerald-50 px-2 py-1 rounded inline-flex mb-2">
                         <span>💰</span> {item.prizeOrStipend}
                       </div>
                     )}
 
-                    <p className="mt-1 text-xs font-medium text-on-surface-variant">
+                    <p className="mt-1 text-xs font-medium text-slate-600">
                       📅 {formatDate(item.start_date || item.exam_date)}{" "}
                       {endDate && endDate !== (item.start_date || item.exam_date) ? `→ ${formatDate(endDate)}` : ""}
                     </p>
 
                     {item.link && (
-                      <a href={item.link} target="_blank" rel="noreferrer" className="mt-3 flex items-center gap-1 text-xs font-bold text-primary hover:text-primary transition-colors w-max">
+                      <a href={item.link} target="_blank" rel="noreferrer" className="mt-3 flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors w-max">
                         Learn More <ExternalLink size={12} />
                       </a>
                     )}

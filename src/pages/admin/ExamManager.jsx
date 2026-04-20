@@ -112,7 +112,7 @@ export default function ExamManager() {
         return (
             <div className="space-y-3">
                 {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-16 animate-pulse rounded-lg bg-surface-container-high" />
+                    <div key={i} className="h-16 animate-pulse rounded-lg bg-slate-200" />
                 ))}
             </div>
         )
@@ -121,14 +121,14 @@ export default function ExamManager() {
     return (
         <div className="space-y-4">
             {error && (
-                <div className="rounded-lg border border-error/20 bg-error/10 px-4 py-2 text-sm text-error">{error}</div>
+                <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">{error}</div>
             )}
 
             <div className="flex flex-wrap items-center gap-3">
                 <select
                     value={streamFilter}
                     onChange={e => setStreamFilter(e.target.value)}
-                    className="rounded-lg border border-outline-variant/20 px-3 py-2 text-sm"
+                    className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
                 >
                     <option value="">All Streams</option>
                     <option value="PCM">PCM</option>
@@ -140,14 +140,14 @@ export default function ExamManager() {
                 <button
                     type="button"
                     onClick={() => setEditing({ ...EMPTY_EXAM })}
-                    className="inline-flex items-center gap-1 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary/100"
+                    className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
                 >
                     <Plus size={14} /> Add Exam
                 </button>
                 <button
                     type="button"
                     onClick={() => setShowImport(prev => !prev)}
-                    className="inline-flex items-center gap-1 rounded-lg border border-outline-variant/20 glass px-4 py-2 text-sm font-medium text-on-surface transition hover:bg-surface-container-low"
+                    className="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                 >
                     <Upload size={14} /> Bulk Import
                 </button>
@@ -155,40 +155,40 @@ export default function ExamManager() {
 
             {/* ── Bulk Import Section ── */}
             {showImport && (
-                <div className="rounded-xl border border-primary/20 bg-primary/10 p-4 space-y-3">
+                <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-4 space-y-3">
                     <p className="text-sm font-medium text-indigo-900">Paste CSV data — one exam per line:</p>
-                    <p className="text-xs text-primary">Format: title, stream, event_type, start_date, end_date, is_national, priority</p>
+                    <p className="text-xs text-indigo-600">Format: title, stream, event_type, start_date, end_date, is_national, priority</p>
                     <textarea
                         value={csvText}
                         onChange={e => setCsvText(e.target.value)}
                         rows={5}
                         placeholder={"JEE Main 2025, PCM, exam, 2025-04-01, 2025-04-15, true, 10\nNEET 2025, PCB, exam, 2025-05-04, 2025-05-04, true, 10"}
-                        className="w-full rounded-lg border border-primary/20 glass px-3 py-2 text-sm font-mono outline-none focus:border-primary/40"
+                        className="w-full rounded-lg border border-indigo-200 bg-white px-3 py-2 text-sm font-mono outline-none focus:border-indigo-400"
                     />
                     <div className="flex items-center gap-3">
                         <button
                             type="button"
                             onClick={handleBulkImport}
                             disabled={!csvText.trim()}
-                            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/100 disabled:opacity-50"
+                            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50"
                         >
                             Import All
                         </button>
                         {importStatus && (
-                            <span className="text-sm font-medium text-primary">{importStatus}</span>
+                            <span className="text-sm font-medium text-indigo-700">{importStatus}</span>
                         )}
                     </div>
                 </div>
             )}
 
-            <p className="text-xs text-on-surface-variant">
+            <p className="text-xs text-slate-500">
                 Showing {filtered.length} of {exams.length} exams
             </p>
 
-            <div className="overflow-x-auto rounded-xl border border-outline-variant/20 glass shadow-sm">
+            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
                 <table className="w-full text-sm">
                     <thead>
-                        <tr className="border-b border-outline-variant/20 bg-surface-container-low text-left text-xs font-semibold text-on-surface-variant">
+                        <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold text-slate-600">
                             <th className="px-4 py-3">Title</th>
                             <th className="px-4 py-3">Stream</th>
                             <th className="px-4 py-3">Type</th>
@@ -200,23 +200,23 @@ export default function ExamManager() {
                     </thead>
                     <tbody>
                         {filtered.map(exam => (
-                            <tr key={exam.id} className="border-b border-outline-variant/10 hover:bg-surface-container-low">
-                                <td className="px-4 py-3 font-medium text-on-surface">{exam.title}</td>
-                                <td className="px-4 py-3 text-on-surface-variant">{exam.stream || "—"}</td>
-                                <td className="px-4 py-3 text-on-surface-variant">{exam.event_type || "—"}</td>
-                                <td className="px-4 py-3 text-on-surface-variant">{exam.start_date || "—"}</td>
-                                <td className="px-4 py-3 text-on-surface-variant">{exam.end_date || "—"}</td>
+                            <tr key={exam.id} className="border-b border-slate-100 hover:bg-slate-50">
+                                <td className="px-4 py-3 font-medium text-slate-900">{exam.title}</td>
+                                <td className="px-4 py-3 text-slate-600">{exam.stream || "—"}</td>
+                                <td className="px-4 py-3 text-slate-600">{exam.event_type || "—"}</td>
+                                <td className="px-4 py-3 text-slate-600">{exam.start_date || "—"}</td>
+                                <td className="px-4 py-3 text-slate-600">{exam.end_date || "—"}</td>
                                 <td className="px-4 py-3 text-center">
-                                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${exam.is_national ? "bg-tertiary/15 text-tertiary" : "bg-surface-container text-on-surface-variant"}`}>
+                                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${exam.is_national ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
                                         {exam.is_national ? "Yes" : "No"}
                                     </span>
                                 </td>
                                 <td className="px-4 py-3 text-center">
                                     <div className="inline-flex gap-2">
-                                        <button type="button" onClick={() => setEditing({ ...exam })} className="rounded-lg p-1 text-on-surface-variant/60 hover:bg-surface-container hover:text-primary">
+                                        <button type="button" onClick={() => setEditing({ ...exam })} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-indigo-600">
                                             <Pencil size={14} />
                                         </button>
-                                        <button type="button" onClick={() => handleDelete(exam.id)} className="rounded-lg p-1 text-on-surface-variant/60 hover:bg-error/10 hover:text-error">
+                                        <button type="button" onClick={() => handleDelete(exam.id)} className="rounded-lg p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600">
                                             <Trash2 size={14} />
                                         </button>
                                     </div>
@@ -225,7 +225,7 @@ export default function ExamManager() {
                         ))}
                         {filtered.length === 0 && (
                             <tr>
-                                <td colSpan={7} className="px-4 py-8 text-center text-sm text-on-surface-variant/60">No exams found.</td>
+                                <td colSpan={7} className="px-4 py-8 text-center text-sm text-slate-400">No exams found.</td>
                             </tr>
                         )}
                     </tbody>
@@ -235,10 +235,10 @@ export default function ExamManager() {
             {/* ── Edit Modal ── */}
             {editing !== null && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="relative mx-4 w-full max-w-lg space-y-4 rounded-2xl glass p-6 shadow-xl">
+                    <div className="relative mx-4 w-full max-w-lg space-y-4 rounded-2xl bg-white p-6 shadow-xl">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-semibold text-on-surface">{editing.id ? "Edit Exam" : "Add Exam"}</h3>
-                            <button type="button" onClick={() => setEditing(null)} className="text-on-surface-variant/60 hover:text-on-surface-variant"><X size={18} /></button>
+                            <h3 className="text-lg font-semibold text-slate-900">{editing.id ? "Edit Exam" : "Add Exam"}</h3>
+                            <button type="button" onClick={() => setEditing(null)} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
                         </div>
 
                         <div className="grid gap-3 sm:grid-cols-2">
@@ -253,23 +253,23 @@ export default function ExamManager() {
                         </div>
                         <Field label="Official Link" value={editing.official_link} set={v => setEditing(p => ({ ...p, official_link: v }))} />
 
-                        <label className="flex items-center gap-2 text-sm text-on-surface">
+                        <label className="flex items-center gap-2 text-sm text-slate-700">
                             <input
                                 type="checkbox"
                                 checked={editing.is_national}
                                 onChange={e => setEditing(p => ({ ...p, is_national: e.target.checked }))}
-                                className="rounded border-outline-variant/20"
+                                className="rounded border-slate-300"
                             />
                             National Exam
                         </label>
 
                         <div className="flex justify-end gap-3 pt-2">
-                            <button type="button" onClick={() => setEditing(null)} className="rounded-lg border border-outline-variant/20 px-4 py-2 text-sm hover:bg-surface-container-low">Cancel</button>
+                            <button type="button" onClick={() => setEditing(null)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm hover:bg-slate-50">Cancel</button>
                             <button
                                 type="button"
                                 onClick={handleSave}
                                 disabled={saving || !editing.title}
-                                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/100 disabled:opacity-50"
+                                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50"
                             >
                                 {saving ? "Saving..." : "Save"}
                             </button>
@@ -284,12 +284,12 @@ export default function ExamManager() {
 function Field({ label, value, set, type = "text" }) {
     return (
         <label>
-            <span className="mb-1 block text-xs font-medium text-on-surface-variant">{label}</span>
+            <span className="mb-1 block text-xs font-medium text-slate-600">{label}</span>
             <input
                 type={type}
                 value={value || ""}
                 onChange={e => set(e.target.value)}
-                className="w-full rounded-lg border border-outline-variant/20 px-3 py-2 text-sm outline-none focus:border-primary"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500"
             />
         </label>
     )

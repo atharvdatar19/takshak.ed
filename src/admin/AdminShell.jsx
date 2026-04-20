@@ -53,23 +53,23 @@ export default function AdminShell() {
     const SidebarContent = () => (
         <>
             {/* Logo */}
-            <div className="flex items-center gap-3 px-4 h-16 border-b border-outline-variant/10">
-                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_15px_rgba(255,180,165,0.2)]">
-                    <Zap size={16} className="text-on-primary" />
+            <div className="flex items-center gap-3 px-4 h-16 border-b border-white/[0.04]">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <Zap size={16} className="text-white" />
                 </div>
                 {sidebarOpen && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 min-w-0">
-                        <span className="text-sm font-headline font-black tracking-tight text-on-surface">TAKSHAK</span>
-                        <span className="text-[9px] text-primary font-label font-bold ml-1.5 uppercase tracking-widest">Admin</span>
+                        <span className="text-sm font-black tracking-tight text-white">TAKSHAK</span>
+                        <span className="text-[9px] text-indigo-400 font-bold ml-1.5 uppercase tracking-widest">Admin</span>
                     </motion.div>
                 )}
-                <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1.5 rounded-full hover:bg-surface-container-high/50 transition-all duration-400 text-on-surface-variant hidden lg:flex">
+                <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1.5 rounded-lg hover:bg-white/[0.04] transition text-slate-500 hidden lg:flex">
                     {sidebarOpen ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
                 </button>
             </div>
 
             {/* Nav */}
-            <nav className="flex-1 py-4 px-2.5 space-y-0.5 overflow-y-auto">
+            <nav className="flex-1 py-4 px-2.5 space-y-0.5 overflow-y-auto scrollbar-thin">
                 {visibleNav.map(item => {
                     const Icon = item.icon
                     return (
@@ -77,9 +77,9 @@ export default function AdminShell() {
                             key={item.to} to={item.to} end={item.end}
                             onClick={() => setMobileOpen(false)}
                             className={({ isActive }) =>
-                                `group flex items-center gap-3 px-3 py-2.5 rounded-full text-[13px] font-medium transition-all duration-400 relative ${isActive
-                                    ? "bg-primary/10 text-primary font-semibold"
-                                    : "text-on-surface-variant hover:bg-surface-container-high/30 hover:text-on-surface"
+                                `group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 relative ${isActive
+                                    ? "bg-gradient-to-r from-indigo-500/15 to-violet-500/10 text-indigo-300 shadow-sm shadow-indigo-500/5"
+                                    : "text-slate-500 hover:bg-white/[0.03] hover:text-slate-300"
                                 }`
                             }
                         >
@@ -87,7 +87,7 @@ export default function AdminShell() {
                                 <>
                                     {isActive && (
                                         <motion.div layoutId="admin-nav-active"
-                                            className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-primary"
+                                            className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-indigo-500"
                                             transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                         />
                                     )}
@@ -101,22 +101,22 @@ export default function AdminShell() {
             </nav>
 
             {/* User Footer */}
-            <div className="border-t border-outline-variant/10 p-3">
+            <div className="border-t border-white/[0.04] p-3">
                 {sidebarOpen ? (
                     <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center text-primary text-xs font-bold">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500/20 to-violet-500/20 flex items-center justify-center text-indigo-400 text-xs font-bold ring-1 ring-indigo-500/20">
                             {(user?.email || "A")[0].toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-[11px] font-semibold text-on-surface truncate">{user?.email || "admin"}</p>
-                            <p className="text-[9px] text-primary font-label font-black uppercase tracking-[0.15em]">{role}</p>
+                            <p className="text-[11px] font-semibold text-white truncate">{user?.email || "admin"}</p>
+                            <p className="text-[9px] text-indigo-400 font-black uppercase tracking-[0.15em]">{role}</p>
                         </div>
-                        <button onClick={handleSignOut} className="p-1.5 rounded-full hover:bg-error/10 text-on-surface-variant hover:text-error transition-all duration-400">
+                        <button onClick={handleSignOut} className="p-1.5 rounded-lg hover:bg-rose-500/10 text-slate-500 hover:text-rose-400 transition">
                             <LogOut size={14} />
                         </button>
                     </div>
                 ) : (
-                    <button onClick={handleSignOut} className="w-full p-2 rounded-full hover:bg-error/10 text-on-surface-variant hover:text-error transition-all duration-400 flex justify-center">
+                    <button onClick={handleSignOut} className="w-full p-2 rounded-lg hover:bg-rose-500/10 text-slate-500 hover:text-rose-400 transition flex justify-center">
                         <LogOut size={16} />
                     </button>
                 )}
@@ -125,12 +125,9 @@ export default function AdminShell() {
     )
 
     return (
-        <div className="flex min-h-screen bg-background text-on-surface">
-            {/* Noise overlay */}
-            <div className="noise-overlay fixed inset-0 z-0 pointer-events-none" />
-
+        <div className="flex min-h-screen bg-[#07080f] text-slate-200">
             {/* Desktop Sidebar */}
-            <aside className={`${sidebarOpen ? "w-60" : "w-[68px]"} transition-all duration-500 hidden lg:flex flex-col border-r border-outline-variant/10 glass shrink-0 sticky top-0 h-screen z-10`}>
+            <aside className={`${sidebarOpen ? "w-60" : "w-[68px]"} transition-all duration-300 hidden lg:flex flex-col border-r border-white/[0.04] bg-[#0a0b14]/80 backdrop-blur-2xl shrink-0 sticky top-0 h-screen`}>
                 <SidebarContent />
             </aside>
 
@@ -139,13 +136,12 @@ export default function AdminShell() {
                 {mobileOpen && (
                     <>
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            transition={{ duration: 0.4, ease: "easeOut" }}
-                            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 lg:hidden"
+                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
                             onClick={() => setMobileOpen(false)}
                         />
                         <motion.aside initial={{ x: -260 }} animate={{ x: 0 }} exit={{ x: -260 }}
-                            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                            className="fixed left-0 top-0 bottom-0 w-60 z-50 flex flex-col border-r border-outline-variant/10 bg-surface-container lg:hidden"
+                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            className="fixed left-0 top-0 bottom-0 w-60 z-50 flex flex-col border-r border-white/[0.04] bg-[#0a0b14] lg:hidden"
                         >
                             <SidebarContent />
                         </motion.aside>
@@ -154,26 +150,26 @@ export default function AdminShell() {
             </AnimatePresence>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto min-h-screen relative z-10">
+            <main className="flex-1 overflow-y-auto min-h-screen">
                 {/* Topbar */}
-                <header className="sticky top-0 z-30 h-14 flex items-center justify-between px-4 lg:px-6 border-b border-outline-variant/10 glass">
+                <header className="sticky top-0 z-30 h-14 flex items-center justify-between px-4 lg:px-6 border-b border-white/[0.04] bg-[#07080f]/80 backdrop-blur-2xl">
                     <div className="flex items-center gap-3">
-                        <button onClick={() => setMobileOpen(true)} className="p-2 rounded-full hover:bg-surface-container-high/50 text-on-surface-variant lg:hidden transition-all duration-400">
+                        <button onClick={() => setMobileOpen(true)} className="p-2 rounded-lg hover:bg-white/[0.04] text-slate-500 lg:hidden">
                             <Menu size={18} />
                         </button>
-                        <button onClick={() => navigate("/")} className="text-[11px] text-on-surface-variant hover:text-primary transition-colors duration-400 flex items-center gap-1 font-label font-bold uppercase tracking-wider">
+                        <button onClick={() => navigate("/")} className="text-[11px] text-slate-600 hover:text-indigo-400 transition flex items-center gap-1 font-medium">
                             ← Back to App
                         </button>
                     </div>
                     <div className="flex items-center gap-3">
                         {/* Connection Status */}
-                        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-label font-black uppercase tracking-wider border ${isConnected
-                                ? "bg-tertiary/10 text-tertiary border-tertiary/20"
-                                : "bg-error/10 text-error border-error/20"
+                        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border ${isConnected
+                                ? "bg-emerald-500/8 text-emerald-400 border-emerald-500/15"
+                                : "bg-amber-500/8 text-amber-400 border-amber-500/15"
                             }`}>
                             <span className="relative flex h-1.5 w-1.5">
-                                {isConnected && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75" />}
-                                <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${isConnected ? "bg-tertiary" : "bg-error"}`} />
+                                {isConnected && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />}
+                                <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${isConnected ? "bg-emerald-400" : "bg-amber-400"}`} />
                             </span>
                             {isConnected ? "Live" : "Demo"}
                         </div>

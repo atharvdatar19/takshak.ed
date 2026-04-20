@@ -15,10 +15,10 @@ import { useAuth } from "../contexts/AuthContext"
 import { formatDate, getDaysLeft } from "../lib/date"
 
 const COLUMNS = [
-    { id: "wishlist", label: "📋 Wishlist", color: "border-outline-variant/20 bg-surface-container-low" },
-    { id: "applied", label: "📝 Applied", color: "border-blue-300 bg-primary/10" },
-    { id: "docs_sent", label: "📄 In Progress", color: "border-amber-300 bg-tertiary/10" },
-    { id: "admitted", label: "🎉 Accepted/Won", color: "border-emerald-300 bg-tertiary/10" },
+    { id: "wishlist", label: "📋 Wishlist", color: "border-slate-300 bg-slate-50" },
+    { id: "applied", label: "📝 Applied", color: "border-blue-300 bg-blue-50" },
+    { id: "docs_sent", label: "📄 In Progress", color: "border-amber-300 bg-amber-50" },
+    { id: "admitted", label: "🎉 Accepted/Won", color: "border-emerald-300 bg-emerald-50" },
 ]
 
 // Demo data for when there's no auth
@@ -29,10 +29,10 @@ const DEMO_APPS = [
 ]
 
 const TYPE_CONFIG = {
-    College: { icon: GraduationCap, color: "text-primary bg-primary/15" },
-    Internship: { icon: Briefcase, color: "text-amber-600 bg-tertiary/15" },
+    College: { icon: GraduationCap, color: "text-blue-600 bg-blue-100" },
+    Internship: { icon: Briefcase, color: "text-amber-600 bg-amber-100" },
     Hackathon: { icon: CodeXml, color: "text-purple-600 bg-purple-100" },
-    Scholarship: { icon: Award, color: "text-tertiary bg-tertiary/15" }
+    Scholarship: { icon: Award, color: "text-emerald-600 bg-emerald-100" }
 }
 
 export default function ApplicationTracker() {
@@ -71,9 +71,9 @@ export default function ApplicationTracker() {
             <motion.section
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="glass rounded-lg p-8 text-center text-white shadow-xl md:p-10"
+                className="card-gradient-teal rounded-3xl p-8 text-center text-white shadow-xl md:p-10"
             >
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl glass/20 shadow-lg">
+                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 shadow-lg">
                     <Kanban size={40} />
                 </div>
                 <h1 className="text-4xl font-extrabold md:text-5xl">Opportunity Tracker</h1>
@@ -85,7 +85,7 @@ export default function ApplicationTracker() {
                 <button
                     type="button"
                     onClick={() => setShowAdd(true)}
-                    className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-secondary px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl"
+                    className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl"
                 >
                     <Plus size={16} /> Add Opportunity
                 </button>
@@ -104,17 +104,17 @@ export default function ApplicationTracker() {
                             initial={{ scale: 0.95 }}
                             animate={{ scale: 1 }}
                             exit={{ scale: 0.95 }}
-                            className="mx-4 w-full max-w-md space-y-4 rounded-lg glass p-6 shadow-2xl"
+                            className="mx-4 w-full max-w-md space-y-4 rounded-3xl bg-white p-6 shadow-2xl"
                         >
                             <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-bold text-on-surface">Add to Tracker</h3>
-                                <button type="button" onClick={() => setShowAdd(false)} className="text-on-surface-variant/60 hover:text-on-surface-variant"><X size={18} /></button>
+                                <h3 className="text-lg font-bold text-slate-900">Add to Tracker</h3>
+                                <button type="button" onClick={() => setShowAdd(false)} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
                             </div>
 
                             <select
                                 value={newApp.type}
                                 onChange={e => setNewApp(p => ({ ...p, type: e.target.value }))}
-                                className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm outline-none focus:border-primary/40 font-semibold"
+                                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-indigo-400 font-semibold"
                             >
                                 <option value="College">🎓 College Application</option>
                                 <option value="Internship">💼 Internship / Job</option>
@@ -126,25 +126,25 @@ export default function ApplicationTracker() {
                                 value={newApp.title}
                                 onChange={e => setNewApp(p => ({ ...p, title: e.target.value }))}
                                 placeholder="Name (e.g. Google STEP, IIT B)"
-                                className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm outline-none focus:border-primary/40"
+                                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-indigo-400"
                             />
                             <input
                                 type="date"
                                 value={newApp.deadline}
                                 onChange={e => setNewApp(p => ({ ...p, deadline: e.target.value }))}
-                                className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm"
+                                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm"
                             />
                             <input
                                 value={newApp.notes}
                                 onChange={e => setNewApp(p => ({ ...p, notes: e.target.value }))}
                                 placeholder="Notes (optional)"
-                                className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-3 text-sm outline-none"
+                                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none"
                             />
                             <button
                                 type="button"
                                 onClick={addApplication}
                                 disabled={!newApp.title}
-                                className="w-full rounded-xl bg-gradient-to-r from-primary to-secondary py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50"
+                                className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50"
                             >
                                 Track Opportunity
                             </button>
@@ -158,9 +158,9 @@ export default function ApplicationTracker() {
                 {COLUMNS.map(col => {
                     const colApps = apps.filter(a => a.status === col.id)
                     return (
-                        <div key={col.id} className={`rounded-lg border p-4 ${col.color}`}>
-                            <h3 className="mb-3 text-sm font-bold text-on-surface">
-                                {col.label} <span className="ml-1 text-on-surface-variant/60">({colApps.length})</span>
+                        <div key={col.id} className={`rounded-3xl border p-4 ${col.color}`}>
+                            <h3 className="mb-3 text-sm font-bold text-slate-700">
+                                {col.label} <span className="ml-1 text-slate-400">({colApps.length})</span>
                             </h3>
                             <div className="space-y-3">
                                 <AnimatePresence>
@@ -175,35 +175,35 @@ export default function ApplicationTracker() {
                                                 initial={{ opacity: 0, y: 8 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, scale: 0.95 }}
-                                                className="scroll-3d-card rounded-2xl border border-white glass p-4 shadow-[0_0_20px_rgba(255,180,165,0.08)] transition hover:-translate-y-0.5"
+                                                className="scroll-3d-card rounded-2xl border border-white bg-white p-4 shadow-card transition hover:-translate-y-0.5"
                                             >
                                                 <div className="flex items-start justify-between gap-2 mb-2">
                                                     <div className="flex items-center gap-2">
-                                                        <div className={`p-1.5 rounded-md ${TYPE_CONFIG[app.type]?.color || 'bg-surface-container'}`}>
+                                                        <div className={`p-1.5 rounded-md ${TYPE_CONFIG[app.type]?.color || 'bg-slate-100'}`}>
                                                             <TypeIcon size={14} />
                                                         </div>
-                                                        <p className="text-sm font-bold text-on-surface leading-tight">{app.title}</p>
+                                                        <p className="text-sm font-bold text-slate-900 leading-tight">{app.title}</p>
                                                     </div>
-                                                    <button type="button" onClick={() => removeApp(app.id)} className="text-on-surface-variant/40 hover:text-rose-500 shrink-0">
+                                                    <button type="button" onClick={() => removeApp(app.id)} className="text-slate-300 hover:text-rose-500 shrink-0">
                                                         <Trash2 size={13} />
                                                     </button>
                                                 </div>
 
-                                                {app.city && <p className="text-[11px] font-medium text-on-surface-variant mb-1">{app.city}{app.state ? `, ${app.state}` : ""}</p>}
+                                                {app.city && <p className="text-[11px] font-medium text-slate-500 mb-1">{app.city}{app.state ? `, ${app.state}` : ""}</p>}
 
                                                 {app.deadline && (
-                                                    <p className={`text-xs font-medium ${daysLeft <= 5 ? "text-error font-bold bg-error/10 px-1 inline-block rounded" : "text-on-surface-variant"}`}>
+                                                    <p className={`text-xs font-medium ${daysLeft <= 5 ? "text-rose-600 font-bold bg-rose-50 px-1 inline-block rounded" : "text-slate-500"}`}>
                                                         ⏳ {formatDate(app.deadline)} {daysLeft >= 0 ? `(${daysLeft}d left)` : ""}
                                                     </p>
                                                 )}
 
-                                                {app.notes && <p className="mt-2 text-xs italic text-on-surface-variant bg-surface-container-low p-2 rounded-lg border border-outline-variant/10">{app.notes}</p>}
+                                                {app.notes && <p className="mt-2 text-xs italic text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-100">{app.notes}</p>}
 
                                                 {nextStatus[col.id] && (
                                                     <button
                                                         type="button"
                                                         onClick={() => moveApp(app.id, nextStatus[col.id])}
-                                                        className="mt-3 flex items-center justify-center w-full gap-1 text-xs font-bold text-primary bg-primary/10 hover:bg-primary/15 p-1.5 rounded-lg transition-colors"
+                                                        className="mt-3 flex items-center justify-center w-full gap-1 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 p-1.5 rounded-lg transition-colors"
                                                     >
                                                         Move Next <ChevronRight size={12} />
                                                     </button>
@@ -213,7 +213,7 @@ export default function ApplicationTracker() {
                                     })}
                                 </AnimatePresence>
                                 {colApps.length === 0 && (
-                                    <p className="py-6 text-center text-xs font-medium text-on-surface-variant/60 glass/50 rounded-xl border border-dashed border-outline-variant/20">Empty Area</p>
+                                    <p className="py-6 text-center text-xs font-medium text-slate-400 bg-white/50 rounded-xl border border-dashed border-slate-300">Empty Area</p>
                                 )}
                             </div>
                         </div>

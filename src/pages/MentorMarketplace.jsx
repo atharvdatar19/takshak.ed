@@ -97,17 +97,17 @@ export default function MentorMarketplace() {
         description={`Discover verified mentors and top educators${profile?.stream ? ` for ${profile.stream}` : ""}.`}
       />
 
-      <div className="mb-6 rounded-2xl border border-outline-variant/20 glass p-5 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between sticky top-4 z-10 transition-all">
+      <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between sticky top-4 z-10 transition-all">
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <Filter size={18} className="text-on-surface-variant/60 shrink-0" />
-          <span className="text-sm font-bold text-on-surface shrink-0">Filters:</span>
+          <Filter size={18} className="text-slate-400 shrink-0" />
+          <span className="text-sm font-bold text-slate-700 shrink-0">Filters:</span>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full">
           <select
             value={stream}
             onChange={event => setStream(event.target.value)}
-            className="flex-1 min-w-[140px] rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2.5 text-sm outline-none focus:border-primary/40 font-medium text-on-surface"
+            className="flex-1 min-w-[140px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 font-medium text-slate-700"
           >
             <option value="">All Domains & Streams</option>
             <option value="PCM">PCM</option>
@@ -121,7 +121,7 @@ export default function MentorMarketplace() {
           <select
             value={selectedLevel}
             onChange={event => setSelectedLevel(event.target.value)}
-            className="flex-1 min-w-[140px] rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2.5 text-sm outline-none focus:border-primary/40 font-medium text-on-surface"
+            className="flex-1 min-w-[140px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 font-medium text-slate-700"
           >
             <option value="">All Levels</option>
             {takshakFilters.levels.map(l => <option key={l} value={l}>{l} Level</option>)}
@@ -130,7 +130,7 @@ export default function MentorMarketplace() {
           <select
             value={selectedStyle}
             onChange={event => setSelectedStyle(event.target.value)}
-            className="flex-1 min-w-[140px] rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2.5 text-sm outline-none focus:border-primary/40 font-medium text-on-surface"
+            className="flex-1 min-w-[140px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 font-medium text-slate-700"
           >
             <option value="">All Teaching Styles</option>
             {takshakFilters.teachingStyles.map(s => <option key={s} value={s}>{s} Style</option>)}
@@ -149,26 +149,26 @@ export default function MentorMarketplace() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 whileHover={{ y: -4 }}
-                className="group rounded-2xl border border-outline-variant/20 glass shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden"
+                className="group rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden"
               >
                 <div className="p-5 flex-1">
                   <div className="mb-3 flex items-start justify-between">
                     <div>
-                      <h3 className="text-lg font-bold text-on-surface leading-tight">{mentor.name}</h3>
-                      <p className="text-sm font-semibold text-primary mt-0.5">{mentor.stream}</p>
+                      <h3 className="text-lg font-bold text-slate-900 leading-tight">{mentor.name}</h3>
+                      <p className="text-sm font-semibold text-indigo-600 mt-0.5">{mentor.stream}</p>
                     </div>
                     {mentor.is_verified && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-tertiary/15 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-tertiary shadow-sm">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 shadow-sm">
                         <ShieldCheck size={12} /> Verified
                       </span>
                     )}
                   </div>
 
-                  <p className="text-sm font-medium text-on-surface-variant mb-2">{mentor.specialization}</p>
+                  <p className="text-sm font-medium text-slate-600 mb-2">{mentor.specialization}</p>
 
                   <div className="flex flex-wrap gap-2 mb-4">
                     {mentor.level && (
-                      <span className="px-2 py-1 bg-primary/10 text-blue-700 text-[10px] font-bold uppercase tracking-wider rounded">
+                      <span className="px-2 py-1 bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-wider rounded">
                         {mentor.level}
                       </span>
                     )}
@@ -179,29 +179,29 @@ export default function MentorMarketplace() {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between text-sm text-on-surface-variant bg-surface-container-low rounded-lg p-3 border border-outline-variant/10 mb-4">
+                  <div className="flex items-center justify-between text-sm text-slate-500 bg-slate-50 rounded-lg p-3 border border-slate-100 mb-4">
                     <div className="text-center">
-                      <p className="font-bold text-on-surface">{mentor.rating || "New"}</p>
+                      <p className="font-bold text-slate-900">{mentor.rating || "New"}</p>
                       <p className="text-[10px] uppercase">Rating ⭐</p>
                     </div>
-                    <div className="w-px h-8 bg-surface-container-high"></div>
+                    <div className="w-px h-8 bg-slate-200"></div>
                     <div className="text-center">
-                      <p className="font-bold text-on-surface">{mentor.reach || `${mentor.experience_years}+ yrs`}</p>
+                      <p className="font-bold text-slate-900">{mentor.reach || `${mentor.experience_years}+ yrs`}</p>
                       <p className="text-[10px] uppercase">Experience</p>
                     </div>
-                    <div className="w-px h-8 bg-surface-container-high"></div>
+                    <div className="w-px h-8 bg-slate-200"></div>
                     <div className="text-center">
-                      <p className="font-bold text-tertiary">₹{mentor.price || "NA"}</p>
+                      <p className="font-bold text-emerald-600">₹{mentor.price || "NA"}</p>
                       <p className="text-[10px] uppercase">Session</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 bg-surface-container-low border-t border-outline-variant/10">
+                <div className="p-4 bg-slate-50 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={() => addToast("success", `Booking request sent to ${mentor.name}!`)}
-                    className="w-full rounded-xl bg-surface-container-highest px-3 py-3 text-sm font-bold text-white transition hover:bg-slate-800 shadow-md active:scale-95 flex justify-center items-center gap-2"
+                    className="w-full rounded-xl bg-slate-900 px-3 py-3 text-sm font-bold text-white transition hover:bg-slate-800 shadow-md active:scale-95 flex justify-center items-center gap-2"
                   >
                     Request Session
                   </button>

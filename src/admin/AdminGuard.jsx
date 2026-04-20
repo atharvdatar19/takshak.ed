@@ -8,8 +8,8 @@ export default function AdminGuard({ children, requiredRoles = ADMIN_ROLES }) {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-surface-container">
-                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <div className="flex items-center justify-center min-h-screen bg-[#0a0b14]">
+                <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
             </div>
         )
     }

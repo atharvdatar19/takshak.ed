@@ -62,14 +62,14 @@ function ProgressStepper({ currentStep }) {
                                 scale: isActive ? 1.1 : 1,
                                 backgroundColor: isDone ? "#6366f1" : isActive ? "#4f46e5" : "#f1f5f9",
                             }}
-                            className={`flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${isDone || isActive ? "text-white shadow-[0_0_20px_rgba(255,180,165,0.15)]" : "text-on-surface-variant/60"
+                            className={`flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${isDone || isActive ? "text-white shadow-lg shadow-indigo-200" : "text-slate-400"
                                 }`}
                         >
                             {isDone ? <CheckCircle2 size={14} /> : <Icon size={14} />}
                             <span className="hidden sm:inline">{step.label}</span>
                         </motion.div>
                         {idx < STEPS.length - 1 && (
-                            <div className={`h-0.5 w-4 sm:w-8 rounded-full transition-colors ${idx < currentStep ? "bg-primary/100" : "bg-surface-container-high"
+                            <div className={`h-0.5 w-4 sm:w-8 rounded-full transition-colors ${idx < currentStep ? "bg-indigo-500" : "bg-slate-200"
                                 }`} />
                         )}
                     </div>
@@ -85,7 +85,7 @@ function SkillSelector({ selected, onToggle }) {
         <div className="space-y-6">
             {SKILL_CATEGORIES.map(cat => (
                 <div key={cat.id}>
-                    <h3 className="text-sm font-bold text-on-surface mb-2 flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-slate-700 mb-2 flex items-center gap-2">
                         <span className={`inline-block h-2 w-2 rounded-full bg-gradient-to-r ${cat.color}`} />
                         {cat.label}
                     </h3>
@@ -100,7 +100,7 @@ function SkillSelector({ selected, onToggle }) {
                                     onClick={() => onToggle(skill.id)}
                                     className={`rounded-xl px-3 py-1.5 text-xs font-medium border transition-all duration-200 ${isSelected
                                             ? `bg-gradient-to-r ${cat.color} text-white border-transparent shadow-md`
-                                            : "glass text-on-surface-variant border-outline-variant/20 hover:border-primary hover:bg-primary/10"
+                                            : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50"
                                         }`}
                                 >
                                     {isSelected && <span className="mr-1">✓</span>}
@@ -128,8 +128,8 @@ function InterestSelector({ selected, onToggle }) {
                         whileTap={{ scale: 0.97 }}
                         onClick={() => onToggle(area.id)}
                         className={`relative rounded-2xl p-4 text-left border transition-all duration-200 ${isSelected
-                                ? "bg-gradient-to-br from-indigo-50 to-purple-50 border-primary shadow-md shadow-indigo-100"
-                                : "glass/80 border-outline-variant/20 hover:border-primary/20 hover:shadow-sm"
+                                ? "bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-300 shadow-md shadow-indigo-100"
+                                : "bg-white/80 border-slate-200 hover:border-indigo-200 hover:shadow-sm"
                             }`}
                     >
                         {isSelected && (
@@ -138,11 +138,11 @@ function InterestSelector({ selected, onToggle }) {
                                 animate={{ scale: 1 }}
                                 className="absolute top-2 right-2"
                             >
-                                <CheckCircle2 size={16} className="text-primary" />
+                                <CheckCircle2 size={16} className="text-indigo-600" />
                             </motion.div>
                         )}
                         <span className="text-2xl block mb-1">{area.icon}</span>
-                        <span className={`text-xs font-semibold ${isSelected ? "text-primary" : "text-on-surface-variant"}`}>
+                        <span className={`text-xs font-semibold ${isSelected ? "text-indigo-700" : "text-slate-600"}`}>
                             {area.label}
                         </span>
                     </motion.button>
@@ -155,12 +155,12 @@ function InterestSelector({ selected, onToggle }) {
 // ── Difficulty badge ──
 function DifficultyBadge({ level }) {
     const colors = {
-        Beginner: "bg-tertiary/15 text-tertiary",
-        Intermediate: "bg-tertiary/15 text-amber-700",
-        Advanced: "bg-error/15 text-error",
+        Beginner: "bg-emerald-100 text-emerald-700",
+        Intermediate: "bg-amber-100 text-amber-700",
+        Advanced: "bg-rose-100 text-rose-700",
     }
     return (
-        <span className={`inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${colors[level] || "bg-surface-container text-on-surface-variant"}`}>
+        <span className={`inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${colors[level] || "bg-slate-100 text-slate-600"}`}>
             {level}
         </span>
     )
@@ -176,12 +176,12 @@ function ResultCard({ path, rank }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: rank * 0.06 }}
-            className="group relative rounded-2xl border border-outline-variant/20/80 glass/90 backdrop-blur-sm overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300"
+            className="group relative rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur-sm overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300"
         >
             {/* Match Score Ribbon */}
             <div className={`absolute top-0 right-0 w-20 h-20 overflow-hidden ${path.matchScore >= 70 ? "" : "opacity-80"}`}>
-                <div className={`absolute top-3 -right-5 w-28 text-center text-[10px] font-bold text-white py-1 rotate-45 shadow ${path.matchScore >= 80 ? "bg-gradient-to-r from-tertiary to-tertiary" :
-                        path.matchScore >= 60 ? "bg-gradient-to-r from-primary to-purple-500" :
+                <div className={`absolute top-3 -right-5 w-28 text-center text-[10px] font-bold text-white py-1 rotate-45 shadow ${path.matchScore >= 80 ? "bg-gradient-to-r from-emerald-500 to-teal-500" :
+                        path.matchScore >= 60 ? "bg-gradient-to-r from-indigo-500 to-purple-500" :
                             path.matchScore >= 40 ? "bg-gradient-to-r from-amber-500 to-orange-500" :
                                 "bg-gradient-to-r from-slate-400 to-slate-500"
                     }`}>
@@ -193,37 +193,37 @@ function ResultCard({ path, rank }) {
                 {/* Header */}
                 <div className="pr-16">
                     <div className="flex items-center gap-2 mb-1">
-                        {rank < 3 && <Star size={14} className="text-tertiary fill-amber-500" />}
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/60">{path.category}</span>
+                        {rank < 3 && <Star size={14} className="text-amber-500 fill-amber-500" />}
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{path.category}</span>
                     </div>
-                    <h3 className="text-lg font-bold text-on-surface mb-1">{path.title}</h3>
-                    <p className="text-xs text-on-surface-variant leading-relaxed mb-3">{path.description}</p>
+                    <h3 className="text-lg font-bold text-slate-800 mb-1">{path.title}</h3>
+                    <p className="text-xs text-slate-500 leading-relaxed mb-3">{path.description}</p>
                 </div>
 
                 {/* Key Metrics */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-                    <div className="rounded-xl bg-tertiary/10 p-2.5 text-center">
-                        <DollarSign size={14} className="mx-auto text-tertiary mb-1" />
-                        <p className="text-[10px] text-on-surface-variant">Monthly Income</p>
-                        <p className="text-xs font-bold text-tertiary">
+                    <div className="rounded-xl bg-emerald-50 p-2.5 text-center">
+                        <DollarSign size={14} className="mx-auto text-emerald-600 mb-1" />
+                        <p className="text-[10px] text-slate-500">Monthly Income</p>
+                        <p className="text-xs font-bold text-emerald-700">
                             {formatCurrency(path.incomeRange.min)} - {formatCurrency(path.incomeRange.max)}
                         </p>
                     </div>
-                    <div className="rounded-xl bg-primary/10 p-2.5 text-center">
-                        <BarChart3 size={14} className="mx-auto text-primary mb-1" />
-                        <p className="text-[10px] text-on-surface-variant">Startup Cost</p>
+                    <div className="rounded-xl bg-blue-50 p-2.5 text-center">
+                        <BarChart3 size={14} className="mx-auto text-blue-600 mb-1" />
+                        <p className="text-[10px] text-slate-500">Startup Cost</p>
                         <p className="text-xs font-bold text-blue-700">
                             {path.startupCost.max === 0 ? "Free" : `${formatCurrency(path.startupCost.min)} - ${formatCurrency(path.startupCost.max)}`}
                         </p>
                     </div>
                     <div className="rounded-xl bg-purple-50 p-2.5 text-center">
                         <Clock size={14} className="mx-auto text-purple-600 mb-1" />
-                        <p className="text-[10px] text-on-surface-variant">Time to Income</p>
+                        <p className="text-[10px] text-slate-500">Time to Income</p>
                         <p className="text-xs font-bold text-purple-700">{path.timeToIncome}</p>
                     </div>
-                    <div className="rounded-xl bg-tertiary/10 p-2.5 text-center">
+                    <div className="rounded-xl bg-amber-50 p-2.5 text-center">
                         <TrendingUp size={14} className="mx-auto text-amber-600 mb-1" />
-                        <p className="text-[10px] text-on-surface-variant">Difficulty</p>
+                        <p className="text-[10px] text-slate-500">Difficulty</p>
                         <DifficultyBadge level={path.difficulty} />
                     </div>
                 </div>
@@ -232,7 +232,7 @@ function ResultCard({ path, rank }) {
                 {path.reasons.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mb-3">
                         {path.reasons.map((r, i) => (
-                            <span key={i} className="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2 py-1 text-[10px] font-medium text-primary">
+                            <span key={i} className="inline-flex items-center gap-1 rounded-lg bg-indigo-50 px-2 py-1 text-[10px] font-medium text-indigo-700">
                                 <Sparkles size={10} /> {r}
                             </span>
                         ))}
@@ -242,7 +242,7 @@ function ResultCard({ path, rank }) {
                 {/* Expand / Collapse */}
                 <button
                     onClick={() => setExpanded(!expanded)}
-                    className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary transition"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition"
                 >
                     {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                     {expanded ? "Show Less" : "View Growth Path & Steps"}
@@ -257,24 +257,24 @@ function ResultCard({ path, rank }) {
                             transition={{ duration: 0.3 }}
                             className="overflow-hidden"
                         >
-                            <div className="mt-4 space-y-4 border-t border-outline-variant/10 pt-4">
+                            <div className="mt-4 space-y-4 border-t border-slate-100 pt-4">
                                 {/* Growth Trajectory */}
                                 <div>
-                                    <h4 className="text-xs font-bold text-on-surface mb-1 flex items-center gap-1">
+                                    <h4 className="text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
                                         <TrendingUp size={12} /> Growth Trajectory
                                     </h4>
-                                    <p className="text-xs text-on-surface-variant leading-relaxed">{path.growthTrajectory}</p>
+                                    <p className="text-xs text-slate-500 leading-relaxed">{path.growthTrajectory}</p>
                                 </div>
 
                                 {/* Action Steps */}
                                 <div>
-                                    <h4 className="text-xs font-bold text-on-surface mb-2 flex items-center gap-1">
+                                    <h4 className="text-xs font-bold text-slate-700 mb-2 flex items-center gap-1">
                                         <Rocket size={12} /> How to Get Started
                                     </h4>
                                     <ol className="space-y-2">
                                         {path.steps.map((step, i) => (
-                                            <li key={i} className="flex gap-2.5 items-start text-xs text-on-surface-variant">
-                                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-[10px] font-bold text-white mt-0.5">
+                                            <li key={i} className="flex gap-2.5 items-start text-xs text-slate-600">
+                                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-[10px] font-bold text-white mt-0.5">
                                                     {i + 1}
                                                 </span>
                                                 <span className="leading-relaxed">{step}</span>
@@ -377,8 +377,8 @@ export default function SkillMatcher() {
                             <Lightbulb size={20} className="text-white" />
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold text-on-surface">AI Skill Matcher</h1>
-                            <p className="text-sm text-on-surface-variant">Discover income paths that match your unique skills & interests</p>
+                            <h1 className="text-2xl font-bold text-slate-800">AI Skill Matcher</h1>
+                            <p className="text-sm text-slate-500">Discover income paths that match your unique skills & interests</p>
                         </div>
                     </div>
                 </motion.div>
@@ -397,10 +397,10 @@ export default function SkillMatcher() {
                             exit={{ opacity: 0, x: -30 }}
                             transition={{ duration: 0.3 }}
                         >
-                            <div className="rounded-2xl border border-outline-variant/20/80 glass/90 backdrop-blur-sm p-6 shadow-sm">
-                                <h2 className="text-lg font-bold text-on-surface mb-1">Select Your Skills</h2>
-                                <p className="text-sm text-on-surface-variant mb-5">
-                                    Pick the skills you currently have — even basic knowledge counts! <span className="text-primary font-medium">({selectedSkills.length} selected)</span>
+                            <div className="rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur-sm p-6 shadow-sm">
+                                <h2 className="text-lg font-bold text-slate-800 mb-1">Select Your Skills</h2>
+                                <p className="text-sm text-slate-500 mb-5">
+                                    Pick the skills you currently have — even basic knowledge counts! <span className="text-indigo-600 font-medium">({selectedSkills.length} selected)</span>
                                 </p>
                                 <SkillSelector selected={selectedSkills} onToggle={toggleSkill} />
 
@@ -409,8 +409,8 @@ export default function SkillMatcher() {
                                         disabled={!canProceedStep0}
                                         onClick={() => setStep(1)}
                                         className={`flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold transition-all ${canProceedStep0
-                                                ? "bg-gradient-to-r from-primary to-secondary text-white shadow-[0_0_20px_rgba(255,180,165,0.15)] hover:shadow-xl"
-                                                : "bg-surface-container text-on-surface-variant/60 cursor-not-allowed"
+                                                ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200 hover:shadow-xl"
+                                                : "bg-slate-100 text-slate-400 cursor-not-allowed"
                                             }`}
                                     >
                                         Next: Pick Interests <ChevronRight size={16} />
@@ -429,17 +429,17 @@ export default function SkillMatcher() {
                             exit={{ opacity: 0, x: -30 }}
                             transition={{ duration: 0.3 }}
                         >
-                            <div className="rounded-2xl border border-outline-variant/20/80 glass/90 backdrop-blur-sm p-6 shadow-sm">
-                                <h2 className="text-lg font-bold text-on-surface mb-1">What Excites You?</h2>
-                                <p className="text-sm text-on-surface-variant mb-5">
-                                    Pick areas that genuinely interest you — passion drives success! <span className="text-primary font-medium">({selectedInterests.length} selected)</span>
+                            <div className="rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur-sm p-6 shadow-sm">
+                                <h2 className="text-lg font-bold text-slate-800 mb-1">What Excites You?</h2>
+                                <p className="text-sm text-slate-500 mb-5">
+                                    Pick areas that genuinely interest you — passion drives success! <span className="text-indigo-600 font-medium">({selectedInterests.length} selected)</span>
                                 </p>
                                 <InterestSelector selected={selectedInterests} onToggle={toggleInterest} />
 
                                 <div className="mt-6 flex justify-between">
                                     <button
                                         onClick={() => setStep(0)}
-                                        className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:bg-surface-container transition"
+                                        className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 transition"
                                     >
                                         <ChevronLeft size={16} /> Back
                                     </button>
@@ -447,8 +447,8 @@ export default function SkillMatcher() {
                                         disabled={!canProceedStep1}
                                         onClick={() => setStep(2)}
                                         className={`flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold transition-all ${canProceedStep1
-                                                ? "bg-gradient-to-r from-primary to-secondary text-white shadow-[0_0_20px_rgba(255,180,165,0.15)] hover:shadow-xl"
-                                                : "bg-surface-container text-on-surface-variant/60 cursor-not-allowed"
+                                                ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200 hover:shadow-xl"
+                                                : "bg-slate-100 text-slate-400 cursor-not-allowed"
                                             }`}
                                     >
                                         Next: Set Preferences <ChevronRight size={16} />
@@ -467,13 +467,13 @@ export default function SkillMatcher() {
                             exit={{ opacity: 0, x: -30 }}
                             transition={{ duration: 0.3 }}
                         >
-                            <div className="rounded-2xl border border-outline-variant/20/80 glass/90 backdrop-blur-sm p-6 shadow-sm">
-                                <h2 className="text-lg font-bold text-on-surface mb-1">Fine-tune Your Search</h2>
-                                <p className="text-sm text-on-surface-variant mb-6">Set your preferences to get the most relevant results.</p>
+                            <div className="rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur-sm p-6 shadow-sm">
+                                <h2 className="text-lg font-bold text-slate-800 mb-1">Fine-tune Your Search</h2>
+                                <p className="text-sm text-slate-500 mb-6">Set your preferences to get the most relevant results.</p>
 
                                 {/* Difficulty Level */}
                                 <div className="mb-6">
-                                    <label className="text-sm font-bold text-on-surface mb-3 block">
+                                    <label className="text-sm font-bold text-slate-700 mb-3 block">
                                         Preferred Difficulty Level
                                     </label>
                                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -482,14 +482,14 @@ export default function SkillMatcher() {
                                                 key={opt.value}
                                                 onClick={() => setDifficulty(opt.value)}
                                                 className={`rounded-xl p-3 text-left border transition-all ${difficulty === opt.value
-                                                        ? "bg-primary/10 border-primary shadow-sm"
-                                                        : "glass border-outline-variant/20 hover:border-primary/20"
+                                                        ? "bg-indigo-50 border-indigo-300 shadow-sm"
+                                                        : "bg-white border-slate-200 hover:border-indigo-200"
                                                     }`}
                                             >
-                                                <p className={`text-xs font-bold ${difficulty === opt.value ? "text-primary" : "text-on-surface"}`}>
+                                                <p className={`text-xs font-bold ${difficulty === opt.value ? "text-indigo-700" : "text-slate-700"}`}>
                                                     {opt.label}
                                                 </p>
-                                                <p className="text-[10px] text-on-surface-variant/60 mt-0.5">{opt.desc}</p>
+                                                <p className="text-[10px] text-slate-400 mt-0.5">{opt.desc}</p>
                                             </button>
                                         ))}
                                     </div>
@@ -497,7 +497,7 @@ export default function SkillMatcher() {
 
                                 {/* Budget */}
                                 <div className="mb-6">
-                                    <label className="text-sm font-bold text-on-surface mb-3 block">
+                                    <label className="text-sm font-bold text-slate-700 mb-3 block">
                                         Maximum Initial Investment
                                     </label>
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -506,11 +506,11 @@ export default function SkillMatcher() {
                                                 key={opt.value}
                                                 onClick={() => setBudget(opt.value)}
                                                 className={`rounded-xl p-3 text-left border transition-all ${budget === opt.value
-                                                        ? "bg-tertiary/10 border-emerald-300 shadow-sm"
-                                                        : "glass border-outline-variant/20 hover:border-tertiary/20"
+                                                        ? "bg-emerald-50 border-emerald-300 shadow-sm"
+                                                        : "bg-white border-slate-200 hover:border-emerald-200"
                                                     }`}
                                             >
-                                                <p className={`text-xs font-bold ${budget === opt.value ? "text-tertiary" : "text-on-surface"}`}>
+                                                <p className={`text-xs font-bold ${budget === opt.value ? "text-emerald-700" : "text-slate-700"}`}>
                                                     {opt.label}
                                                 </p>
                                             </button>
@@ -521,7 +521,7 @@ export default function SkillMatcher() {
                                 <div className="flex justify-between">
                                     <button
                                         onClick={() => setStep(1)}
-                                        className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:bg-surface-container transition"
+                                        className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 transition"
                                     >
                                         <ChevronLeft size={16} /> Back
                                     </button>
@@ -547,20 +547,20 @@ export default function SkillMatcher() {
                             {/* Results Header */}
                             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
                                 <div>
-                                    <h2 className="text-lg font-bold text-on-surface">
+                                    <h2 className="text-lg font-bold text-slate-800">
                                         🎯 {sortedResults.length} Income Path{sortedResults.length !== 1 ? "s" : ""} Found
                                     </h2>
-                                    <p className="text-sm text-on-surface-variant">Ranked by how well they match your profile</p>
+                                    <p className="text-sm text-slate-500">Ranked by how well they match your profile</p>
                                 </div>
 
                                 <div className="flex gap-2 flex-wrap">
                                     {/* Sort Selector */}
-                                    <div className="flex items-center gap-1.5 rounded-xl glass border border-outline-variant/20 px-3 py-1.5">
-                                        <ArrowUpDown size={13} className="text-on-surface-variant/60" />
+                                    <div className="flex items-center gap-1.5 rounded-xl bg-white border border-slate-200 px-3 py-1.5">
+                                        <ArrowUpDown size={13} className="text-slate-400" />
                                         <select
                                             value={sortBy}
                                             onChange={e => setSortBy(e.target.value)}
-                                            className="bg-transparent text-xs font-medium text-on-surface outline-none cursor-pointer"
+                                            className="bg-transparent text-xs font-medium text-slate-700 outline-none cursor-pointer"
                                         >
                                             {SORT_OPTIONS.map(opt => (
                                                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -573,8 +573,8 @@ export default function SkillMatcher() {
                                         onClick={handleSave}
                                         disabled={saving || saved}
                                         className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${saved
-                                                ? "bg-tertiary/15 text-tertiary"
-                                                : "bg-primary/10 text-primary hover:bg-primary/15"
+                                                ? "bg-emerald-100 text-emerald-700"
+                                                : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
                                             }`}
                                     >
                                         {saved ? <CheckCircle2 size={13} /> : <Save size={13} />}
@@ -584,7 +584,7 @@ export default function SkillMatcher() {
                                     {/* Start Over */}
                                     <button
                                         onClick={() => { setStep(0); setResults([]) }}
-                                        className="flex items-center gap-1.5 rounded-xl bg-surface-container px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:bg-surface-container-high transition"
+                                        className="flex items-center gap-1.5 rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-200 transition"
                                     >
                                         Start Over
                                     </button>
@@ -593,15 +593,15 @@ export default function SkillMatcher() {
 
                             {/* No Results */}
                             {sortedResults.length === 0 && (
-                                <div className="rounded-2xl border border-outline-variant/20/80 glass/90 backdrop-blur-sm p-12 text-center space-y-3">
-                                    <AlertCircle size={40} className="mx-auto text-tertiary" />
-                                    <h3 className="text-lg font-bold text-on-surface">No matches found</h3>
-                                    <p className="text-sm text-on-surface-variant max-w-md mx-auto">
+                                <div className="rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur-sm p-12 text-center space-y-3">
+                                    <AlertCircle size={40} className="mx-auto text-amber-500" />
+                                    <h3 className="text-lg font-bold text-slate-700">No matches found</h3>
+                                    <p className="text-sm text-slate-500 max-w-md mx-auto">
                                         Try selecting more skills or broader preferences. The more you select, the better our matching works.
                                     </p>
                                     <button
                                         onClick={() => setStep(0)}
-                                        className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(255,180,165,0.15)] hover:bg-primary transition"
+                                        className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition"
                                     >
                                         <ChevronLeft size={16} /> Adjust Skills
                                     </button>

@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { Command, Search, X, Users, Building, GraduationCap } from "lucide-react"
+import { Command, Search, X } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { getMentors, getColleges } from "../services/api"
 
 const COMMANDS = [
     { id: "dashboard", label: "Go to Dashboard", path: "/dashboard", keywords: "home overview metrics" },
@@ -24,8 +23,6 @@ export default function CommandPalette() {
     const [open, setOpen] = useState(false)
     const [query, setQuery] = useState("")
     const [selected, setSelected] = useState(0)
-    const [dynamicData, setDynamicData] = useState([])
-    const hasFetched = useRef(false)
     const inputRef = useRef(null)
     const navigate = useNavigate()
 
@@ -46,42 +43,16 @@ export default function CommandPalette() {
             setQuery("")
             setSelected(0)
             setTimeout(() => inputRef.current?.focus(), 50)
-            
-            if (!hasFetched.current) {
-                hasFetched.current = true
-                Promise.all([
-                    getMentors(),
-                    getColleges({ page: 1, pageSize: 30 })
-                ]).then(([mentorsData, collegesData]) => {
-                    const mappedMentors = (mentorsData || []).map(m => ({
-                        id: `mentor-${m.id}`,
-                        label: `Mentor: ${m.full_name}`,
-                        path: `/mentors/${m.id}`,
-                        keywords: `${m.full_name} ${m.headline || ''} ${m.college || ''} mentor guide educator`,
-                        icon: Users
-                    }))
-                    
-                    const mappedColleges = (collegesData.records || []).map(c => ({
-                        id: `coll-${c.id}`,
-                        label: `College: ${c.name}`,
-                        path: `/colleges?search=${encodeURIComponent(c.name)}`,
-                        keywords: `${c.name} ${c.city || ''} ${c.state || ''} college university`,
-                        icon: Building
-                    }))
-                    setDynamicData([...mappedMentors, ...mappedColleges])
-                }).catch(err => console.error("Error fetching cmd palette data", err))
-            }
         }
     }, [open])
 
     const filtered = useMemo(() => {
-        const ALL_COMMANDS = [...COMMANDS, ...dynamicData]
-        if (!query.trim()) return ALL_COMMANDS
+        if (!query.trim()) return COMMANDS
         const lower = query.toLowerCase()
-        return ALL_COMMANDS.filter(
-            cmd => cmd.label.toLowerCase().includes(lower) || cmd.keywords.toLowerCase().includes(lower),
+        return COMMANDS.filter(
+            cmd => cmd.label.toLowerCase().includes(lower) || cmd.keywords.includes(lower),
         )
-    }, [query, dynamicData])
+    }, [query])
 
     useEffect(() => {
         setSelected(0)
@@ -124,21 +95,21 @@ export default function CommandPalette() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -10, scale: 0.97 }}
                         transition={{ duration: 0.2, ease: "easeOut" }}
-                        className="relative z-10 mx-4 w-full max-w-lg overflow-hidden rounded-2xl border border-outline-variant/20 glass shadow-2xl dark:border-slate-700 dark:bg-surface-container-highest"
+                        className="relative z-10 mx-4 w-full max-w-lg overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900"
                         onClick={e => e.stopPropagation()}
                     >
                         {/* Search Input */}
-                        <div className="flex items-center gap-3 border-b border-outline-variant/20 px-4 py-3 dark:border-slate-700">
-                            <Search size={16} className="text-on-surface-variant/60" />
+                        <div className="flex items-center gap-3 border-b border-slate-200 px-4 py-3 dark:border-slate-700">
+                            <Search size={16} className="text-slate-400" />
                             <input
                                 ref={inputRef}
                                 value={query}
                                 onChange={e => setQuery(e.target.value)}
                                 onKeyDown={handleKeyNav}
                                 placeholder="Type a command or search..."
-                                className="flex-1 bg-transparent text-sm text-on-surface outline-none placeholder:text-on-surface-variant/60 dark:text-white"
+                                className="flex-1 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:text-white"
                             />
-                            <kbd className="hidden rounded-md border border-outline-variant/20 px-1.5 py-0.5 text-[10px] text-on-surface-variant/60 sm:inline dark:border-slate-600">
+                            <kbd className="hidden rounded-md border border-slate-200 px-1.5 py-0.5 text-[10px] text-slate-400 sm:inline dark:border-slate-600">
                                 ESC
                             </kbd>
                         </div>
@@ -146,7 +117,7 @@ export default function CommandPalette() {
                         {/* Results */}
                         <ul className="max-h-64 overflow-y-auto p-2">
                             {filtered.length === 0 ? (
-                                <li className="px-3 py-6 text-center text-sm text-on-surface-variant/60">No results found.</li>
+                                <li className="px-3 py-6 text-center text-sm text-slate-400">No results found.</li>
                             ) : (
                                 filtered.map((cmd, i) => (
                                     <li key={cmd.id}>
@@ -154,14 +125,11 @@ export default function CommandPalette() {
                                             type="button"
                                             onClick={() => runCommand(cmd)}
                                             className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${i === selected
-                                                ? "bg-primary text-white"
-                                                : "text-on-surface hover:bg-surface-container dark:text-on-surface-variant/40 dark:hover:bg-slate-800"
+                                                ? "bg-indigo-600 text-white"
+                                                : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                                                 }`}
                                         >
-                                            {cmd.icon 
-                                                ? <cmd.icon size={14} className={i === selected ? "text-white/70" : "text-on-surface-variant/60"} />
-                                                : <Command size={14} className={i === selected ? "text-white/70" : "text-on-surface-variant/60"} />
-                                            }
+                                            <Command size={14} className={i === selected ? "text-white/70" : "text-slate-400"} />
                                             {cmd.label}
                                         </button>
                                     </li>
@@ -170,7 +138,7 @@ export default function CommandPalette() {
                         </ul>
 
                         {/* Footer hint */}
-                        <div className="border-t border-outline-variant/20 px-4 py-2 text-[11px] text-on-surface-variant/60 dark:border-slate-700">
+                        <div className="border-t border-slate-200 px-4 py-2 text-[11px] text-slate-400 dark:border-slate-700">
                             <span className="mr-3">↑↓ Navigate</span>
                             <span className="mr-3">↵ Select</span>
                             <span>Esc Close</span>

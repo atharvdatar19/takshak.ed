@@ -17,7 +17,7 @@ import {
   Wifi,
 } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { Link, useSearchParams } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useToast } from "../components/Toast"
 import DataState from "../components/DataState"
 import LoadingSkeleton from "../components/LoadingSkeleton"
@@ -37,14 +37,10 @@ export default function CollegeDirectory() {
   const [error, setError] = useState("")
   const [total, setTotal] = useState(0)
   const [showFilters, setShowFilters] = useState(false)
-  const [searchParams, setSearchParams] = useSearchParams()
-  const initialSearch = searchParams.get("search") || ""
-  const initialStream = searchParams.get("stream") || ""
-
   const [filters, setFilters] = useState({
-    search: initialSearch,
+    search: "",
     state: "",
-    stream: initialStream,
+    stream: "",
     admissionMode: "",
     status: "open",
     page: 1,
@@ -56,33 +52,14 @@ export default function CollegeDirectory() {
     async function hydrate() {
       const userProfile = await getCurrentUserProfile()
       setProfile(userProfile)
-      if (!initialStream) {
-        setFilters(previous => ({ ...previous, stream: userProfile?.stream || "" }))
-      }
+      setFilters(previous => ({ ...previous, stream: userProfile?.stream || "" }))
     }
     hydrate()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams)
-    if (filters.search) params.set("search", filters.search)
-    else params.delete("search")
-
-    if (filters.stream) params.set("stream", filters.stream)
-    else params.delete("stream")
-
-    setSearchParams(params, { replace: true })
-  }, [filters.search, filters.stream, setSearchParams])
-
-  useEffect(() => {
-    // Only fetch immediately on mount or if pagination changes, otherwise debounce
-    const handler = setTimeout(() => {
-      loadColleges()
-    }, 400)
-
-    return () => clearTimeout(handler)
-  }, [filters.search, filters.state, filters.stream, filters.admissionMode, filters.status, filters.page])
+    loadColleges()
+  }, [filters])
 
   const loadColleges = useCallback(async () => {
     setLoading(true)
@@ -119,9 +96,9 @@ export default function CollegeDirectory() {
       <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass mb-6 rounded-lg p-8 text-center text-white shadow-xl md:p-12"
+        className="hero-gradient mb-6 rounded-3xl p-8 text-center text-white shadow-xl md:p-12"
       >
-        <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl glass/20 shadow-lg">
+        <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 shadow-lg">
           <GraduationCap size={40} />
         </div>
         <h1 className="text-4xl font-extrabold md:text-5xl">College Directory</h1>
@@ -141,25 +118,23 @@ export default function CollegeDirectory() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="mb-5 space-y-3 rounded-lg border border-outline-variant/20/60 glass p-5 shadow-[0_0_20px_rgba(255,180,165,0.08)]"
+        className="mb-5 space-y-3 rounded-3xl border border-slate-200/60 bg-white p-5 shadow-card"
       >
         <div className="grid gap-3 md:grid-cols-2">
-          <div className="flex items-center gap-2 rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2.5">
-            <Search size={16} className="text-on-surface-variant/60" />
+          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+            <Search size={16} className="text-slate-400" />
             <input
               value={filters.search}
               onChange={event => updateFilter("search", event.target.value)}
               placeholder="Search colleges, cities, or states..."
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-on-surface-variant/60"
+              className="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
             />
           </div>
-          <div className="flex items-center gap-2 rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2.5">
-            <GraduationCap size={16} className="text-on-surface-variant/60" />
+          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+            <GraduationCap size={16} className="text-slate-400" />
             <input
-              value={filters.stream || ""}
-              onChange={event => updateFilter("stream", event.target.value)}
               placeholder="Search by program (e.g., B.Tech, MBBS)"
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-on-surface-variant/60"
+              className="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
             />
           </div>
         </div>
@@ -167,18 +142,18 @@ export default function CollegeDirectory() {
         <button
           type="button"
           onClick={() => setShowFilters(p => !p)}
-          className="flex items-center gap-2 text-sm font-medium text-on-surface-variant hover:text-primary"
+          className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-indigo-600"
         >
           <Filter size={14} /> {showFilters ? "Hide" : "Show"} Advanced Filters
         </button>
 
         {showFilters && (
           <div className="grid gap-3 pt-2 md:grid-cols-4">
-            <select value={filters.state} onChange={event => updateFilter("state", event.target.value)} className="rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2.5 text-sm">
+            <select value={filters.state} onChange={event => updateFilter("state", event.target.value)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
               <option value="">All states</option>
               {states.map(state => <option key={state} value={state}>{state}</option>)}
             </select>
-            <select value={filters.stream} onChange={event => updateFilter("stream", event.target.value)} className="rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2.5 text-sm">
+            <select value={filters.stream} onChange={event => updateFilter("stream", event.target.value)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
               <option value="">All streams</option>
               <option value="PCM">PCM</option>
               <option value="PCB">PCB</option>
@@ -186,7 +161,7 @@ export default function CollegeDirectory() {
               <option value="Arts">Arts</option>
               <option value="Defence">Defence</option>
             </select>
-            <select value={filters.admissionMode} onChange={event => updateFilter("admissionMode", event.target.value)} className="rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2.5 text-sm">
+            <select value={filters.admissionMode} onChange={event => updateFilter("admissionMode", event.target.value)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
               <option value="">All modes</option>
               <option value="JEE">JEE</option>
               <option value="NEET">NEET</option>
@@ -194,7 +169,7 @@ export default function CollegeDirectory() {
               <option value="Lateral">Lateral</option>
               <option value="Direct">Direct</option>
             </select>
-            <select value={filters.status} onChange={event => updateFilter("status", event.target.value)} className="rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2.5 text-sm">
+            <select value={filters.status} onChange={event => updateFilter("status", event.target.value)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
               <option value="open">Open</option>
               <option value="closingSoon">Closing soon</option>
               <option value="closed">Closed</option>
@@ -215,49 +190,49 @@ export default function CollegeDirectory() {
               return (
                 <StaggerItem key={college.id} className="h-full">
                   <MagneticCard intensity={0.05} className="h-full">
-                    <article className="scroll-3d-card group h-full overflow-hidden rounded-lg border border-outline-variant/20/60 glass shadow-[0_0_20px_rgba(255,180,165,0.08)] transition-all hover:shadow-[0_0_20px_rgba(255,180,165,0.08)]-hover">
-                      <div className="glass relative flex h-28 items-center justify-between px-5 py-4">
-                        <span className="rounded-full border border-green-300 bg-tertiary/10 px-3 py-1 text-xs font-semibold text-green-700">
+                    <article className="scroll-3d-card group h-full overflow-hidden rounded-3xl border border-slate-200/60 bg-white shadow-card transition-all hover:shadow-card-hover">
+                      <div className="card-gradient-blue relative flex h-28 items-center justify-between px-5 py-4">
+                        <span className="rounded-full border border-green-300 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
                           {college.type || "private"}
                         </span>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl glass/20">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
                       <GraduationCap size={20} className="text-white" />
                     </div>
                   </div>
 
                   <div className="space-y-3 p-5">
-                    <h3 className="text-lg font-bold text-on-surface">{college.name}</h3>
-                    <p className="flex items-center gap-1.5 text-sm text-on-surface-variant">
+                    <h3 className="text-lg font-bold text-slate-900">{college.name}</h3>
+                    <p className="flex items-center gap-1.5 text-sm text-slate-500">
                       <MapPin size={13} /> {college.city}, {college.state}
                     </p>
 
                     {streams.length > 0 && (
                       <div>
-                        <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-on-surface">
+                        <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
                           <GraduationCap size={12} /> Programs
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {streams.map(s => (
-                            <span key={s} className="rounded-full border border-primary/20 px-2.5 py-0.5 text-xs font-medium text-primary">{s}</span>
+                            <span key={s} className="rounded-full border border-indigo-200 px-2.5 py-0.5 text-xs font-medium text-indigo-600">{s}</span>
                           ))}
                         </div>
                       </div>
                     )}
 
                     <div>
-                      <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-on-surface">
-                        <Sparkles size={12} className="text-tertiary" /> Facilities
+                      <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                        <Sparkles size={12} className="text-amber-500" /> Facilities
                       </p>
                       <div className="flex gap-2">
                         {FACILITY_ICONS.map((FIcon, idx) => (
-                          <div key={idx} className="flex h-8 w-8 items-center justify-center rounded-lg border border-outline-variant/20 text-on-surface-variant/60">
+                          <div key={idx} className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400">
                             <FIcon size={14} />
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    <p className="flex items-center gap-1.5 text-sm text-on-surface-variant">
+                    <p className="flex items-center gap-1.5 text-sm text-slate-500">
                       <Calendar size={13} /> Est. {college.established_year || "N/A"}
                     </p>
 
@@ -265,14 +240,14 @@ export default function CollegeDirectory() {
                       <button
                         type="button"
                         onClick={() => addToast("success", `Tracking established for ${college.name}`)}
-                        className="flex items-center gap-1.5 rounded-xl border border-amber-300 px-3 py-2 text-xs font-medium text-amber-700 transition hover:bg-tertiary/10"
+                        className="flex items-center gap-1.5 rounded-xl border border-amber-300 px-3 py-2 text-xs font-medium text-amber-700 transition hover:bg-amber-50"
                       >
                         <Bookmark size={12} /> Track
                       </button>
                       <button
                         type="button"
                         onClick={() => addToast("info", "Trending data will be available shortly")}
-                        className="flex items-center justify-center rounded-xl border border-amber-300 px-3 py-2 text-xs font-medium text-amber-700 transition hover:bg-tertiary/10"
+                        className="flex items-center justify-center rounded-xl border border-amber-300 px-3 py-2 text-xs font-medium text-amber-700 transition hover:bg-amber-50"
                       >
                         <TrendingUp size={12} />
                       </button>
@@ -283,14 +258,14 @@ export default function CollegeDirectory() {
                         href={college.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-md transition hover:shadow-lg hover:-translate-y-0.5"
+                        className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-md transition hover:shadow-lg hover:-translate-y-0.5"
                       >
                         <ExternalLink size={12} /> Visit Website
                       </a>
                     )}
 
                     {daysLeft >= 0 && daysLeft <= 5 && (
-                      <p className="rounded-xl bg-error/15 px-3 py-1.5 text-center text-xs font-semibold text-error">
+                      <p className="rounded-xl bg-rose-100 px-3 py-1.5 text-center text-xs font-semibold text-rose-700">
                         ⏰ Closing in {daysLeft} days
                       </p>
                     )}
@@ -307,16 +282,16 @@ export default function CollegeDirectory() {
               type="button"
               disabled={filters.page <= 1}
               onClick={() => setFilters(previous => ({ ...previous, page: previous.page - 1 }))}
-              className="rounded-xl border border-outline-variant/20 glass px-4 py-2 text-sm font-medium disabled:opacity-50"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium disabled:opacity-50"
             >
               Previous
             </button>
-            <p className="text-sm text-on-surface-variant">Page {filters.page} of {totalPages}</p>
+            <p className="text-sm text-slate-600">Page {filters.page} of {totalPages}</p>
             <button
               type="button"
               disabled={filters.page >= totalPages}
               onClick={() => setFilters(previous => ({ ...previous, page: previous.page + 1 }))}
-              className="rounded-xl border border-outline-variant/20 glass px-4 py-2 text-sm font-medium disabled:opacity-50"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium disabled:opacity-50"
             >
               Next
             </button>

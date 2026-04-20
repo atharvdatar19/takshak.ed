@@ -20,10 +20,10 @@ const PLATFORM_ICONS = {
 }
 
 const TYPE_BADGES = {
-    playlist: { label: "Playlist", color: "bg-red-100 text-red-700 border-error/20" },
+    playlist: { label: "Playlist", color: "bg-red-100 text-red-700 border-red-200" },
     video: { label: "Video", color: "bg-pink-100 text-pink-700 border-pink-200" },
-    pdf: { label: "PDF", color: "bg-tertiary/15 text-amber-700 border-amber-200" },
-    notes: { label: "Notes", color: "bg-primary/15 text-blue-700 border-blue-200" },
+    pdf: { label: "PDF", color: "bg-amber-100 text-amber-700 border-amber-200" },
+    notes: { label: "Notes", color: "bg-blue-100 text-blue-700 border-blue-200" },
     channel: { label: "Channel", color: "bg-purple-100 text-purple-700 border-purple-200" },
     telegram: { label: "Telegram", color: "bg-cyan-100 text-cyan-700 border-cyan-200" },
 }
@@ -109,7 +109,7 @@ export default function ResourceHub() {
             >
                 <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-400 via-transparent to-transparent" />
                 <div className="relative z-10 max-w-2xl">
-                    <span className="inline-block rounded-full glass/10 px-3 py-1 text-xs font-bold uppercase tracking-wider mb-4 border border-outline-variant/20 backdrop-blur-md text-primary/70">
+                    <span className="inline-block rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-wider mb-4 border border-white/20 backdrop-blur-md text-indigo-200">
                         📚 Curated & Vetted
                     </span>
                     <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4">Resource Hub</h1>
@@ -122,9 +122,9 @@ export default function ResourceHub() {
             {/* ── FILTERS ── */}
             <motion.div
                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 glass p-4 rounded-2xl border border-outline-variant/20 shadow-sm sticky top-20 z-10"
+                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm sticky top-20 z-10"
             >
-                <div className="flex items-center gap-2 text-on-surface-variant font-semibold mr-1 shrink-0">
+                <div className="flex items-center gap-2 text-slate-500 font-semibold mr-1 shrink-0">
                     <Filter size={18} /> Filters:
                 </div>
 
@@ -140,9 +140,9 @@ export default function ResourceHub() {
 
                     {/* ── LEFT: EDUCATORS ── */}
                     <div className="lg:col-span-5 space-y-4">
-                        <h2 className="text-lg font-bold text-on-surface flex items-center gap-2">
-                            <BookOpen size={20} className="text-primary" /> Educators
-                            <span className="text-xs font-normal text-on-surface-variant/60 ml-1">({educators.length})</span>
+                        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <BookOpen size={20} className="text-indigo-600" /> Educators
+                            <span className="text-xs font-normal text-slate-400 ml-1">({educators.length})</span>
                         </h2>
 
                         <div className="space-y-3 max-h-[calc(100vh-260px)] overflow-y-auto pr-1 hide-scrollbar">
@@ -153,8 +153,8 @@ export default function ResourceHub() {
                                     onClick={() => setSelectedEducator(selectedEducator === educator.id ? null : educator.id)}
                                     initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                                     className={`w-full text-left rounded-2xl border p-4 transition-all duration-200 group ${selectedEducator === educator.id
-                                        ? "bg-primary/10 border-primary shadow-md ring-1 ring-primary"
-                                        : "glass border-outline-variant/20 hover:border-primary/20 hover:shadow-sm"
+                                        ? "bg-indigo-50 border-indigo-300 shadow-md ring-1 ring-indigo-300"
+                                        : "bg-white border-slate-200 hover:border-indigo-200 hover:shadow-sm"
                                         }`}
                                 >
                                     <div className="flex items-start gap-3">
@@ -164,24 +164,24 @@ export default function ResourceHub() {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-1.5 mb-0.5">
-                                                <h3 className="font-bold text-on-surface text-sm truncate group-hover:text-primary transition">{educator.name}</h3>
+                                                <h3 className="font-bold text-slate-900 text-sm truncate group-hover:text-indigo-700 transition">{educator.name}</h3>
                                                 {educator.verified && (
-                                                    <CheckCircle size={14} className="text-primary shrink-0" />
+                                                    <CheckCircle size={14} className="text-blue-500 shrink-0" />
                                                 )}
                                             </div>
-                                            <p className="text-xs text-on-surface-variant">{educator.handle} · {educator.subscriber_count} subscribers</p>
+                                            <p className="text-xs text-slate-500">{educator.handle} · {educator.subscriber_count} subscribers</p>
 
-                                            <p className="text-xs text-on-surface-variant mt-1.5 line-clamp-2 leading-relaxed">{educator.description}</p>
+                                            <p className="text-xs text-slate-600 mt-1.5 line-clamp-2 leading-relaxed">{educator.description}</p>
 
                                             <div className="mt-2 flex flex-wrap gap-1.5">
                                                 {educator.subjects?.map(s => (
-                                                    <span key={s} className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider rounded-md border border-primary/10">{s}</span>
+                                                    <span key={s} className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase tracking-wider rounded-md border border-indigo-100">{s}</span>
                                                 ))}
-                                                <span className="px-2 py-0.5 bg-tertiary/10 text-amber-700 text-[10px] font-bold uppercase tracking-wider rounded-md border border-amber-100">{educator.language}</span>
+                                                <span className="px-2 py-0.5 bg-amber-50 text-amber-700 text-[10px] font-bold uppercase tracking-wider rounded-md border border-amber-100">{educator.language}</span>
                                             </div>
 
                                             {educator.city_origin && (
-                                                <p className="text-[11px] text-on-surface-variant/60 mt-1.5 flex items-center gap-1">
+                                                <p className="text-[11px] text-slate-400 mt-1.5 flex items-center gap-1">
                                                     <MapPin size={10} /> From {educator.city_origin} 📍
                                                 </p>
                                             )}
@@ -191,9 +191,9 @@ export default function ResourceHub() {
                             ))}
 
                             {educators.length === 0 && (
-                                <div className="text-center py-12 glass rounded-2xl border border-outline-variant/20">
+                                <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
                                     <p className="text-4xl mb-3">🔍</p>
-                                    <p className="text-sm text-on-surface-variant">No educators found for these filters. Try adjusting.</p>
+                                    <p className="text-sm text-slate-500">No educators found for these filters. Try adjusting.</p>
                                 </div>
                             )}
                         </div>
@@ -201,11 +201,11 @@ export default function ResourceHub() {
 
                     {/* ── RIGHT: RESOURCES ── */}
                     <div className="lg:col-span-7 space-y-4">
-                        <h2 className="text-lg font-bold text-on-surface flex items-center gap-2">
-                            <Star size={20} className="text-tertiary" /> Resources
-                            <span className="text-xs font-normal text-on-surface-variant/60 ml-1">({resources.length})</span>
+                        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <Star size={20} className="text-amber-500" /> Resources
+                            <span className="text-xs font-normal text-slate-400 ml-1">({resources.length})</span>
                             {selectedEducator && (
-                                <button onClick={() => setSelectedEducator(null)} className="ml-auto text-xs text-primary font-semibold hover:underline">
+                                <button onClick={() => setSelectedEducator(null)} className="ml-auto text-xs text-indigo-600 font-semibold hover:underline">
                                     Show All
                                 </button>
                             )}
@@ -220,22 +220,22 @@ export default function ResourceHub() {
                                             key={resource.id}
                                             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
                                             transition={{ delay: idx * 0.03 }}
-                                            className="glass rounded-2xl border border-outline-variant/20 p-4 hover:shadow-md transition-shadow group"
+                                            className="bg-white rounded-2xl border border-slate-200 p-4 hover:shadow-md transition-shadow group"
                                         >
                                             <div className="flex items-start justify-between gap-3">
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                                                         {resource.is_pinned && (
-                                                            <span className="px-2 py-0.5 bg-tertiary/15 text-amber-700 text-[10px] font-black uppercase tracking-wider rounded-md border border-amber-200">⭐ Top Pick</span>
+                                                            <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-black uppercase tracking-wider rounded-md border border-amber-200">⭐ Top Pick</span>
                                                         )}
                                                         <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md border ${typeBadge.color}`}>{typeBadge.label}</span>
-                                                        <span className="px-2 py-0.5 bg-surface-container text-on-surface-variant text-[10px] font-bold uppercase tracking-wider rounded-md border border-outline-variant/20">{resource.exam}</span>
+                                                        <span className="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider rounded-md border border-slate-200">{resource.exam}</span>
                                                     </div>
 
-                                                    <h3 className="font-bold text-on-surface text-sm group-hover:text-primary transition">{resource.title}</h3>
+                                                    <h3 className="font-bold text-slate-900 text-sm group-hover:text-indigo-700 transition">{resource.title}</h3>
 
-                                                    <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-on-surface-variant">
-                                                        <span className="font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">{resource.subject}</span>
+                                                    <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-slate-500">
+                                                        <span className="font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">{resource.subject}</span>
                                                         {resource.topic && <span>· {resource.topic}</span>}
                                                         {resource.duration_hours && (
                                                             <span className="flex items-center gap-1"><Clock size={12} /> {resource.duration_hours}h</span>
@@ -247,7 +247,7 @@ export default function ResourceHub() {
                                                 <div className="flex flex-col items-center gap-2 shrink-0">
                                                     <button
                                                         onClick={() => handleUpvote(resource.id)}
-                                                        className="flex flex-col items-center gap-0.5 rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-2 text-on-surface-variant hover:bg-tertiary/10 hover:border-emerald-300 hover:text-tertiary transition"
+                                                        className="flex flex-col items-center gap-0.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-600 hover:bg-emerald-50 hover:border-emerald-300 hover:text-emerald-600 transition"
                                                     >
                                                         <ThumbsUp size={16} />
                                                         <span className="text-[10px] font-black">{resource.upvotes}</span>
@@ -256,7 +256,7 @@ export default function ResourceHub() {
                                                         href={resource.url}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="flex items-center gap-1.5 rounded-xl bg-surface-container-highest text-white px-3 py-2 text-xs font-bold shadow-sm hover:bg-primary transition hover:-translate-y-0.5"
+                                                        className="flex items-center gap-1.5 rounded-xl bg-slate-900 text-white px-3 py-2 text-xs font-bold shadow-sm hover:bg-indigo-600 transition hover:-translate-y-0.5"
                                                     >
                                                         Open <ExternalLink size={12} />
                                                     </a>
@@ -268,9 +268,9 @@ export default function ResourceHub() {
                             </AnimatePresence>
 
                             {resources.length === 0 && (
-                                <div className="text-center py-16 glass rounded-2xl border border-outline-variant/20">
+                                <div className="text-center py-16 bg-white rounded-2xl border border-slate-200">
                                     <p className="text-5xl mb-3">📖</p>
-                                    <p className="text-sm text-on-surface-variant">Select an educator or adjust filters to see curated resources.</p>
+                                    <p className="text-sm text-slate-500">Select an educator or adjust filters to see curated resources.</p>
                                 </div>
                             )}
                         </div>
@@ -287,11 +287,11 @@ function FilterSelect({ label, value, options, onChange }) {
             <select
                 value={value}
                 onChange={e => onChange(e.target.value)}
-                className="w-full appearance-none rounded-xl border border-outline-variant/20 bg-surface-container-low px-4 py-2.5 pr-10 text-sm font-semibold text-on-surface outline-none focus:border-primary focus:glass transition"
+                className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 pr-10 text-sm font-semibold text-slate-700 outline-none focus:border-indigo-500 focus:bg-white transition"
             >
                 {options.map(opt => <option key={opt} value={opt}>{opt === "All" ? `All ${label}s` : opt}</option>)}
             </select>
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant/60" />
+            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
         </div>
     )
 }

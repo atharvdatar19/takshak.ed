@@ -14,7 +14,7 @@ export default function ProtectedRoute({ children, roles = [] }) {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/20 border-t-indigo-600" />
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600" />
             </div>
         )
     }
@@ -24,8 +24,8 @@ export default function ProtectedRoute({ children, roles = [] }) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
                 <div className="text-6xl mb-4">🔒</div>
-                <h2 className="text-2xl font-bold text-on-surface mb-2">Sign-In Required</h2>
-                <p className="text-on-surface-variant max-w-md">
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">Sign-In Required</h2>
+                <p className="text-slate-500 max-w-md">
                     Please log in or sign up to access this feature.
                 </p>
             </div>
@@ -39,8 +39,8 @@ export default function ProtectedRoute({ children, roles = [] }) {
             return (
                 <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
                     <div className="text-6xl mb-4">🔒</div>
-                    <h2 className="text-2xl font-bold text-on-surface mb-2">Access Restricted</h2>
-                    <p className="text-on-surface-variant max-w-md">
+                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Access Restricted</h2>
+                    <p className="text-slate-500 max-w-md">
                         This page requires {roles.join(" or ")} access.
                         Please contact support if you believe this is an error.
                     </p>
