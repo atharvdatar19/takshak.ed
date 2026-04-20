@@ -10,7 +10,7 @@ We centralize those opportunities and highlight deadlines so no student misses o
 ## 🌍 Live Prototypes
 
 ### 🛠 Under Development Full-Stack Prototype
-🔗 https://takshak.netlify.app
+🔗 https://takshak.vercel.app
 
 ---
 
