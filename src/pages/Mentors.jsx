@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import { Search, Filter, Star, GraduationCap, MapPin, CheckCircle, Zap, Shield, Sparkles, ChevronRight, X } from "lucide-react"
 import { getMentors } from "../services/api"
 import { Link, useNavigate } from "react-router-dom"
-import LoadingSkeleton from "../components/LoadingSkeleton"
+import LoadingSkeleton from "../components/ui/LoadingSkeleton"
 
 const STREAMS = ["All", "Engineering", "Medical", "Design", "Commerce", "Arts"]
 

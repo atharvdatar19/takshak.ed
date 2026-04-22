@@ -1,7 +1,7 @@
 import { Component, Suspense, lazy, useState } from "react"
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
-import { useAuth } from "../contexts/AuthContext"
+import { useAuth } from "../../contexts/AuthContext"
 import {
   ArrowLeft,
   Bell,
@@ -24,15 +24,15 @@ import {
   Users,
   X,
 } from "lucide-react"
-import ChatbotAssistant from "./chatbot/ChatbotAssistant"
-import CommandPalette from "./CommandPalette"
-import CursorTrail from "./CursorTrail"
-import ThemeToggle from "./ThemeToggle"
-import LeadCaptureModal from "./LeadCaptureModal"
-import AnimatedPage from "./motion/AnimatedPage"
-import { useScrollProgress } from "../hooks/useScrollProgress"
+import ChatbotAssistant from "../chatbot/ChatbotAssistant"
+import CommandPalette from "../modals/CommandPalette"
+import CursorTrail from "../misc/CursorTrail"
+import ThemeToggle from "../ui/ThemeToggle"
+import LeadCaptureModal from "../modals/LeadCaptureModal"
+import AnimatedPage from "../motion/AnimatedPage"
+import { useScrollProgress } from "../../hooks/useScrollProgress"
 
-const FloatingBackground = lazy(() => import("./3d/FloatingBackground"))
+const FloatingBackground = lazy(() => import("../3d/FloatingBackground"))
 
 class SafeBoundary extends Component {
   constructor(props) {

@@ -6,9 +6,9 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 import supabase, { isDemoMode } from "../supabaseClient"
 import { useRealtimeSync } from "../hooks/useRealtimeSync"
-import LoadingSkeleton from "../components/LoadingSkeleton"
-import DataState from "../components/DataState"
-import { useToast } from "../components/Toast"
+import LoadingSkeleton from "../components/ui/LoadingSkeleton"
+import DataState from "../components/misc/DataState"
+import { useToast } from "../components/ui/Toast"
 
 const PAGE_SIZE = 8
 const INDIAN_STATES = [

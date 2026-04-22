@@ -4,8 +4,8 @@ import { useState, useEffect, useMemo } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { ArrowLeft, Star, MapPin, GraduationCap, Globe, CalendarDays, Clock, CheckCircle, ExternalLink, Video, ChevronLeft, ChevronRight, Gift } from "lucide-react"
 import { getMentorById, getMentorAvailability, getMentorReviews } from "../services/api"
-import BookingModal from "../components/BookingModal"
-import LoadingSkeleton from "../components/LoadingSkeleton"
+import BookingModal from "../components/modals/BookingModal"
+import LoadingSkeleton from "../components/ui/LoadingSkeleton"
 
 export default function MentorDetail() {
     const { id } = useParams()

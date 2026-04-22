@@ -8,7 +8,7 @@ export function trackEvent(eventName, payload = {}) {
   }
 
   if (APP_CONFIG.analytics.debug) {
-    // eslint-disable-next-line no-console
+
     console.info(`[analytics] ${eventName}`, payload)
   }
 }

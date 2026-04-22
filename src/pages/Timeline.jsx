@@ -1,10 +1,10 @@
 import { motion } from "framer-motion"
 import { Helmet } from "react-helmet-async"
-import { BellRing, Clock3, ExternalLink } from "lucide-react"
+import { BellRing, ExternalLink } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import DataState from "../components/DataState"
-import LoadingSkeleton from "../components/LoadingSkeleton"
-import PageHeader from "../components/PageHeader"
+import DataState from "../components/misc/DataState"
+import LoadingSkeleton from "../components/ui/LoadingSkeleton"
+import PageHeader from "../components/layout/PageHeader"
 import { formatDate, getDaysLeft } from "../lib/date"
 import { getExamsTimeline } from "../services/api"
 import { getCurrentUserProfile } from "../services/superapp"
@@ -62,22 +62,26 @@ export default function Timeline() {
   }, [])
 
   useEffect(() => {
-    loadTimeline()
+    // Only load initial timeline, remove synchronous state warning
+    const load = async () => {
+      await loadTimeline()
+    }
+    load()
   }, [loadTimeline])
 
   // ── Realtime: auto-reload when exams_timeline table changes ──
   useRealtimeSync("exams_timeline", () => loadTimeline())
 
-  const now = new Date()
-
   const grouped = useMemo(() => {
+    const nowTime = new Date().getTime()
+
     const filteredTimeline = selectedType === "All"
       ? timeline
       : timeline.filter(item => item.event_type === selectedType)
 
     const upcoming = filteredTimeline.filter(
       (item) =>
-        new Date(item.start_date || item.exam_date) >= now
+        new Date(item.start_date || item.exam_date).getTime() >= nowTime
     )
 
     const closingSoon = upcoming.filter((item) => {

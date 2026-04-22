@@ -1,12 +1,12 @@
 import { Helmet } from "react-helmet-async"
 import { motion, AnimatePresence } from "framer-motion"
-import { useState, useEffect, useMemo, useCallback } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSearchParams } from "react-router-dom"
-import { BookOpen, ExternalLink, ChevronDown, MapPin, CheckCircle, Star, ThumbsUp, Play, FileText, Clock, Filter, Youtube, MessageCircle, Globe } from "lucide-react"
+import { BookOpen, ExternalLink, ChevronDown, MapPin, CheckCircle, Star, ThumbsUp, FileText, Clock, Filter, Youtube, MessageCircle, Globe } from "lucide-react"
 import { getEducators, getResources, upvoteResource } from "../services/api"
 import { useAuth } from "../contexts/AuthContext"
-import { useToast } from "../components/Toast"
-import LoadingSkeleton from "../components/LoadingSkeleton"
+import { useToast } from "../components/ui/Toast"
+import LoadingSkeleton from "../components/ui/LoadingSkeleton"
 
 const EXAM_OPTIONS = ["All", "JEE", "NEET", "CUET", "Class 12", "Class 10"]
 const SUBJECT_OPTIONS = ["All", "Physics", "Chemistry", "Maths", "Science"]
@@ -59,15 +59,19 @@ export default function ResourceHub() {
     // Fetch educators
     useEffect(() => {
         let cancelled = false
-        setLoading(true)
-        const params = {}
-        if (examFilter !== "All") params.exam = examFilter
-        if (subjectFilter !== "All") params.subject = subjectFilter
-        if (languageFilter !== "All") params.language = languageFilter
 
-        getEducators(params).then(data => {
+        const fetchEducators = async () => {
+            setLoading(true)
+            const params = {}
+            if (examFilter !== "All") params.exam = examFilter
+            if (subjectFilter !== "All") params.subject = subjectFilter
+            if (languageFilter !== "All") params.language = languageFilter
+
+            const data = await getEducators(params)
             if (!cancelled) { setEducators(data); setLoading(false) }
-        })
+        }
+
+        fetchEducators()
         return () => { cancelled = true }
     }, [examFilter, subjectFilter, languageFilter])
 
@@ -114,7 +118,7 @@ export default function ResourceHub() {
                     </span>
                     <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4">Resource Hub</h1>
                     <p className="text-indigo-100/90 text-lg leading-relaxed">
-                        Stop wasting hours on YouTube. We've curated the <strong>best free resources</strong> for every subject & exam — ranked by the community, vetted by toppers.
+                        Stop wasting hours on YouTube. We&apos;ve curated the <strong>best free resources</strong> for every subject & exam — ranked by the community, vetted by toppers.
                     </p>
                 </div>
             </motion.section>

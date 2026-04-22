@@ -3,8 +3,8 @@ import { motion } from "framer-motion"
 import { useState, useEffect } from "react"
 import { CalendarDays, DollarSign, Clock, User, Video, CheckCircle, XCircle, ExternalLink, TrendingUp, Calendar, AlertCircle, Link2, Shield, Loader, Gift } from "lucide-react"
 import { useAuth } from "../contexts/AuthContext"
-import { useToast } from "../components/Toast"
-import LoadingSkeleton from "../components/LoadingSkeleton"
+import { useToast } from "../components/ui/Toast"
+import LoadingSkeleton from "../components/ui/LoadingSkeleton"
 import supabase from "../supabaseClient"
 
 const TABS = [

@@ -1,0 +1,66 @@
+
+/app/src/pages/ResourceHub.jsx
+    3:31  warning  'useMemo' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              no-unused-vars
+    5:84  warning  'Play' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 no-unused-vars
+   62:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  60 |     useEffect(() => {
+  61 |         let cancelled = false
+> 62 |         setLoading(true)
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  63 |         const params = {}
+  64 |         if (examFilter !== "All") params.exam = examFilter
+  65 |         if (subjectFilter !== "All") params.subject = subjectFilter  react-hooks/set-state-in-effect
+  117:58  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  react/no-unescaped-entities
+
+/app/src/pages/ScholarshipFinder.jsx
+   2:18   warning  'AnimatePresence' is defined but never used                      no-unused-vars
+  62:101  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  62:123  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/app/src/pages/StressCheckin.jsx
+   1:18  warning  'AnimatePresence' is defined but never used  no-unused-vars
+   4:5   warning  'MessageCircle' is defined but never used    no-unused-vars
+   5:5   warning  'Smile' is defined but never used            no-unused-vars
+   6:5   warning  'TrendingDown' is defined but never used     no-unused-vars
+   7:5   warning  'TrendingUp' is defined but never used       no-unused-vars
+   9:10  warning  'useEffect' is defined but never used        no-unused-vars
+  34:70  error    Empty block statement                        no-empty
+
+/app/src/pages/StudyPlanner.jsx
+   1:18  warning  'AnimatePresence' is defined but never used  no-unused-vars
+   4:5   warning  'Calendar' is defined but never used         no-unused-vars
+   6:5   warning  'ChevronRight' is defined but never used     no-unused-vars
+   7:5   warning  'Clock' is defined but never used            no-unused-vars
+   8:5   warning  'GraduationCap' is defined but never used    no-unused-vars
+   9:5   warning  'Plus' is defined but never used             no-unused-vars
+  11:5   warning  'Trash2' is defined but never used           no-unused-vars
+  13:10  warning  'useMemo' is defined but never used          no-unused-vars
+  29:86  error    Empty block statement                        no-empty
+
+/app/src/pages/Timeline.jsx
+   3:20  warning  'Clock3' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      no-unused-vars
+  65:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  63 |
+  64 |   useEffect(() => {
+> 65 |     loadTimeline()
+     |     ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  66 |   }, [loadTimeline])
+  67 |
+  68 |   // ── Realtime: auto-reload when exams_timeline table changes ──  react-hooks/set-state-in-effect
+  92:6   warning  React Hook useMemo has a missing dependency: 'now'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    react-hooks/exhaustive-deps
+
+✖ 26 problems (7 errors, 19 warnings)

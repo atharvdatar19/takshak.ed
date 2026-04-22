@@ -1,12 +1,8 @@
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import {
     Heart,
-    MessageCircle,
-    Smile,
-    TrendingDown,
-    TrendingUp,
 } from "lucide-react"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 
 const MOODS = [
     { emoji: "😊", label: "Happy", value: 5, color: "emerald" },
@@ -31,7 +27,7 @@ function loadLogs() {
     try { return JSON.parse(localStorage.getItem(LS_KEY) || "[]") } catch { return [] }
 }
 function saveLogs(logs) {
-    try { localStorage.setItem(LS_KEY, JSON.stringify(logs)) } catch { }
+    try { localStorage.setItem(LS_KEY, JSON.stringify(logs)) } catch (e) { console.error(e) }
 }
 
 export default function StressCheckin() {

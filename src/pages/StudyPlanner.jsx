@@ -1,16 +1,10 @@
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import {
     BookOpen,
-    Calendar,
     Check,
-    ChevronRight,
-    Clock,
-    GraduationCap,
-    Plus,
     Sparkles,
-    Trash2,
 } from "lucide-react"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 
 const EXAMS = ["JEE Main", "JEE Advanced", "NEET", "CUET", "NDA", "CAT", "CLAT", "BITSAT"]
 const SUBJECTS_MAP = {
@@ -26,7 +20,7 @@ const SUBJECTS_MAP = {
 
 const LS_KEY = "mentorbhaiyaa_study_plan"
 function loadPlan() { try { return JSON.parse(localStorage.getItem(LS_KEY)) } catch { return null } }
-function savePlan(p) { try { localStorage.setItem(LS_KEY, JSON.stringify(p)) } catch { } }
+function savePlan(p) { try { localStorage.setItem(LS_KEY, JSON.stringify(p)) } catch (e) { console.error(e) } }
 
 function generateSchedule(exam, examDate, hoursPerDay) {
     const subjects = SUBJECTS_MAP[exam] || []

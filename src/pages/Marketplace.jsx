@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async"
 import { ShoppingBag, Search, Filter, MessageSquare, MapPin, Tag, Star, ChevronDown, CheckCircle2, PlayCircle, BookOpen } from "lucide-react"
 import { getMarketplaceListings } from "../services/marketplace"
 import { takshakCourses } from "../data/takshakData"
-import { useToast } from "../components/Toast"
+import { useToast } from "../components/ui/Toast"
 
 export default function Marketplace() {
     const [activeTab, setActiveTab] = useState("buy") // "buy" | "sell"

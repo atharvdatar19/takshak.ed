@@ -1,10 +1,10 @@
 import { Component, Suspense, lazy } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
-import { ToastProvider } from "./components/Toast"
-import SplashScreen from "./components/SplashScreen"
-import AppLayout from "./components/AppLayout"
-import ProtectedRoute from "./components/ProtectedRoute"
+import { ToastProvider } from "./components/ui/Toast"
+import SplashScreen from "./components/misc/SplashScreen"
+import AppLayout from "./components/layout/AppLayout"
+import ProtectedRoute from "./components/layout/ProtectedRoute"
 
 // ── Lazy-loaded pages (code-splitting for smaller initial bundle) ──
 const Alerts = lazy(() => import("./pages/Alerts"))
@@ -32,7 +32,6 @@ const Marketplace = lazy(() => import("./pages/Marketplace"))
 const BridgeCourses = lazy(() => import("./pages/BridgeCourses"))
 const SkillMatcher = lazy(() => import("./pages/SkillMatcher"))
 const DefenceAspirants = lazy(() => import("./pages/DefenceAspirants"))
-const AdminControl = lazy(() => import("./pages/admin/AdminControl"))
 
 // ── New Admin Panel ──
 const AdminShell = lazy(() => import("./admin/AdminShell"))
@@ -146,9 +145,6 @@ export default function App() {
                     <Route path="/bridge" element={<ProtectedRoute><BridgeCourses /></ProtectedRoute>} />
                     <Route path="/skill-matcher" element={<ProtectedRoute><SkillMatcher /></ProtectedRoute>} />
                     <Route path="/mentor/dashboard" element={<ProtectedRoute><MentorDashboard /></ProtectedRoute>} />
-
-                    {/* Old Admin (legacy) */}
-                    <Route path="/admin-legacy" element={<ProtectedRoute roles={["admin"]}><AdminControl /></ProtectedRoute>} />
                   </Route>
 
                   {/* ── New Admin Panel (separate layout) ── */}

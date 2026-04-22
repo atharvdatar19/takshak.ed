@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import {
     Award,
     Calendar,
@@ -59,7 +59,7 @@ export default function ScholarshipFinder() {
                         <Award size={32} />
                     </div>
                     <h1 className="text-display text-3xl md:text-5xl">Scholarship Finder</h1>
-                    <p className="mt-3 text-white/80 text-sm md:text-base">Discover scholarships you're eligible for — don't leave money on the table</p>
+                    <p className="mt-3 text-white/80 text-sm md:text-base">Discover scholarships you&apos;re eligible for — don&apos;t leave money on the table</p>
                 </div>
             </motion.section>
 

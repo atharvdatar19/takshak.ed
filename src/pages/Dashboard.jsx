@@ -18,8 +18,8 @@ import {
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
-import LoadingSkeleton from "../components/LoadingSkeleton"
-import NotificationBell from "../components/NotificationBell"
+import LoadingSkeleton from "../components/ui/LoadingSkeleton"
+import NotificationBell from "../components/ui/NotificationBell"
 
 import { getDashboardBundle } from "../services/superapp"
 import { formatDate, getDaysLeft, isWithinRange } from "../lib/date"

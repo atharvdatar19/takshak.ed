@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Mail, Phone, ChevronRight } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import supabase from '../supabaseClient';
-import { PulseGlow } from './animations/AnimationUtils';
+import { useAuth } from '../../contexts/AuthContext';
+import supabase from '../../supabaseClient';
+import { PulseGlow } from '../animations/AnimationUtils';
 
 export default function LeadCaptureModal() {
   const { user } = useAuth();
