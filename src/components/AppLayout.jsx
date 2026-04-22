@@ -23,6 +23,9 @@ import {
   User,
   Users,
   X,
+  Clock,
+  FileText,
+  Calculator,
 } from "lucide-react"
 import ChatbotAssistant from "./chatbot/ChatbotAssistant"
 import CommandPalette from "./CommandPalette"
@@ -80,6 +83,9 @@ const NAV_SECTIONS = [
       { to: "/skill-matcher", label: "AI Skill Matcher", icon: Lightbulb },
       { to: "/planner", label: "Study Planner", icon: BookOpen },
       { to: "/documents", label: "Document Checklist", icon: ClipboardCheck },
+      { to: "/focus-room", label: "Focus Room", icon: Clock },
+      { to: "/resume-builder", label: "Resume Builder", icon: FileText },
+      { to: "/gpa-calculator", label: "GPA Calculator", icon: Calculator },
     ],
   },
   {

@@ -48,6 +48,11 @@ const AdminExams = lazy(() => import("./admin/pages/AdminExams"))
 const AdminUsers = lazy(() => import("./admin/pages/AdminUsers"))
 const AdminTeamAccess = lazy(() => import("./admin/pages/AdminTeamAccess"))
 
+// ── New Features ──
+const FocusRoom = lazy(() => import("./pages/FocusRoom"))
+const ResumeBuilder = lazy(() => import("./pages/ResumeBuilder"))
+const GpaCalculator = lazy(() => import("./pages/GpaCalculator"))
+
 /* ── Loading fallback ── */
 function PageLoader() {
   return (
@@ -146,6 +151,9 @@ export default function App() {
                     <Route path="/bridge" element={<ProtectedRoute><BridgeCourses /></ProtectedRoute>} />
                     <Route path="/skill-matcher" element={<ProtectedRoute><SkillMatcher /></ProtectedRoute>} />
                     <Route path="/mentor/dashboard" element={<ProtectedRoute><MentorDashboard /></ProtectedRoute>} />
+                    <Route path="/focus-room" element={<ProtectedRoute><FocusRoom /></ProtectedRoute>} />
+                    <Route path="/resume-builder" element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
+                    <Route path="/gpa-calculator" element={<ProtectedRoute><GpaCalculator /></ProtectedRoute>} />
 
                     {/* Old Admin (legacy) */}
                     <Route path="/admin-legacy" element={<ProtectedRoute roles={["admin"]}><AdminControl /></ProtectedRoute>} />
