@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { Bot, MessageSquare, Send, User, X, Sparkles, ChevronRight } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { getAssistantResponse, getWelcomeMessage } from "../../services/chatbot/responseEngine"
+import { getAssistantResponse, getWelcomeMessage } from "@database/services/chatbot/responseEngine"
 
 export default function ChatbotAssistant() {
   const [isOpen, setIsOpen] = useState(false)

@@ -1,7 +1,7 @@
 import { Component, Suspense, lazy, useState } from "react"
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
-import { useAuth } from "../contexts/AuthContext"
+import { useAuth } from "@auth/AuthContext"
 import {
   ArrowLeft,
   Bell,
@@ -30,7 +30,7 @@ import CursorTrail from "./CursorTrail"
 import ThemeToggle from "./ThemeToggle"
 import LeadCaptureModal from "./LeadCaptureModal"
 import AnimatedPage from "./motion/AnimatedPage"
-import { useScrollProgress } from "../hooks/useScrollProgress"
+import { useScrollProgress } from "@hooks/useScrollProgress"
 
 const FloatingBackground = lazy(() => import("./3d/FloatingBackground"))
 

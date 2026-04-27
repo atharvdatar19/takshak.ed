@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { BookOpen, GraduationCap } from 'lucide-react'
-import supabase, { isDemoMode } from '../../supabaseClient'
+import supabase, { isDemoMode } from '@database/supabaseClient'
 import { useNavigate } from 'react-router-dom'
 
 const DEMO_RESULTS = [

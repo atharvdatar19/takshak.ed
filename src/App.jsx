@@ -1,52 +1,63 @@
 import { Component, Suspense, lazy } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
-import { AuthProvider } from "./contexts/AuthContext"
-import { ToastProvider } from "./components/Toast"
-import SplashScreen from "./components/SplashScreen"
-import AppLayout from "./components/AppLayout"
-import ProtectedRoute from "./components/ProtectedRoute"
+import { AuthProvider } from "@auth/AuthContext"
+import { ToastProvider } from "@components/Toast"
+import SplashScreen from "@components/SplashScreen"
+import AppLayout from "@components/AppLayout"
+import ProtectedRoute from "@components/ProtectedRoute"
 
-// ── Lazy-loaded pages (code-splitting for smaller initial bundle) ──
-const Alerts = lazy(() => import("./pages/Alerts"))
-const ApplicationTracker = lazy(() => import("./pages/ApplicationTracker"))
-const AuthPage = lazy(() => import("./pages/AuthPage"))
-const CollegeCompare = lazy(() => import("./pages/CollegeCompare"))
-const CollegeDirectory = lazy(() => import("./pages/CollegeDirectory"))
-const CutoffPredictor = lazy(() => import("./pages/CutoffPredictor"))
-const Dashboard = lazy(() => import("./pages/Dashboard"))
-const DocumentChecklist = lazy(() => import("./pages/DocumentChecklist"))
-const DoubtForum = lazy(() => import("./pages/DoubtForum"))
-const MeetingScheduler = lazy(() => import("./pages/MeetingScheduler"))
-const Mentors = lazy(() => import("./pages/Mentors"))
-const MentorDetail = lazy(() => import("./pages/MentorDetail"))
-const MentorDashboard = lazy(() => import("./pages/MentorDashboard"))
-const ResourceHub = lazy(() => import("./pages/ResourceHub"))
-const ScholarshipFinder = lazy(() => import("./pages/ScholarshipFinder"))
-const StressCheckin = lazy(() => import("./pages/StressCheckin"))
-const StudyPlanner = lazy(() => import("./pages/StudyPlanner"))
-const Timeline = lazy(() => import("./pages/Timeline"))
-const RankReality = lazy(() => import("./pages/RankReality"))
-const PlanBAnalyzer = lazy(() => import("./pages/PlanBAnalyzer"))
-const PreFreshers = lazy(() => import("./pages/PreFreshers"))
-const Marketplace = lazy(() => import("./pages/Marketplace"))
-const BridgeCourses = lazy(() => import("./pages/BridgeCourses"))
-const SkillMatcher = lazy(() => import("./pages/SkillMatcher"))
-const DefenceAspirants = lazy(() => import("./pages/DefenceAspirants"))
-const AdminControl = lazy(() => import("./pages/admin/AdminControl"))
+// ── Auth ──────────────────────────────────────────────────────
+const AuthPage = lazy(() => import("@auth/AuthPage"))
 
-// ── New Admin Panel ──
-const AdminShell = lazy(() => import("./admin/AdminShell"))
-const AdminGuard = lazy(() => import("./admin/AdminGuard"))
-const NewAdminDashboard = lazy(() => import("./admin/pages/AdminDashboard"))
-const AdminMentorApps = lazy(() => import("./admin/pages/AdminMentorApps"))
-const AdminSessions = lazy(() => import("./admin/pages/AdminSessions"))
-const AdminPayouts = lazy(() => import("./admin/pages/AdminPayouts"))
-const AdminReports = lazy(() => import("./admin/pages/AdminReports"))
-const AdminEducators = lazy(() => import("./admin/pages/AdminEducators"))
-const AdminColleges = lazy(() => import("./admin/pages/AdminColleges"))
-const AdminExams = lazy(() => import("./admin/pages/AdminExams"))
-const AdminUsers = lazy(() => import("./admin/pages/AdminUsers"))
-const AdminTeamAccess = lazy(() => import("./admin/pages/AdminTeamAccess"))
+// ── Tools / Dashboard ─────────────────────────────────────────
+const Dashboard = lazy(() => import("@features/tools/Dashboard"))
+const RankReality = lazy(() => import("@features/tools/RankReality"))
+const PlanBAnalyzer = lazy(() => import("@features/tools/PlanBAnalyzer"))
+const ApplicationTracker = lazy(() => import("@features/tools/ApplicationTracker"))
+const Marketplace = lazy(() => import("@features/tools/Marketplace"))
+
+// ── Colleges ──────────────────────────────────────────────────
+const CollegeDirectory = lazy(() => import("@features/colleges/CollegeDirectory"))
+const CollegeCompare = lazy(() => import("@features/colleges/CollegeCompare"))
+const CutoffPredictor = lazy(() => import("@features/colleges/CutoffPredictor"))
+
+// ── Mentors ───────────────────────────────────────────────────
+const Mentors = lazy(() => import("@features/mentors/Mentors"))
+const MentorDetail = lazy(() => import("@features/mentors/MentorDetail"))
+const MentorDashboard = lazy(() => import("@features/mentors/MentorDashboard"))
+const MentorMarketplace = lazy(() => import("@features/mentors/MentorMarketplace"))
+const MeetingScheduler = lazy(() => import("@features/mentors/MeetingScheduler"))
+
+// ── Resources ─────────────────────────────────────────────────
+const ResourceHub = lazy(() => import("@features/resources/ResourceHub"))
+const StudyPlanner = lazy(() => import("@features/resources/StudyPlanner"))
+const Timeline = lazy(() => import("@features/resources/Timeline"))
+const BridgeCourses = lazy(() => import("@features/resources/BridgeCourses"))
+const DocumentChecklist = lazy(() => import("@features/resources/DocumentChecklist"))
+const ScholarshipFinder = lazy(() => import("@features/resources/ScholarshipFinder"))
+const Alerts = lazy(() => import("@features/resources/Alerts"))
+
+// ── Community ─────────────────────────────────────────────────
+const DoubtForum = lazy(() => import("@features/community/DoubtForum"))
+const StressCheckin = lazy(() => import("@features/community/StressCheckin"))
+const PreFreshers = lazy(() => import("@features/community/PreFreshers"))
+const SkillMatcher = lazy(() => import("@features/community/SkillMatcher"))
+const DefenceAspirants = lazy(() => import("@features/community/DefenceAspirants"))
+
+// ── Admin ─────────────────────────────────────────────────────
+const AdminControl = lazy(() => import("@features/admin/pages/AdminControl"))
+const AdminShell = lazy(() => import("@features/admin/AdminShell"))
+const AdminGuard = lazy(() => import("@features/admin/AdminGuard"))
+const NewAdminDashboard = lazy(() => import("@features/admin/pages/AdminDashboard"))
+const AdminMentorApps = lazy(() => import("@features/admin/pages/AdminMentorApps"))
+const AdminSessions = lazy(() => import("@features/admin/pages/AdminSessions"))
+const AdminPayouts = lazy(() => import("@features/admin/pages/AdminPayouts"))
+const AdminReports = lazy(() => import("@features/admin/pages/AdminReports"))
+const AdminEducators = lazy(() => import("@features/admin/pages/AdminEducators"))
+const AdminColleges = lazy(() => import("@features/admin/pages/AdminColleges"))
+const AdminExams = lazy(() => import("@features/admin/pages/AdminExams"))
+const AdminUsers = lazy(() => import("@features/admin/pages/AdminUsers"))
+const AdminTeamAccess = lazy(() => import("@features/admin/pages/AdminTeamAccess"))
 
 /* ── Loading fallback ── */
 function PageLoader() {
@@ -116,11 +127,10 @@ export default function App() {
 
                   {/* ── App Pages (with layout) ── */}
                   <Route element={<AppLayout />}>
-                    {/* Dashboard IS home */}
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/dashboard" element={<Navigate to="/" replace />} />
 
-                    {/* Public routes */}
+                    {/* Public */}
                     <Route path="/colleges" element={<CollegeDirectory />} />
                     <Route path="/cutoff" element={<CutoffPredictor />} />
                     <Route path="/resources" element={<ResourceHub />} />
@@ -132,7 +142,7 @@ export default function App() {
                     <Route path="/mentors" element={<Mentors />} />
                     <Route path="/mentors/:id" element={<MentorDetail />} />
 
-                    {/* Student+ routes (require login) */}
+                    {/* Authenticated */}
                     <Route path="/planner" element={<ProtectedRoute><StudyPlanner /></ProtectedRoute>} />
                     <Route path="/forum" element={<ProtectedRoute><DoubtForum /></ProtectedRoute>} />
                     <Route path="/wellness" element={<ProtectedRoute><StressCheckin /></ProtectedRoute>} />
@@ -146,12 +156,13 @@ export default function App() {
                     <Route path="/bridge" element={<ProtectedRoute><BridgeCourses /></ProtectedRoute>} />
                     <Route path="/skill-matcher" element={<ProtectedRoute><SkillMatcher /></ProtectedRoute>} />
                     <Route path="/mentor/dashboard" element={<ProtectedRoute><MentorDashboard /></ProtectedRoute>} />
+                    <Route path="/mentor-marketplace" element={<ProtectedRoute><MentorMarketplace /></ProtectedRoute>} />
 
-                    {/* Old Admin (legacy) */}
+                    {/* Admin legacy */}
                     <Route path="/admin-legacy" element={<ProtectedRoute roles={["admin"]}><AdminControl /></ProtectedRoute>} />
                   </Route>
 
-                  {/* ── New Admin Panel (separate layout) ── */}
+                  {/* ── Admin Panel ── */}
                   <Route path="/admin" element={
                     <Suspense fallback={<PageLoader />}>
                       <AdminGuard>
@@ -171,7 +182,6 @@ export default function App() {
                     <Route path="team" element={<AdminTeamAccess />} />
                   </Route>
 
-                  {/* Catch-all */}
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </Suspense>

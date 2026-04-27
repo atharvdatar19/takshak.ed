@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { variantMap, staggerFast, staggerMid, staggerSlow } from '../../animations/variants'
+import { variantMap, staggerFast, staggerMid, staggerSlow } from '../animations/variants'
 
 const staggerMap = {
   fast: staggerFast,

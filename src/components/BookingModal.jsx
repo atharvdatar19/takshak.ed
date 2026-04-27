@@ -2,8 +2,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useState, useEffect } from "react"
 import { X, Clock, CalendarDays, CreditCard, CheckCircle, Loader, ExternalLink, Calendar, Gift, Shield } from "lucide-react"
 import { useToast } from "./Toast"
-import { useAuth } from "../contexts/AuthContext"
-import supabase from "../supabaseClient"
+import { useAuth } from "@auth/AuthContext"
+import supabase from "@database/supabaseClient"
 
 const SESSION_RATE_INR = 80
 const SESSION_DURATION_MIN = 10

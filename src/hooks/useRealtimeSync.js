@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react'
-import supabase from '../supabaseClient'
+import supabase from '@database/supabaseClient'
 
 /**
  * useRealtimeSync - Subscribe to Supabase realtime changes
