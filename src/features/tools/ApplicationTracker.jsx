@@ -288,7 +288,7 @@ export default function ApplicationTracker() {
 
   return (
     <>
-      <Helmet><title>Application Tracker — TAKSHAK</title></Helmet>
+      <Helmet><title>Application Tracker — TAKक्षक</title></Helmet>
 
       <div className="space-y-6">
         {/* ── Page header ── */}

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { motion, useScroll, useTransform, useSpring, useMotionValue, AnimatePresence, useInView } from "framer-motion"
 import {
   ArrowRight, BookOpen, Building2, CheckCircle2, ChevronDown,
@@ -321,13 +321,13 @@ function Navbar({ scrolled }) {
         <Link to="/" className="flex items-center gap-3 group">
           <motion.img
             src="/takshak_logo.jpg"
-            alt="TAKSHAK"
+            alt="TAKक्षक"
             whileHover={{ rotate:10, scale:1.1 }}
             transition={{ type:"spring", stiffness:300 }}
             className="w-9 h-9 rounded-xl object-cover shadow-lg shadow-indigo-500/30"
           />
           <span className="text-[16px] font-black tracking-tight text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-violet-400 transition-all duration-300">
-            TAKSHAK
+            TAKक्षक
           </span>
         </Link>
 
@@ -550,8 +550,7 @@ function DiscoverMockup() {
    Main LandingPage
 ───────────────────────────────────────────── */
 export default function LandingPage() {
-  const { user, loading } = useAuth()
-  const navigate = useNavigate()
+  const { user } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll()
@@ -560,10 +559,6 @@ export default function LandingPage() {
   const heroY       = useTransform(smoothProgress, [0,0.3], [0,-100])
   const heroOpacity = useTransform(smoothProgress, [0,0.2], [1,0])
   const heroScale   = useTransform(smoothProgress, [0,0.3], [1,0.95])
-
-  useEffect(() => {
-    if (!loading && user) navigate("/dashboard", { replace: true })
-  }, [user, loading, navigate])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -937,7 +932,7 @@ export default function LandingPage() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { name:"Ananya Sharma",   exam:"NEET 2025",    score:"AIR 1,842",   text:"The mentor sessions changed everything. My AIIMS mentor showed me exactly where I was losing marks in Zoology. Booked within 3 days of joining TAKSHAK.",  color:"emerald" },
+              { name:"Ananya Sharma",   exam:"NEET 2025",    score:"AIR 1,842",   text:"The mentor sessions changed everything. My AIIMS mentor showed me exactly where I was losing marks in Zoology. Booked within 3 days of joining TAKक्षक.",  color:"emerald" },
               { name:"Rohan Patil",     exam:"JEE Advanced", score:"AIR 3,210",   text:"The cutoff predictor was scary accurate. It told me I had 87% chance at NIT Trichy CSE — and I got exactly that. Stopped guessing, started targeting.",       color:"indigo"  },
               { name:"Priya Nambiar",   exam:"NDA 1 2025",   score:"Selected",    text:"First session with my NDA mentor was free — he gave me a 90-day SSB strategy in that one call. I'd never have figured that out from YouTube videos.",          color:"rose"    },
               { name:"Kartik Mehta",    exam:"CUET 2025",    score:"DU Economics",text:"The application tracker kept me sane during admission season. I was managing 12 colleges simultaneously and never missed a single deadline.",                  color:"amber"   },
@@ -993,7 +988,7 @@ export default function LandingPage() {
             </h2>
             <motion.p initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={{ once:true }}
               transition={{ delay:0.4 }} className="text-slate-400 text-lg leading-relaxed mb-10">
-              Join 20,000+ students already using TAKSHAK to prepare smarter, find mentors, and navigate college admissions with confidence.
+              Join 20,000+ students already using TAKक्षक to prepare smarter, find mentors, and navigate college admissions with confidence.
             </motion.p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link to="/signup">
@@ -1020,8 +1015,8 @@ export default function LandingPage() {
             {/* Brand */}
             <div className="col-span-2 md:col-span-1">
               <Link to="/" className="flex items-center gap-2.5 mb-4 group">
-                <img src="/takshak_logo.jpg" alt="TAKSHAK" className="w-8 h-8 rounded-xl object-cover" />
-                <span className="text-[14px] font-black text-white">TAKSHAK</span>
+                <img src="/takshak_logo.jpg" alt="TAKक्षक" className="w-8 h-8 rounded-xl object-cover" />
+                <span className="text-[14px] font-black text-white">TAKक्षक</span>
               </Link>
               <p className="text-[12px] text-slate-500 leading-relaxed mb-5">
                 Your complete college admission & exam prep platform — built for India's students.
@@ -1121,7 +1116,7 @@ export default function LandingPage() {
           {/* Bottom bar */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-3 border-t border-white/[0.06] pt-6">
             <p className="text-[11px] text-slate-600">
-              © {new Date().getFullYear()} TAKSHAK. Made with ❤️ for India's students.
+              © {new Date().getFullYear()} TAKक्षक. Made with ❤️ for India's students.
             </p>
             <div className="flex items-center gap-4">
               {["/privacy","/terms","/cookies"].map((to, i) => (

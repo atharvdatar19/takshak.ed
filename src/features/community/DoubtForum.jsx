@@ -370,7 +370,7 @@ export default function DoubtForum() {
   return (
     <>
       <Helmet>
-        <title>Doubt Forum — TAKSHAK</title>
+        <title>Doubt Forum — TAKक्षक</title>
         <meta name="description" content="Ask your exam preparation doubts anonymously. Get answers from toppers, seniors and mentors." />
       </Helmet>
 

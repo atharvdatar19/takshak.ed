@@ -105,7 +105,7 @@ export default function DefenceAspirants() {
     return (
         <div className="min-h-screen bg-[#0b1326] pb-24 relative overflow-hidden">
             <Helmet>
-                <title>Defence Exam Aspirants — NDA, CDS, AFCAT & SSB Prep | TAKSHAK</title>
+                <title>Defence Exam Aspirants — NDA, CDS, AFCAT & SSB Prep | TAKक्षक</title>
                 <meta name="description" content="Prepare for NDA, CDS, AFCAT & SSB interviews with expert mentors. First guidance session free." />
             </Helmet>
 
@@ -318,7 +318,7 @@ export default function DefenceAspirants() {
                 <section className="relative overflow-hidden rounded-[2.5rem] bg-[#0f1930]/80 border border-white/10 p-10 md:p-16 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
                     <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
                     
-                    <h2 className="text-3xl font-black text-white mb-12 text-center relative z-10">Why Aspirants Choose TAKSHAK</h2>
+                    <h2 className="text-3xl font-black text-white mb-12 text-center relative z-10">Why Aspirants Choose TAKक्षक</h2>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
                         {[
                             { icon: Shield, label: "Mentors Who've Done It", desc: "Learn from AIR 371 NDA holder and specialists", border: "border-emerald-500/30", color: "text-emerald-400 bg-emerald-500/10" },

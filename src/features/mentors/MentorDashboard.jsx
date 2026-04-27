@@ -158,7 +158,7 @@ export default function MentorDashboard() {
     return (
         <div className="space-y-8 pb-12 max-w-5xl mx-auto">
             <Helmet>
-                <title>Mentor Dashboard | TAKSHAK</title>
+                <title>Mentor Dashboard | TAKक्षक</title>
             </Helmet>
 
             {/* Header */}

@@ -18,13 +18,13 @@ export default function CookiePolicy() {
         </P>
       </Section>
 
-      <Section title="2. How Takshak Uses Cookies">
+      <Section title="2. How TAKक्षक Uses Cookies">
         <P>We use cookies for four purposes:</P>
         <Ul items={[
           "Essential cookies — required for core functionality such as login sessions and security. These cannot be disabled.",
           "Functional cookies — remember your preferences (theme, recent pages) to improve your experience.",
           "Analytics cookies — help us understand how features are used so we can improve the platform. These are anonymised and do not identify you personally.",
-          "No advertising cookies — Takshak does not use third-party advertising or tracking cookies for ad targeting.",
+          "No advertising cookies — TAKक्षक does not use third-party advertising or tracking cookies for ad targeting.",
         ]} />
       </Section>
 
@@ -60,7 +60,7 @@ export default function CookiePolicy() {
 
       <Section title="4. Managing Your Cookie Preferences">
         <P>
-          When you first visit Takshak, a cookie consent banner will appear. You can:
+          When you first visit TAKक्षक, a cookie consent banner will appear. You can:
         </P>
         <Ul items={[
           "Accept All — enable all cookies including analytics.",
@@ -96,13 +96,13 @@ export default function CookiePolicy() {
 
       <Section title="6. Do Not Track">
         <P>
-          Some browsers transmit a "Do Not Track" signal. Takshak respects this signal and will not activate optional analytics cookies if DNT is enabled in your browser.
+          Some browsers transmit a "Do Not Track" signal. TAKक्षक respects this signal and will not activate optional analytics cookies if DNT is enabled in your browser.
         </P>
       </Section>
 
       <Section title="7. Updates to This Policy">
         <P>
-          We may update this Cookie Policy to reflect changes in the cookies we use or applicable regulations. Updates will be posted on this page with a revised "Last Updated" date. Continued use of Takshak constitutes acceptance of the updated policy.
+          We may update this Cookie Policy to reflect changes in the cookies we use or applicable regulations. Updates will be posted on this page with a revised "Last Updated" date. Continued use of TAKक्षक constitutes acceptance of the updated policy.
         </P>
       </Section>
 

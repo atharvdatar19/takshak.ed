@@ -54,10 +54,10 @@ export default function AdminShell() {
         <>
             {/* Logo */}
             <div className="flex items-center gap-3 px-4 h-16 border-b border-white/[0.04]">
-                <img src="/takshak_logo.jpg" alt="TAKSHAK" className="w-8 h-8 rounded-xl object-cover shadow-lg shadow-indigo-500/20" />
+                <img src="/takshak_logo.jpg" alt="TAKक्षक" className="w-8 h-8 rounded-xl object-cover shadow-lg shadow-indigo-500/20" />
                 {sidebarOpen && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 min-w-0">
-                        <span className="text-sm font-black tracking-tight text-white">TAKSHAK</span>
+                        <span className="text-sm font-black tracking-tight text-white">TAKक्षक</span>
                         <span className="text-[9px] text-indigo-400 font-bold ml-1.5 uppercase tracking-widest">Admin</span>
                     </motion.div>
                 )}

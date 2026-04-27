@@ -243,7 +243,7 @@ export default function StudyPlanner() {
 
   return (
     <>
-      <Helmet><title>Study Planner — TAKSHAK</title></Helmet>
+      <Helmet><title>Study Planner — TAKक्षक</title></Helmet>
 
       <div className="mx-auto max-w-4xl space-y-6">
         {/* ── Header ── */}

@@ -172,7 +172,7 @@ export default function AuthPage({ defaultTab = "signup" }) {
                 <div className="relative z-10 max-w-md text-white">
                     <motion.img
                         src="/takshak_logo.jpg"
-                        alt="TAKSHAK"
+                        alt="TAKक्षक"
                         className="w-16 h-16 object-cover mb-8 drop-shadow-[0_0_15px_rgba(78,222,163,0.3)] rounded-2xl border border-white/10"
                         initial={{ scale: 0, rotate: -180 }}
                         animate={{ scale: 1, rotate: 0 }}
@@ -191,7 +191,7 @@ export default function AuthPage({ defaultTab = "signup" }) {
                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
                         className="mt-6 text-[#a3aac4] text-base leading-relaxed"
                     >
-                        Join thousands of students who trust TAKSHAK for exam preparation,
+                        Join thousands of students who trust TAKक्षक for exam preparation,
                         cutoff predictions, and 1:1 guidance from top rankers.
                     </motion.p>
 
@@ -216,8 +216,8 @@ export default function AuthPage({ defaultTab = "signup" }) {
                 <div className="w-full max-w-md">
                     {/* Mobile brand */}
                     <div className="flex items-center gap-3 mb-8 lg:hidden">
-                        <img src="/takshak_logo.jpg" alt="TAKSHAK" className="w-10 h-10 object-cover rounded-xl shadow-lg border border-white/10" />
-                        <span className="text-xl font-bold text-white tracking-widest">TAKSHAK</span>
+                        <img src="/takshak_logo.jpg" alt="TAKक्षक" className="w-10 h-10 object-cover rounded-xl shadow-lg border border-white/10" />
+                        <span className="text-xl font-bold text-white tracking-widest">TAKक्षक</span>
                     </div>
 
                     {/* Tab toggle — pill style */}

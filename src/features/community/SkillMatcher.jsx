@@ -361,7 +361,7 @@ export default function SkillMatcher() {
     return (
         <>
             <Helmet>
-                <title>AI Skill Matcher — Find Your Income Path | TAKSHAK</title>
+                <title>AI Skill Matcher — Find Your Income Path | TAKक्षक</title>
                 <meta name="description" content="Discover realistic income paths and business ideas based on your skills and interests. AI-powered matching engine for Indian students and freshers." />
             </Helmet>
 

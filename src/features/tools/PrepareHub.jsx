@@ -84,7 +84,7 @@ export default function PrepareHub() {
   return (
     <>
       <Helmet>
-        <title>Prepare — TAKSHAK</title>
+        <title>Prepare — TAKक्षक</title>
       </Helmet>
 
       <div className="mx-auto max-w-5xl space-y-8">

@@ -143,7 +143,7 @@ export default function BookingModal({ isOpen, onClose, mentor, selectedSlot }) 
                     key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_placeholder",
                     amount: orderData.amount,
                     currency: orderData.currency,
-                    name: "TAKSHAK Session",
+                    name: "TAKक्षक Session",
                     description: `10-min Mentorship with ${name}`,
                     order_id: orderData.id,
                     handler: async function (response) {

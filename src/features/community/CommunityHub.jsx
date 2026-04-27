@@ -53,7 +53,7 @@ export default function CommunityHub() {
   return (
     <>
       <Helmet>
-        <title>Community — TAKSHAK</title>
+        <title>Community — TAKक्षक</title>
       </Helmet>
 
       <div className="mx-auto max-w-4xl space-y-8">

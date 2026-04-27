@@ -56,7 +56,7 @@ export default function Mentors() {
     return (
         <div className="relative min-h-screen pb-24 overflow-hidden" ref={containerRef}>
             <Helmet>
-                <title>Find a Mentor — Elite 1:1 Guidance | TAKSHAK</title>
+                <title>Find a Mentor — Elite 1:1 Guidance | TAKक्षक</title>
                 <meta name="description" content="Connect with verified students from IITs, NITs, and top colleges for 1:1 mentorship and exam strategy." />
             </Helmet>
 

@@ -98,7 +98,7 @@ export default function ResourceHub() {
     return (
         <div className="space-y-8 pb-12">
             <Helmet>
-                <title>Resources — Best Free Study Material | TAKSHAK</title>
+                <title>Resources — Best Free Study Material | TAKक्षक</title>
                 <meta name="description" content="Curated list of the best free YouTube channels, playlists, PDFs and study resources for JEE, NEET, CUET and board exams." />
             </Helmet>
 

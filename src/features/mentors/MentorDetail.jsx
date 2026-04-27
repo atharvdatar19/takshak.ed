@@ -60,7 +60,7 @@ export default function MentorDetail() {
     return (
         <div className="space-y-8 pb-12 max-w-5xl mx-auto pt-4 relative">
             <Helmet>
-                <title>{name} — Book a Session | TAKSHAK Mentors</title>
+                <title>{name} — Book a Session | TAKक्षक Mentors</title>
                 <meta name="description" content={`Book a 1:1 mentoring session with ${name} from ${mentor.college}. ${mentor.bio?.slice(0, 120) || ""}`} />
             </Helmet>
 

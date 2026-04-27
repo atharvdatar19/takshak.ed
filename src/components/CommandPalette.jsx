@@ -9,7 +9,7 @@ const COMMANDS = [
     { id: "timeline", label: "Go to Timeline", path: "/timeline", keywords: "exams schedule dates deadlines" },
     { id: "alerts", label: "Go to Alerts", path: "/alerts", keywords: "deadline urgent closing" },
     { id: "mentors", label: "Go to Mentor Marketplace", path: "/mentor-marketplace", keywords: "mentor booking guide educator tutor" },
-    { id: "takshak-courses", label: "Search Official Courses (TAKSHAK)", path: "/marketplace", keywords: "course live recorded physicswallah unacademy learn study" },
+    { id: "takshak-courses", label: "Search Official Courses (TAKक्षक)", path: "/marketplace", keywords: "course live recorded physicswallah unacademy learn study" },
     { id: "takshak-opportunities", label: "Track Internships & Hackathons", path: "/applications", keywords: "internship hackathon scholarship opportunity tracker" },
     { id: "admin", label: "Go to Admin Control", path: "/admin", keywords: "admin manage control panel" },
     { id: "admin-colleges", label: "Admin → Manage Colleges", path: "/admin", keywords: "add edit college crud" },

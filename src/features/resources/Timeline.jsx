@@ -95,9 +95,9 @@ export default function Timeline() {
   return (
     <div>
       <Helmet>
-        <title>Academic Timeline & Deadlines | TAKSHAK</title>
+        <title>Academic Timeline & Deadlines | TAKक्षक</title>
         <meta name="description" content="Never miss an application deadline! Track JEE, NEET, CUET, hackathons, and scholarship timelines." />
-        <meta property="og:title" content="Academic Timeline & Deadlines | TAKSHAK" />
+        <meta property="og:title" content="Academic Timeline & Deadlines | TAKक्षक" />
         <meta property="og:description" content="Never miss an application deadline! Track JEE, NEET, CUET, hackathons, and scholarship timelines." />
       </Helmet>
 

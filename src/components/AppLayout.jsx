@@ -1,5 +1,5 @@
 import { Component, Suspense, lazy, useState } from "react"
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom"
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import { useAuth } from "@auth/AuthContext"
 import {
@@ -95,12 +95,12 @@ function SidebarContent({ onNavigate }) {
   return (
     <div className="flex h-full flex-col">
       {/* ── Brand ── */}
-      <div className="flex items-center gap-3 px-5 pb-4 pt-5">
-        <img src="/takshak_logo.jpg" alt="TAKSHAK" className="h-9 w-auto rounded-xl" />
+      <Link to="/" className="flex items-center gap-3 px-5 pb-4 pt-5 hover:opacity-80 transition-opacity">
+        <img src="/takshak_logo.jpg" alt="TAKक्षक" className="h-9 w-auto rounded-xl" />
         <span className="text-sm font-black tracking-wide" style={{ color: "var(--obsidian-on-surface)" }}>
-          TAKSHAK
+          TAKक्षक
         </span>
-      </div>
+      </Link>
 
       {/* ── Primary Nav ── */}
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
@@ -282,9 +282,9 @@ export default function AppLayout() {
         }}
       >
         <div className="flex items-center gap-2">
-          <img src="/takshak_logo.jpg" alt="TAKSHAK" className="h-8 w-auto rounded-lg" />
+          <img src="/takshak_logo.jpg" alt="TAKक्षक" className="h-8 w-auto rounded-lg" />
           <span className="text-sm font-black tracking-wide" style={{ color: "var(--obsidian-on-surface)" }}>
-            TAKSHAK
+            TAKक्षक
           </span>
         </div>
       </div>
@@ -299,7 +299,7 @@ export default function AppLayout() {
             <footer className="mt-20 border-t pt-8 pb-4" style={{ borderColor: "var(--obsidian-outline-variant)" }}>
               <div className="flex flex-col items-center gap-1">
                 <p className="text-sm font-medium" style={{ color: "var(--obsidian-on-surface-variant)" }}>
-                  Made with ❤️ by <span className="font-bold" style={{ color: "var(--obsidian-primary)" }}>TAKSHAK</span>
+                  Made with ❤️ by <span className="font-bold" style={{ color: "var(--obsidian-primary)" }}>TAKक्षक</span>
                 </p>
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: "var(--obsidian-on-surface-variant)" }}>
                   Empowering Students Since 2024

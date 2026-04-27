@@ -5,10 +5,10 @@ export default function PrivacyPolicy() {
     <LegalLayout title="Privacy Policy" lastUpdated="April 27, 2025">
       <Section title="1. Overview">
         <P>
-          Takshak ("we", "our", "us") is committed to protecting the privacy of students, mentors, and visitors who use our platform at takshak.ed. This Privacy Policy explains what personal data we collect, why we collect it, how it is used, and your rights under the Digital Personal Data Protection Act, 2023 (DPDP Act) and other applicable Indian laws.
+          TAKक्षक ("we", "our", "us") is committed to protecting the privacy of students, mentors, and visitors who use our platform at takshak.ed. This Privacy Policy explains what personal data we collect, why we collect it, how it is used, and your rights under the Digital Personal Data Protection Act, 2023 (DPDP Act) and other applicable Indian laws.
         </P>
         <P>
-          By using Takshak, you agree to the collection and use of information in accordance with this policy. If you do not agree, please discontinue use of the platform.
+          By using TAKक्षक, you agree to the collection and use of information in accordance with this policy. If you do not agree, please discontinue use of the platform.
         </P>
       </Section>
 
@@ -26,7 +26,7 @@ export default function PrivacyPolicy() {
 
       <Section title="3. How We Use Your Data">
         <Ul items={[
-          "To create and manage your Takshak account and provide personalised features.",
+          "To create and manage your TAKक्षक account and provide personalised features.",
           "To match you with relevant mentors, colleges, scholarships, and exam resources.",
           "To process mentor session bookings and payments via Razorpay.",
           "To send transactional emails (session confirmations, deadline alerts, OTPs) — never marketing without consent.",
@@ -90,7 +90,7 @@ export default function PrivacyPolicy() {
 
       <Section title="9. Children's Privacy">
         <P>
-          Takshak is designed for students aged 15 and above. Students under 18 should use the platform with parental awareness. We do not knowingly collect data from children under 13. If we discover such data, it will be promptly deleted.
+          TAKक्षक is designed for students aged 15 and above. Students under 18 should use the platform with parental awareness. We do not knowingly collect data from children under 13. If we discover such data, it will be promptly deleted.
         </P>
       </Section>
 
@@ -110,7 +110,7 @@ export default function PrivacyPolicy() {
         <P>In accordance with the Information Technology Act, 2000 and DPDP Act, 2023, our Grievance Officer is:</P>
         <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 text-[12px] text-slate-400 space-y-1 mt-2">
           <p><span className="text-white font-semibold">Name:</span> Atharv Datar</p>
-          <p><span className="text-white font-semibold">Organisation:</span> Takshak</p>
+          <p><span className="text-white font-semibold">Organisation:</span> TAKक्षक</p>
           <p><span className="text-white font-semibold">Email:</span> <a href="mailto:takshak.info@gmail.com" className="text-indigo-400 hover:underline">takshak.info@gmail.com</a></p>
           <p><span className="text-white font-semibold">Response time:</span> Within 48 business hours</p>
         </div>

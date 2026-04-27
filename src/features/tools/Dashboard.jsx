@@ -475,7 +475,7 @@ export default function Dashboard() {
   return (
     <div>
       <Helmet>
-        <title>Home — TAKSHAK</title>
+        <title>Home — TAKक्षक</title>
         <meta name="description" content="Your student command centre — exam countdowns, mentor sessions, college deadlines and more." />
       </Helmet>
 
@@ -500,7 +500,7 @@ export default function Dashboard() {
                 className="text-[22px] font-black tracking-tight"
                 style={{ color: "var(--obsidian-on-surface)", letterSpacing: "-0.03em" }}
               >
-                Welcome to TAKSHAK
+                Welcome to TAKक्षक
               </h1>
             )}
             {insight && (
@@ -672,7 +672,7 @@ export default function Dashboard() {
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h3 className="text-[15px] font-bold" style={{ color: "var(--obsidian-on-surface)" }}>
-                    Join 10,000+ students on TAKSHAK
+                    Join 10,000+ students on TAKक्षक
                   </h3>
                   <p className="mt-0.5 text-[13px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>
                     Track applications, book mentors, get exam alerts — everything free.

@@ -78,9 +78,9 @@ export default function Marketplace() {
     return (
         <div className="mx-auto max-w-7xl animate-fade-in space-y-8">
             <Helmet>
-                <title>Marketplace | TAKSHAK</title>
+                <title>Marketplace | TAKक्षक</title>
                 <meta name="description" content="Buy and sell second-hand study materials, P2P notes, and discover official Live/Recorded courses." />
-                <meta property="og:title" content="Marketplace | TAKSHAK Courses & Materials" />
+                <meta property="og:title" content="Marketplace | TAKक्षक Courses & Materials" />
                 <meta property="og:description" content="Buy and sell second-hand study materials, P2P notes, and discover official Live/Recorded courses." />
             </Helmet>
 
