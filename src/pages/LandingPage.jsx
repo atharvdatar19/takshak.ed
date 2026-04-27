@@ -1,233 +1,465 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
+import { motion, useScroll, useTransform, useSpring, useMotionValue, AnimatePresence, useInView } from "framer-motion"
 import {
   ArrowRight, BookOpen, Building2, CheckCircle2, ChevronDown,
   Compass, GraduationCap, Menu, MessageSquare, Shield,
-  Star, Target, TrendingUp, Users, X, Zap, Mail,
+  Star, Target, TrendingUp, Users, X, Zap, Mail, Sparkles,
+  MousePointer2, Layers, Rocket, ClipboardList, Calendar,
+  FileText, Brain, Heart, Sword,
 } from "lucide-react"
 import { useAuth } from "@auth/AuthContext"
 
-/* Social icons as inline SVGs to avoid extra deps */
-function IconX() {
-  return (
-    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.732-8.84L2.025 2.25H8.1l4.258 5.63 5.886-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-    </svg>
-  )
+/* ─────────────────────────────────────────────
+   PHANTOM-INSPIRED: Custom easing curves
+───────────────────────────────────────────── */
+const PHANTOM_EASE = {
+  bounce: [0.68, -0.55, 0.265, 1.55],
+  smooth: [0.25, 0.1, 0.25, 1],
+  snap:   [0.87, 0, 0.13, 1],
+  float:  [0.45, 0, 0.55, 1],
 }
-function IconInstagram() {
+
+/* ─────────────────────────────────────────────
+   Floating mascot
+───────────────────────────────────────────── */
+function FloatingMascot() {
+  const y      = useMotionValue(0)
+  const rotate = useMotionValue(0)
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      y.set(Math.sin(Date.now() / 1000) * 15)
+      rotate.set(Math.sin(Date.now() / 1500) * 5)
+    }, 16)
+    return () => clearInterval(id)
+  }, [y, rotate])
+
   return (
-    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true">
-      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-    </svg>
-  )
-}
-function IconLinkedIn() {
-  return (
-    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-    </svg>
-  )
-}
-function IconYouTube() {
-  return (
-    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true">
-      <path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
-    </svg>
+    <motion.div style={{ y, rotate }} className="relative w-16 h-16">
+      <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-600 opacity-20 blur-xl animate-pulse" />
+      <div className="relative w-full h-full rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/40">
+        <Sparkles size={28} className="text-white" />
+      </div>
+      <motion.div
+        animate={{ scaleY: [1, 1.2, 1], opacity: [0.6, 0.3, 0.6] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-8 h-4 bg-gradient-to-b from-violet-500 to-transparent rounded-full blur-md"
+      />
+    </motion.div>
   )
 }
 
 /* ─────────────────────────────────────────────
-   Floating hero UI preview cards
+   Ethereal background orbs + grid + noise
 ───────────────────────────────────────────── */
-function MentorPreviewCard() {
+function EtherealBackground() {
   return (
-    <div className="w-56 rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-xl shadow-2xl shadow-black/40">
-      <div className="flex items-center gap-3 mb-3">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-xs font-black text-white shrink-0">RS</div>
-        <div>
-          <p className="text-[11px] font-bold text-white leading-tight">Raghav Mishra</p>
-          <p className="text-[9px] text-slate-400">NDA Coach · AIR 371</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-1 mb-2.5">
-        {[1,2,3,4,5].map(i => <Star key={i} size={9} className="text-amber-400 fill-amber-400" />)}
-        <span className="text-[9px] text-slate-400 ml-1">5.0 · 120 sessions</span>
-      </div>
-      <div className="rounded-lg bg-emerald-500/15 border border-emerald-500/20 px-2.5 py-1.5 text-[9px] text-emerald-400 font-semibold flex items-center gap-1">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Session confirmed · Tomorrow 4 PM
-      </div>
-    </div>
-  )
-}
-
-function CutoffPreviewCard() {
-  return (
-    <div className="w-52 rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-xl shadow-2xl shadow-black/40">
-      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-bold mb-1">JEE Main Rank</p>
-      <p className="text-3xl font-black text-white leading-none">12,450</p>
-      <div className="mt-3 space-y-1.5">
-        <div className="flex items-center justify-between text-[9px]">
-          <span className="text-emerald-400 font-bold flex items-center gap-1"><CheckCircle2 size={9} /> NIT Trichy CSE</span>
-          <span className="text-emerald-500 font-bold">95%</span>
-        </div>
-        <div className="flex items-center justify-between text-[9px]">
-          <span className="text-amber-400 font-bold flex items-center gap-1">~ VJTI Mumbai IT</span>
-          <span className="text-amber-500 font-bold">72%</span>
-        </div>
-        <div className="flex items-center justify-between text-[9px]">
-          <span className="text-slate-400 font-bold flex items-center gap-1">~ COEP Pune ENTC</span>
-          <span className="text-slate-500 font-bold">58%</span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function PlannerPreviewCard() {
-  return (
-    <div className="w-52 rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-xl shadow-2xl shadow-black/40">
-      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-bold mb-2">Today's Study Goal</p>
-      <div className="space-y-1.5 mb-3">
-        {[
-          { label: "Physics — Optics", done: true },
-          { label: "Chemistry — Organic", done: true },
-          { label: "Maths — Integration", done: false },
-        ].map(g => (
-          <div key={g.label} className="flex items-center gap-2 text-[10px]">
-            <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 ${g.done ? "bg-emerald-500 border-emerald-500" : "border-slate-600"}`}>
-              {g.done && <CheckCircle2 size={8} className="text-white" />}
-            </div>
-            <span className={g.done ? "text-slate-500 line-through" : "text-white font-medium"}>{g.label}</span>
-          </div>
-        ))}
-      </div>
-      <div className="h-1.5 w-full rounded-full bg-white/10">
-        <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-indigo-500 to-emerald-400" />
-      </div>
-      <p className="text-[9px] text-slate-400 mt-1.5">2 of 3 done · 3h 40m studied</p>
+    <div className="pointer-events-none fixed inset-0 overflow-hidden">
+      <motion.div animate={{ x:[0,100,0], y:[0,-50,0] }} transition={{ duration:20, repeat:Infinity, ease:"linear" }}
+        className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] rounded-full bg-purple-600/15 blur-[150px]" />
+      <motion.div animate={{ x:[0,-80,0], y:[0,100,0] }} transition={{ duration:25, repeat:Infinity, ease:"linear" }}
+        className="absolute top-[20%] right-[-15%] w-[600px] h-[600px] rounded-full bg-indigo-500/12 blur-[130px]" />
+      <motion.div animate={{ x:[0,60,0], y:[0,80,0] }} transition={{ duration:18, repeat:Infinity, ease:"linear" }}
+        className="absolute bottom-[-10%] left-[20%] w-[700px] h-[700px] rounded-full bg-violet-500/10 blur-[140px]" />
+      <motion.div animate={{ scale:[1,1.2,1], opacity:[0.05,0.1,0.05] }} transition={{ duration:10, repeat:Infinity, ease:"easeInOut" }}
+        className="absolute top-[40%] left-[50%] -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-fuchsia-500/8 blur-[120px]" />
+      {/* Grid */}
+      <div className="absolute inset-0 opacity-[0.02]"
+        style={{ backgroundImage:`linear-gradient(rgba(139,92,246,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.5) 1px,transparent 1px)`, backgroundSize:"80px 80px" }} />
+      {/* Noise */}
+      <div className="absolute inset-0 opacity-[0.03]"
+        style={{ backgroundImage:`url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")` }} />
     </div>
   )
 }
 
 /* ─────────────────────────────────────────────
-   Nav
+   Scroll progress bar
 ───────────────────────────────────────────── */
-const NAV_LINKS = [
-  { label: "Discover", href: "/discover" },
-  { label: "Prepare",  href: "/prepare"  },
-  { label: "Mentors",  href: "/mentors"  },
-  { label: "Community",href: "/community"},
-]
-
-function Navbar({ scrolled }) {
-  const [mobileOpen, setMobileOpen] = useState(false)
+function ScrollProgress() {
+  const { scrollYProgress } = useScroll()
+  const scaleX = useSpring(scrollYProgress, { stiffness:100, damping:30, restDelta:0.001 })
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? "bg-[#05080f]/80 backdrop-blur-2xl border-b border-white/[0.06]" : "bg-transparent"}`}>
-      <div className="max-w-7xl mx-auto px-5 md:px-10 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 via-violet-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-            <Zap size={15} className="text-white" />
-          </div>
-          <span className="text-[15px] font-black tracking-tight text-white">TAKSHAK</span>
-        </Link>
-
-        {/* Desktop nav links */}
-        <nav className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map(l => (
-            <Link key={l.label} to={l.href} className="text-[13px] font-medium text-slate-400 hover:text-white transition-colors">
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* CTA */}
-        <div className="hidden md:flex items-center gap-3">
-          <Link to="/login" className="text-[13px] font-medium text-slate-400 hover:text-white transition-colors">Sign In</Link>
-          <Link to="/signup" className="inline-flex items-center gap-1.5 rounded-full bg-white text-[#050811] text-[12px] font-black px-4 py-2 hover:bg-indigo-100 transition-colors">
-            Get Started <ArrowRight size={12} />
-          </Link>
-        </div>
-
-        {/* Mobile menu button */}
-        <button onClick={() => setMobileOpen(v => !v)} className="md:hidden text-slate-400 hover:text-white transition-colors p-2">
-          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </div>
-
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#05080f]/95 backdrop-blur-2xl border-b border-white/[0.06] px-5 pb-6">
-            <nav className="flex flex-col gap-4 pt-4">
-              {NAV_LINKS.map(l => (
-                <Link key={l.label} to={l.href} onClick={() => setMobileOpen(false)} className="text-sm font-medium text-slate-300 hover:text-white transition-colors">{l.label}</Link>
-              ))}
-              <hr className="border-white/[0.06]" />
-              <Link to="/signup" onClick={() => setMobileOpen(false)} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-white text-[#050811] text-sm font-black px-5 py-2.5 w-full">
-                Get Started Free <ArrowRight size={13} />
-              </Link>
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </header>
+    <motion.div
+      className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500 origin-left z-[60]"
+      style={{ scaleX }}
+    />
   )
 }
 
 /* ─────────────────────────────────────────────
-   Section label
+   Word-reveal text animation
 ───────────────────────────────────────────── */
-function Label({ children, color = "indigo" }) {
-  const c = {
-    indigo:  "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
-    emerald: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-    violet:  "bg-violet-500/10 text-violet-400 border-violet-500/20",
-    amber:   "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  }[color]
+function RevealText({ children, delay = 0 }) {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: "-100px" })
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 text-[10px] font-black uppercase tracking-widest ${c}`}>
-      {children}
+    <span ref={ref}>
+      {children.split(" ").map((word, i) => (
+        <span key={i} className="inline-block overflow-hidden mr-[0.25em]">
+          <motion.span
+            className="inline-block"
+            initial={{ y:"100%", rotate:5 }}
+            animate={isInView ? { y:0, rotate:0 } : { y:"100%", rotate:5 }}
+            transition={{ duration:0.6, delay: delay + i * 0.08, ease: PHANTOM_EASE.bounce }}
+          >
+            {word}
+          </motion.span>
+        </span>
+      ))}
     </span>
   )
 }
 
 /* ─────────────────────────────────────────────
-   Feature chip
+   Magnetic button
 ───────────────────────────────────────────── */
-function FeatureChip({ icon: Icon, label, sub }) {
+function MagneticButton({ children, className = "", onClick, as: As = "button" }) {
+  const ref = useRef(null)
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const sx = useSpring(x, { stiffness:150, damping:15 })
+  const sy = useSpring(y, { stiffness:150, damping:15 })
+
+  const onMove = useCallback((e) => {
+    if (!ref.current) return
+    const r = ref.current.getBoundingClientRect()
+    x.set((e.clientX - (r.left + r.width / 2)) * 0.2)
+    y.set((e.clientY - (r.top  + r.height / 2)) * 0.2)
+  }, [x, y])
+
+  const onLeave = useCallback(() => { x.set(0); y.set(0) }, [x, y])
+
   return (
-    <div className="flex items-start gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 hover:bg-white/[0.06] transition-colors group">
-      <div className="w-9 h-9 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center shrink-0 group-hover:border-indigo-500/30 transition-colors">
-        <Icon size={16} className="text-slate-400 group-hover:text-indigo-400 transition-colors" />
-      </div>
-      <div>
-        <p className="text-[12px] font-bold text-white">{label}</p>
-        <p className="text-[11px] text-slate-500 mt-0.5">{sub}</p>
-      </div>
+    <motion.button
+      ref={ref}
+      style={{ x: sx, y: sy }}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      onClick={onClick}
+      className={className}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+    >
+      {children}
+    </motion.button>
+  )
+}
+
+/* ─────────────────────────────────────────────
+   Parallax card
+───────────────────────────────────────────── */
+function ParallaxCard({ children, className = "", depth = 1 }) {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end","end start"] })
+  const y       = useTransform(scrollYProgress, [0,1], [100*depth, -100*depth])
+  const rotateX = useTransform(scrollYProgress, [0,1], [10,-10])
+  const opacity = useTransform(scrollYProgress, [0,0.2,0.8,1], [0,1,1,0])
+  return (
+    <motion.div ref={ref} style={{ y, rotateX, opacity }} className={`perspective-1000 ${className}`}>
+      <div className="transform-gpu">{children}</div>
+    </motion.div>
+  )
+}
+
+/* ─────────────────────────────────────────────
+   Spotlight hover card
+───────────────────────────────────────────── */
+function SpotlightCard({ children, className = "" }) {
+  const ref = useRef(null)
+  const [pos, setPos]       = useState({ x:0, y:0 })
+  const [hovered, setHover] = useState(false)
+
+  const onMove = useCallback((e) => {
+    if (!ref.current) return
+    const r = ref.current.getBoundingClientRect()
+    setPos({ x: e.clientX - r.left, y: e.clientY - r.top })
+  }, [])
+
+  return (
+    <div ref={ref} onMouseMove={onMove} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+      className={`relative overflow-hidden ${className}`}>
+      <motion.div
+        className="pointer-events-none absolute inset-0"
+        animate={{ opacity: hovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        style={{ background: `radial-gradient(600px circle at ${pos.x}px ${pos.y}px, rgba(139,92,246,0.15), transparent 40%)` }}
+      />
+      {children}
     </div>
   )
 }
 
 /* ─────────────────────────────────────────────
-   UI mockup panels (for feature sections)
+   Social icons
+───────────────────────────────────────────── */
+function IconX() {
+  return <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.732-8.84L2.025 2.25H8.1l4.258 5.63 5.886-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+}
+function IconInstagram() {
+  return <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+}
+function IconLinkedIn() {
+  return <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+}
+function IconYouTube() {
+  return <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+}
+
+/* ─────────────────────────────────────────────
+   Hero floating preview cards
+───────────────────────────────────────────── */
+function MentorPreviewCard() {
+  return (
+    <SpotlightCard className="w-64 rounded-3xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-2xl shadow-2xl shadow-purple-500/10 hover:border-purple-500/30 transition-colors duration-500">
+      <div className="flex items-center gap-3 mb-4">
+        <motion.div whileHover={{ scale:1.1, rotate:5 }}
+          className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-xs font-black text-white shrink-0 shadow-lg shadow-indigo-500/30">
+          RS
+        </motion.div>
+        <div>
+          <p className="text-xs font-bold text-white leading-tight">Raghav Mishra</p>
+          <p className="text-[10px] text-slate-400">NDA Coach · AIR 371</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-1 mb-3">
+        {[1,2,3,4,5].map(i => (
+          <motion.div key={i} initial={{ opacity:0, scale:0 }} animate={{ opacity:1, scale:1 }}
+            transition={{ delay: i*0.1, type:"spring", stiffness:300 }}>
+            <Star size={10} className="text-amber-400 fill-amber-400" />
+          </motion.div>
+        ))}
+        <span className="text-[10px] text-slate-400 ml-1.5">5.0 · 120 sessions</span>
+      </div>
+      <motion.div whileHover={{ scale:1.02 }}
+        className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 text-[10px] text-emerald-400 font-semibold flex items-center gap-2">
+        <motion.span animate={{ scale:[1,1.2,1] }} transition={{ duration:2, repeat:Infinity }}
+          className="w-2 h-2 rounded-full bg-emerald-400" />
+        Session confirmed · Tomorrow 4 PM
+      </motion.div>
+    </SpotlightCard>
+  )
+}
+
+function CutoffPreviewCard() {
+  return (
+    <SpotlightCard className="w-60 rounded-3xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-2xl shadow-2xl shadow-purple-500/10 hover:border-purple-500/30 transition-colors duration-500">
+      <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold mb-2">JEE Main Rank</p>
+      <p className="text-4xl font-black text-white leading-none bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">12,450</p>
+      <div className="mt-4 space-y-2">
+        {[
+          { college:"NIT Trichy CSE", chance:95, color:"emerald" },
+          { college:"VJTI Mumbai IT",  chance:72, color:"amber"   },
+          { college:"COEP Pune ENTC",  chance:58, color:"slate"   },
+        ].map((r, i) => (
+          <motion.div key={r.college} initial={{ opacity:0, x:-20 }} whileInView={{ opacity:1, x:0 }}
+            transition={{ delay: i*0.1 }} className="flex items-center justify-between text-[10px]">
+            <span className={`text-${r.color}-400 font-bold flex items-center gap-1`}>
+              {r.chance > 80 ? <CheckCircle2 size={10} /> : <TrendingUp size={10} />}
+              {r.college}
+            </span>
+            <span className={`text-${r.color}-500 font-bold`}>{r.chance}%</span>
+          </motion.div>
+        ))}
+      </div>
+    </SpotlightCard>
+  )
+}
+
+function PlannerPreviewCard() {
+  return (
+    <SpotlightCard className="w-60 rounded-3xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-2xl shadow-2xl shadow-purple-500/10 hover:border-purple-500/30 transition-colors duration-500">
+      <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold mb-3">Today's Study Goal</p>
+      <div className="space-y-2 mb-4">
+        {[
+          { label:"Physics — Optics",      done:true  },
+          { label:"Chemistry — Organic",   done:true  },
+          { label:"Maths — Integration",   done:false },
+        ].map((g, i) => (
+          <motion.div key={g.label} initial={{ opacity:0, x:-10 }} whileInView={{ opacity:1, x:0 }}
+            transition={{ delay: i*0.15 }} className="flex items-center gap-2.5 text-[11px]">
+            <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${g.done ? "bg-emerald-500 border-emerald-500" : "border-slate-600"}`}>
+              {g.done && <CheckCircle2 size={10} className="text-white" />}
+            </div>
+            <span className={g.done ? "text-slate-500 line-through" : "text-white font-medium"}>{g.label}</span>
+          </motion.div>
+        ))}
+      </div>
+      <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
+        <motion.div initial={{ width:0 }} whileInView={{ width:"66%" }}
+          transition={{ duration:1.5, ease: PHANTOM_EASE.smooth }}
+          className="h-full rounded-full bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500" />
+      </div>
+      <p className="text-[10px] text-slate-400 mt-2">2 of 3 done · 3h 40m studied</p>
+    </SpotlightCard>
+  )
+}
+
+/* ─────────────────────────────────────────────
+   Navbar
+───────────────────────────────────────────── */
+const NAV_LINKS = [
+  { label:"Discover",  href:"/discover"  },
+  { label:"Prepare",   href:"/prepare"   },
+  { label:"Mentors",   href:"/mentors"   },
+  { label:"Community", href:"/community" },
+]
+
+function Navbar({ scrolled }) {
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [hoveredLink, setHoveredLink] = useState(null)
+
+  return (
+    <motion.header
+      initial={{ y:-100 }}
+      animate={{ y:0 }}
+      transition={{ duration:0.8, ease: PHANTOM_EASE.smooth }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${scrolled ? "bg-[#0a0a1a]/80 backdrop-blur-2xl border-b border-white/[0.06]" : "bg-transparent"}`}
+    >
+      <div className="max-w-7xl mx-auto px-5 md:px-10 h-16 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-3 group">
+          <motion.img
+            src="/takshak_logo.jpg"
+            alt="TAKSHAK"
+            whileHover={{ rotate:10, scale:1.1 }}
+            transition={{ type:"spring", stiffness:300 }}
+            className="w-9 h-9 rounded-xl object-cover shadow-lg shadow-indigo-500/30"
+          />
+          <span className="text-[16px] font-black tracking-tight text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-violet-400 transition-all duration-300">
+            TAKSHAK
+          </span>
+        </Link>
+
+        <nav className="hidden md:flex items-center gap-8">
+          {NAV_LINKS.map((l, i) => (
+            <motion.div key={l.label} onHoverStart={() => setHoveredLink(i)} onHoverEnd={() => setHoveredLink(null)} className="relative">
+              <Link to={l.href} className="text-[13px] font-medium text-slate-400 hover:text-white transition-colors py-2">
+                {l.label}
+              </Link>
+              {hoveredLink === i && (
+                <motion.div layoutId="navHover"
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full"
+                  transition={{ type:"spring", stiffness:300, damping:30 }} />
+              )}
+            </motion.div>
+          ))}
+        </nav>
+
+        <div className="hidden md:flex items-center gap-3">
+          <Link to="/login" className="text-[13px] font-medium text-slate-400 hover:text-white transition-colors">Sign In</Link>
+          <Link to="/signup">
+            <MagneticButton className="inline-flex items-center gap-1.5 rounded-full bg-white text-[#0a0a1a] text-[12px] font-black px-5 py-2.5 hover:bg-indigo-50 transition-colors shadow-lg shadow-white/10">
+              Get Started <ArrowRight size={12} />
+            </MagneticButton>
+          </Link>
+        </div>
+
+        <motion.button whileTap={{ scale:0.9 }} onClick={() => setMobileOpen(v => !v)}
+          className="md:hidden text-slate-400 hover:text-white transition-colors p-2">
+          <AnimatePresence mode="wait">
+            {mobileOpen
+              ? <motion.div key="close" initial={{ rotate:-90, opacity:0 }} animate={{ rotate:0, opacity:1 }} exit={{ rotate:90, opacity:0 }}><X size={20} /></motion.div>
+              : <motion.div key="menu"  initial={{ rotate:90, opacity:0 }}  animate={{ rotate:0, opacity:1 }} exit={{ rotate:-90, opacity:0 }}><Menu size={20} /></motion.div>
+            }
+          </AnimatePresence>
+        </motion.button>
+      </div>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity:0, height:0, filter:"blur(10px)" }}
+            animate={{ opacity:1, height:"auto", filter:"blur(0px)" }}
+            exit={{ opacity:0, height:0, filter:"blur(10px)" }}
+            transition={{ duration:0.5, ease: PHANTOM_EASE.smooth }}
+            className="md:hidden bg-[#0a0a1a]/95 backdrop-blur-2xl border-b border-white/[0.06] px-5 pb-6 overflow-hidden"
+          >
+            <nav className="flex flex-col gap-4 pt-4">
+              {NAV_LINKS.map((l, i) => (
+                <motion.div key={l.label} initial={{ opacity:0, x:-20 }} animate={{ opacity:1, x:0 }} transition={{ delay: i*0.1 }}>
+                  <Link to={l.href} onClick={() => setMobileOpen(false)}
+                    className="text-sm font-medium text-slate-300 hover:text-white transition-colors block py-2">{l.label}</Link>
+                </motion.div>
+              ))}
+              <hr className="border-white/[0.06]" />
+              <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.4 }}>
+                <Link to="/signup" onClick={() => setMobileOpen(false)}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-full bg-white text-[#0a0a1a] text-sm font-black px-5 py-2.5 w-full">
+                  Get Started Free <ArrowRight size={13} />
+                </Link>
+              </motion.div>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
+  )
+}
+
+/* ─────────────────────────────────────────────
+   Section label pill
+───────────────────────────────────────────── */
+function Label({ children, color = "indigo" }) {
+  const colors = {
+    indigo:  "from-indigo-500/20 to-indigo-500/5 text-indigo-300 border-indigo-500/30",
+    emerald: "from-emerald-500/20 to-emerald-500/5 text-emerald-300 border-emerald-500/30",
+    violet:  "from-violet-500/20 to-violet-500/5 text-violet-300 border-violet-500/30",
+    amber:   "from-amber-500/20 to-amber-500/5 text-amber-300 border-amber-500/30",
+    purple:  "from-purple-500/20 to-purple-500/5 text-purple-300 border-purple-500/30",
+    rose:    "from-rose-500/20 to-rose-500/5 text-rose-300 border-rose-500/30",
+  }
+  return (
+    <motion.span whileHover={{ scale:1.05 }}
+      className={`inline-flex items-center gap-2 rounded-full border bg-gradient-to-r ${colors[color]} px-4 py-1.5 text-[11px] font-black uppercase tracking-widest shadow-lg backdrop-blur-sm`}>
+      {children}
+    </motion.span>
+  )
+}
+
+/* ─────────────────────────────────────────────
+   Feature chip card
+───────────────────────────────────────────── */
+function FeatureChip({ icon: Icon, label, sub }) {
+  return (
+    <SpotlightCard>
+      <motion.div whileHover={{ y:-2, scale:1.02 }} transition={{ type:"spring", stiffness:400, damping:25 }}
+        className="flex items-start gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 hover:bg-white/[0.06] transition-colors group cursor-pointer">
+        <div className="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center shrink-0 group-hover:border-indigo-500/30 group-hover:bg-indigo-500/10 transition-all duration-300">
+          <Icon size={18} className="text-slate-400 group-hover:text-indigo-400 transition-colors" />
+        </div>
+        <div>
+          <p className="text-[13px] font-bold text-white">{label}</p>
+          <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">{sub}</p>
+        </div>
+      </motion.div>
+    </SpotlightCard>
+  )
+}
+
+/* ─────────────────────────────────────────────
+   3D Mockup panels
 ───────────────────────────────────────────── */
 function MentorsMockup() {
   const mentors = [
-    { initials: "RS", name: "Raghav Mishra",  field: "NDA / SSB Coach",       rating: 5.0, color: "from-indigo-500 to-violet-600" },
-    { initials: "PS", name: "Priya Sharma",   field: "NEET · AIIMS Delhi",    rating: 4.9, color: "from-rose-500 to-pink-600"     },
-    { initials: "AM", name: "Arjun Mehta",    field: "CUET · DU Admissions",  rating: 4.7, color: "from-amber-500 to-orange-600"  },
+    { initials:"RS", name:"Raghav Mishra", field:"NDA / SSB Coach",      rating:5.0, color:"from-indigo-500 to-violet-600" },
+    { initials:"PS", name:"Priya Sharma",  field:"NEET · AIIMS Delhi",   rating:4.9, color:"from-rose-500 to-pink-600"     },
+    { initials:"AM", name:"Arjun Mehta",   field:"CUET · DU Admissions", rating:4.7, color:"from-amber-500 to-orange-600"  },
   ]
   return (
-    <div className="relative rounded-3xl border border-white/[0.08] bg-white/[0.03] p-6 space-y-3 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-violet-500/5 pointer-events-none" />
-      <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider mb-4">Top Mentors</p>
-      {mentors.map(m => (
-        <div key={m.name} className="flex items-center gap-3 rounded-2xl border border-white/[0.05] bg-white/[0.04] p-3.5">
-          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${m.color} flex items-center justify-center text-xs font-black text-white shrink-0`}>{m.initials}</div>
+    <div className="relative rounded-3xl border border-white/[0.08] bg-white/[0.03] p-6 space-y-3 overflow-hidden group hover:border-purple-500/20 transition-colors duration-500">
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-violet-500/5 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a1a]/60 pointer-events-none" />
+      <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider mb-4 relative z-10">Top Mentors</p>
+      {mentors.map((m, i) => (
+        <motion.div key={m.name}
+          initial={{ opacity:0, x:-30 }} whileInView={{ opacity:1, x:0 }}
+          transition={{ delay: i*0.15, type:"spring", stiffness:100 }}
+          whileHover={{ x:5, scale:1.02 }}
+          className="flex items-center gap-3 rounded-2xl border border-white/[0.05] bg-white/[0.04] p-3.5 hover:bg-white/[0.08] transition-colors relative z-10 cursor-pointer">
+          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${m.color} flex items-center justify-center text-xs font-black text-white shrink-0 shadow-lg`}>
+            {m.initials}
+          </div>
           <div className="flex-1 min-w-0">
             <p className="text-[11px] font-bold text-white truncate">{m.name}</p>
             <p className="text-[9px] text-slate-500 truncate">{m.field}</p>
@@ -236,36 +468,44 @@ function MentorsMockup() {
             <Star size={9} className="text-amber-400 fill-amber-400" />
             <span className="text-[9px] text-amber-400 font-bold">{m.rating}</span>
           </div>
-        </div>
+        </motion.div>
       ))}
-      <button className="w-full rounded-xl bg-indigo-500/15 border border-indigo-500/20 text-indigo-400 text-[10px] font-bold py-2.5 mt-1 hover:bg-indigo-500/20 transition-colors">
-        Book a Free Session →
-      </button>
+      <Link to="/mentors">
+        <motion.div whileHover={{ scale:1.02 }} whileTap={{ scale:0.98 }}
+          className="w-full rounded-xl bg-indigo-500/15 border border-indigo-500/20 text-indigo-400 text-[10px] font-bold py-2.5 mt-1 hover:bg-indigo-500/25 transition-colors relative z-10 text-center cursor-pointer">
+          Book a Free Session →
+        </motion.div>
+      </Link>
     </div>
   )
 }
 
 function CommunityMockup() {
   const posts = [
-    { q: "Is dropping a year for JEE worth it in 2025?", ans: 24, votes: 89, tag: "JEE" },
-    { q: "What's the cutoff for NEET AIIMS Delhi this year?", ans: 11, votes: 62, tag: "NEET" },
-    { q: "Honest review of Allen vs Aakash for NEET prep", ans: 37, votes: 148, tag: "Coaching" },
+    { q:"Is dropping a year for JEE worth it in 2025?",          ans:24, votes:89,  tag:"JEE"      },
+    { q:"What's the cutoff for NEET AIIMS Delhi this year?",     ans:11, votes:62,  tag:"NEET"     },
+    { q:"Honest review of Allen vs Aakash for NEET prep",        ans:37, votes:148, tag:"Coaching" },
   ]
   return (
-    <div className="relative rounded-3xl border border-white/[0.08] bg-white/[0.03] p-6 space-y-3 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-emerald-500/5 pointer-events-none" />
+    <div className="relative rounded-3xl border border-white/[0.08] bg-white/[0.03] p-6 space-y-3 overflow-hidden group hover:border-purple-500/20 transition-colors duration-500">
+      <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-emerald-500/5 pointer-events-none" />
       <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider mb-4">Doubt Forum · Live</p>
-      {posts.map(p => (
-        <div key={p.q} className="rounded-2xl border border-white/[0.05] bg-white/[0.04] p-3.5">
+      {posts.map((p, i) => (
+        <motion.div key={p.q}
+          initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} transition={{ delay: i*0.15 }}
+          whileHover={{ y:-2, scale:1.02 }}
+          className="rounded-2xl border border-white/[0.05] bg-white/[0.04] p-3.5 hover:bg-white/[0.08] transition-all cursor-pointer">
           <div className="flex items-start justify-between gap-2">
             <p className="text-[10px] text-white font-semibold leading-relaxed flex-1">{p.q}</p>
-            <span className="shrink-0 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/15 px-2 py-0.5 text-[8px] font-black uppercase">{p.tag}</span>
+            <span className="shrink-0 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/15 px-2 py-0.5 text-[8px] font-black uppercase">
+              {p.tag}
+            </span>
           </div>
           <div className="flex items-center gap-3 mt-2 text-[9px] text-slate-500">
-            <span className="flex items-center gap-1">▲ {p.votes}</span>
+            <span className="flex items-center gap-1"><TrendingUp size={10} /> {p.votes}</span>
             <span>{p.ans} answers</span>
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
   )
@@ -273,31 +513,33 @@ function CommunityMockup() {
 
 function DiscoverMockup() {
   return (
-    <div className="relative rounded-3xl border border-white/[0.08] bg-white/[0.03] p-6 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 pointer-events-none" />
+    <div className="relative rounded-3xl border border-white/[0.08] bg-white/[0.03] p-6 overflow-hidden group hover:border-purple-500/20 transition-colors duration-500">
+      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-teal-500/5 pointer-events-none" />
       <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider mb-4">Cutoff Predictor</p>
-      {/* Rank input */}
-      <div className="rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-3 mb-3">
+      <motion.div whileHover={{ scale:1.02 }} className="rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-3 mb-4">
         <p className="text-[9px] text-slate-500 mb-0.5">Your JEE Main Rank</p>
-        <p className="text-xl font-black text-white">12,450</p>
-      </div>
-      {/* Results */}
-      <div className="space-y-2">
+        <motion.p initial={{ opacity:0, scale:0.5 }} whileInView={{ opacity:1, scale:1 }}
+          transition={{ type:"spring", stiffness:200 }} className="text-2xl font-black text-white">12,450</motion.p>
+      </motion.div>
+      <div className="space-y-3">
         {[
-          { college: "NIT Trichy — CSE",     chance: 95, color: "emerald" },
-          { college: "VJTI Mumbai — IT",     chance: 72, color: "amber"   },
-          { college: "COEP Pune — ENTC",     chance: 55, color: "orange"  },
-          { college: "BITS Pilani — EEE",    chance: 28, color: "rose"    },
-        ].map(r => (
-          <div key={r.college} className="flex items-center gap-3">
+          { college:"NIT Trichy — CSE",  chance:95, color:"emerald" },
+          { college:"VJTI Mumbai — IT",  chance:72, color:"amber"   },
+          { college:"COEP Pune — ENTC",  chance:55, color:"orange"  },
+          { college:"BITS Pilani — EEE", chance:28, color:"rose"    },
+        ].map((r, i) => (
+          <motion.div key={r.college} initial={{ opacity:0, x:-20 }} whileInView={{ opacity:1, x:0 }}
+            transition={{ delay: i*0.1 }} className="flex items-center gap-3">
             <div className="flex-1">
               <p className="text-[9px] text-slate-300 font-medium truncate">{r.college}</p>
-              <div className="mt-1 h-1 rounded-full bg-white/[0.05]">
-                <div className={`h-full rounded-full bg-${r.color}-500`} style={{ width: `${r.chance}%` }} />
+              <div className="mt-1 h-1.5 rounded-full bg-white/[0.05] overflow-hidden">
+                <motion.div initial={{ width:0 }} whileInView={{ width:`${r.chance}%` }}
+                  transition={{ duration:1, delay: i*0.2, ease: PHANTOM_EASE.smooth }}
+                  className={`h-full rounded-full bg-${r.color}-500`} />
               </div>
             </div>
             <span className={`text-[9px] font-black text-${r.color}-400 w-8 text-right`}>{r.chance}%</span>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
@@ -305,7 +547,7 @@ function DiscoverMockup() {
 }
 
 /* ─────────────────────────────────────────────
-   Main Page
+   Main LandingPage
 ───────────────────────────────────────────── */
 export default function LandingPage() {
   const { user, loading } = useAuth()
@@ -313,7 +555,11 @@ export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false)
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll()
-  const heroY = useTransform(scrollYProgress, [0, 0.3], [0, -60])
+
+  const smoothProgress = useSpring(scrollYProgress, { stiffness:100, damping:30, restDelta:0.001 })
+  const heroY       = useTransform(smoothProgress, [0,0.3], [0,-100])
+  const heroOpacity = useTransform(smoothProgress, [0,0.2], [1,0])
+  const heroScale   = useTransform(smoothProgress, [0,0.3], [1,0.95])
 
   useEffect(() => {
     if (!loading && user) navigate("/dashboard", { replace: true })
@@ -327,228 +573,272 @@ export default function LandingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#05080f] flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+      <div className="min-h-screen bg-[#0a0a1a] flex items-center justify-center">
+        <motion.div animate={{ rotate:360 }} transition={{ duration:1, repeat:Infinity, ease:"linear" }}
+          className="w-10 h-10 rounded-full border-2 border-indigo-500 border-t-transparent" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#05080f] text-white overflow-x-hidden" style={{ fontFamily: "'Manrope', 'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#0a0a1a] text-white overflow-x-hidden selection:bg-indigo-500/30 selection:text-indigo-200"
+      style={{ fontFamily:"'Inter','SF Pro Display',system-ui,sans-serif" }}>
+      <EtherealBackground />
+      <ScrollProgress />
       <Navbar scrolled={scrolled} />
 
-      {/* ═══════════════════════════════════════
+      {/* ══════════════════════════════════════
           HERO
       ══════════════════════════════════════ */}
       <section ref={heroRef} className="relative min-h-screen flex flex-col items-center justify-center text-center px-5 pt-24 pb-20 overflow-hidden">
-        {/* Background orbs */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-indigo-600/20 blur-[140px]" />
-          <div className="absolute top-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-violet-500/15 blur-[120px]" />
-          <div className="absolute bottom-[10%] left-[10%] w-[500px] h-[500px] rounded-full bg-emerald-500/10 blur-[140px]" />
-          {/* Grid */}
-          <div className="absolute inset-0 opacity-[0.03]"
-            style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.5) 1px,transparent 1px)", backgroundSize: "60px 60px" }} />
-        </div>
+        <motion.div style={{ y:heroY, opacity:heroOpacity, scale:heroScale }} className="relative z-10 max-w-5xl mx-auto">
+          {/* Mascot */}
+          <motion.div initial={{ opacity:0, y:30 }} animate={{ opacity:1, y:0 }}
+            transition={{ duration:0.8, ease: PHANTOM_EASE.smooth }} className="mb-8 flex justify-center">
+            <FloatingMascot />
+          </motion.div>
 
-        <motion.div style={{ y: heroY }} className="relative z-10 max-w-5xl mx-auto">
           {/* Badge */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 rounded-full border border-indigo-500/25 bg-indigo-500/8 px-4 py-1.5 text-[11px] font-bold text-indigo-300 mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+          <motion.div initial={{ opacity:0, y:20, scale:0.9 }} animate={{ opacity:1, y:0, scale:1 }}
+            transition={{ duration:0.6, delay:0.2 }}
+            className="inline-flex items-center gap-2 rounded-full border border-purple-500/25 bg-purple-500/[0.08] px-4 py-1.5 text-[11px] font-bold text-purple-300 mb-8 backdrop-blur-sm">
+            <motion.span animate={{ scale:[1,1.3,1] }} transition={{ duration:2, repeat:Infinity }}
+              className="w-1.5 h-1.5 rounded-full bg-purple-400" />
             Trusted by 20,000+ students across India
           </motion.div>
 
           {/* Headline */}
-          <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-[82px] font-black leading-[1.02] tracking-[-0.04em] mb-6">
-            <span className="text-white">The education app</span>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[84px] font-black leading-[1.02] tracking-[-0.04em] mb-6">
+            <RevealText delay={0.3}>The education app</RevealText>
             <br />
-            <span className="bg-gradient-to-r from-indigo-400 via-violet-300 to-emerald-400 bg-clip-text text-transparent">
-              that'll take you places
+            <span className="bg-gradient-to-r from-indigo-400 via-violet-300 to-purple-400 bg-clip-text text-transparent">
+              <RevealText delay={0.6}>that'll take you places</RevealText>
             </span>
-          </motion.h1>
+          </h1>
 
-          {/* Subheadline */}
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }}
+          {/* Sub */}
+          <motion.p initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:0.9 }}
             className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
             Your home for JEE, NEET & CUET prep — cutoff predictions, 1:1 mentor sessions with IIT & AIIMS toppers, scholarship discovery, and a community that actually helps.
           </motion.p>
 
           {/* CTAs */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.38 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link to="/signup"
-              className="inline-flex items-center gap-2 rounded-full bg-white text-[#05080f] font-black text-[14px] px-7 py-3.5 hover:scale-[1.03] transition-transform shadow-2xl shadow-white/10">
-              Get Started Free <ArrowRight size={15} />
+          <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:1.1 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link to="/signup">
+              <MagneticButton className="inline-flex items-center gap-2 rounded-full bg-white text-[#0a0a1a] font-black text-[14px] px-8 py-4 shadow-2xl shadow-white/10 hover:shadow-white/20 transition-shadow">
+                Get Started Free <ArrowRight size={15} />
+              </MagneticButton>
             </Link>
-            <Link to="/discover"
-              className="inline-flex items-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.04] text-white font-semibold text-[14px] px-7 py-3.5 hover:bg-white/[0.08] transition-colors backdrop-blur-sm">
-              Explore Features <ChevronDown size={14} />
-            </Link>
+            <motion.div whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }}>
+              <Link to="/discover"
+                className="inline-flex items-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.04] text-white font-semibold text-[14px] px-8 py-4 hover:bg-white/[0.08] transition-colors backdrop-blur-sm">
+                Explore Features
+                <motion.span animate={{ y:[0,3,0] }} transition={{ duration:1.5, repeat:Infinity }}>
+                  <ChevronDown size={14} />
+                </motion.span>
+              </Link>
+            </motion.div>
           </motion.div>
         </motion.div>
 
         {/* Floating preview cards */}
-        <div className="relative z-10 mt-16 w-full max-w-5xl mx-auto px-5 hidden md:grid grid-cols-3 gap-5">
+        <div className="relative z-10 mt-20 w-full max-w-5xl mx-auto px-5 hidden md:grid grid-cols-3 gap-6">
           {[
-            { component: <MentorPreviewCard />,   delay: 0.5, y: [0, -12, 0], duration: 3.5 },
-            { component: <CutoffPreviewCard />,   delay: 0.65, y: [0, -8, 0], duration: 4   },
-            { component: <PlannerPreviewCard />,  delay: 0.8, y: [0, -14, 0], duration: 3   },
-          ].map(({ component, delay, y, duration }, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay }}
-              className="flex justify-center">
-              <motion.div animate={{ y }} transition={{ duration, repeat: Infinity, ease: "easeInOut" }}>
+            { component:<MentorPreviewCard />,  delay:1.3, y:[0,-15,0], duration:4,   rotate:-2 },
+            { component:<CutoffPreviewCard />,  delay:1.5, y:[0,-10,0], duration:5,   rotate:0  },
+            { component:<PlannerPreviewCard />, delay:1.7, y:[0,-18,0], duration:3.5, rotate:2  },
+          ].map(({ component, delay, y, duration, rotate }, i) => (
+            <motion.div key={i} initial={{ opacity:0, y:50 }} animate={{ opacity:1, y:0 }}
+              transition={{ duration:0.8, delay }} className="flex justify-center">
+              <motion.div animate={{ y, rotate }} transition={{ duration, repeat:Infinity, ease:"easeInOut" }}>
                 {component}
               </motion.div>
             </motion.div>
           ))}
         </div>
+
+        {/* Scroll indicator */}
+        <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:2 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+          <span className="text-[10px] text-slate-500 uppercase tracking-widest">Scroll</span>
+          <motion.div animate={{ y:[0,8,0] }} transition={{ duration:1.5, repeat:Infinity }}>
+            <MousePointer2 size={16} className="text-slate-500 rotate-180" />
+          </motion.div>
+        </motion.div>
       </section>
 
-      {/* ═══════════════════════════════════════
+      {/* ══════════════════════════════════════
           STATS BAR
       ══════════════════════════════════════ */}
-      <section className="relative border-y border-white/[0.05] bg-white/[0.02] backdrop-blur-sm">
-        <div className="max-w-5xl mx-auto px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <section className="relative border-y border-white/[0.05] bg-white/[0.02] backdrop-blur-sm overflow-hidden">
+        <div className="max-w-5xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
-            { value: "20,000+", label: "Students helped" },
-            { value: "500+",    label: "Colleges listed" },
-            { value: "50+",     label: "Verified mentors" },
-            { value: "Free",    label: "Always free to start" },
+            { value:"20,000+", label:"Students helped"      },
+            { value:"500+",    label:"Colleges listed"      },
+            { value:"50+",     label:"Verified mentors"     },
+            { value:"Free",    label:"Always free to start" },
           ].map((s, i) => (
-            <motion.div key={s.label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-              <p className="text-2xl md:text-3xl font-black text-white mb-1">{s.value}</p>
+            <motion.div key={s.label} initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+              transition={{ delay: i*0.1, type:"spring", stiffness:100 }} whileHover={{ scale:1.05 }} className="group cursor-default">
+              <motion.p initial={{ scale:0.5 }} whileInView={{ scale:1 }} viewport={{ once:true }}
+                transition={{ delay: i*0.1+0.2, type:"spring", stiffness:200 }}
+                className="text-3xl md:text-4xl font-black text-white mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-violet-400 transition-all duration-300">
+                {s.value}
+              </motion.p>
               <p className="text-[11px] text-slate-500 font-medium uppercase tracking-wider">{s.label}</p>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
+      {/* ══════════════════════════════════════
           DISCOVER SECTION
       ══════════════════════════════════════ */}
-      <section className="relative py-24 px-5 overflow-hidden">
-        <div className="pointer-events-none absolute top-1/2 left-0 w-[500px] h-[500px] -translate-y-1/2 rounded-full bg-indigo-600/10 blur-[130px]" />
+      <section className="relative py-28 px-5 overflow-hidden">
+        <div className="pointer-events-none absolute top-1/2 left-0 w-[600px] h-[600px] -translate-y-1/2 rounded-full bg-indigo-600/[0.08] blur-[150px]" />
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left: text */}
-            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
-              <Label color="indigo"><Compass size={10} /> Discover</Label>
-              <h2 className="mt-5 text-4xl md:text-5xl font-black tracking-tight leading-[1.05] text-white">
-                Find your college.<br />
-                <span className="bg-gradient-to-r from-indigo-400 to-violet-300 bg-clip-text text-transparent">Predict your cutoff.</span>
+            <motion.div initial={{ opacity:0, x:-50 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }}
+              transition={{ duration:0.8, ease: PHANTOM_EASE.smooth }}>
+              <Label color="purple"><Compass size={10} /> Discover</Label>
+              <h2 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05]">
+                <RevealText>Find your college.</RevealText><br />
+                <span className="bg-gradient-to-r from-indigo-400 to-violet-300 bg-clip-text text-transparent">
+                  <RevealText delay={0.3}>Predict your cutoff.</RevealText>
+                </span>
               </h2>
-              <p className="mt-5 text-slate-400 text-base leading-relaxed max-w-md">
+              <motion.p initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={{ once:true }}
+                transition={{ delay:0.5 }} className="mt-6 text-slate-400 text-base leading-relaxed max-w-md">
                 Browse 500+ colleges, predict admission chances with real cutoff data, compare side-by-side, and find scholarships you're actually eligible for.
-              </p>
+              </motion.p>
               <div className="mt-8 grid grid-cols-2 gap-3">
-                <FeatureChip icon={Building2}   label="College Directory"     sub="500+ colleges with full data" />
-                <FeatureChip icon={Target}       label="Cutoff Predictor"     sub="Real rank-based predictions" />
-                <FeatureChip icon={TrendingUp}   label="Rank Reality Check"   sub="Know exactly where you stand" />
-                <FeatureChip icon={GraduationCap}label="Scholarship Finder"   sub="Merit, need & category based" />
+                <FeatureChip icon={Building2}    label="College Directory"   sub="500+ colleges with full data"   />
+                <FeatureChip icon={Target}        label="Cutoff Predictor"   sub="Real rank-based predictions"    />
+                <FeatureChip icon={TrendingUp}    label="Rank Reality Check" sub="Know exactly where you stand"   />
+                <FeatureChip icon={GraduationCap} label="Scholarship Finder" sub="Merit, need & category based"   />
               </div>
-              <Link to="/discover" className="mt-8 inline-flex items-center gap-2 text-indigo-400 font-bold text-sm hover:text-indigo-300 transition-colors">
-                Explore Discover <ArrowRight size={14} />
-              </Link>
+              <motion.div initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={{ once:true }} className="mt-8">
+                <Link to="/discover" className="inline-flex items-center gap-2 text-indigo-400 font-bold text-sm hover:text-indigo-300 transition-colors group">
+                  Explore Discover <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
             </motion.div>
-
-            {/* Right: mockup */}
-            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.15 }}>
-              <DiscoverMockup />
-            </motion.div>
+            <ParallaxCard depth={0.5}><DiscoverMockup /></ParallaxCard>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
+      {/* ══════════════════════════════════════
           MENTORS SECTION
       ══════════════════════════════════════ */}
-      <section className="relative py-24 px-5 overflow-hidden">
-        <div className="pointer-events-none absolute top-1/2 right-0 w-[500px] h-[500px] -translate-y-1/2 rounded-full bg-violet-600/10 blur-[130px]" />
+      <section className="relative py-28 px-5 overflow-hidden">
+        <div className="pointer-events-none absolute top-1/2 right-0 w-[600px] h-[600px] -translate-y-1/2 rounded-full bg-violet-600/[0.08] blur-[150px]" />
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left: mockup */}
-            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="lg:order-1 order-2">
-              <MentorsMockup />
-            </motion.div>
-
-            {/* Right: text */}
-            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.15 }} className="lg:order-2 order-1">
+            <ParallaxCard depth={0.5} className="lg:order-1 order-2"><MentorsMockup /></ParallaxCard>
+            <motion.div initial={{ opacity:0, x:50 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }}
+              transition={{ duration:0.8, ease: PHANTOM_EASE.smooth }} className="lg:order-2 order-1">
               <Label color="violet"><Users size={10} /> Mentors</Label>
-              <h2 className="mt-5 text-4xl md:text-5xl font-black tracking-tight leading-[1.05] text-white">
-                Your Bhaiya & Didi<br />
-                <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">from IIT & AIIMS.</span>
+              <h2 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05]">
+                <RevealText>Your Bhaiya &amp; Didi</RevealText><br />
+                <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
+                  <RevealText delay={0.3}>from IIT &amp; AIIMS.</RevealText>
+                </span>
               </h2>
-              <p className="mt-5 text-slate-400 text-base leading-relaxed max-w-md">
+              <motion.p initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={{ once:true }}
+                transition={{ delay:0.5 }} className="mt-6 text-slate-400 text-base leading-relaxed max-w-md">
                 Book 1:1 video sessions with verified seniors who've been exactly where you are. Real guidance, real strategies — not generic advice.
-              </p>
+              </motion.p>
               <ul className="mt-8 space-y-3">
                 {[
                   "Verified IIT, AIIMS, BITS & NDA alumni only",
                   "First 10-minute session always free",
                   "Book in seconds, meet via Google Meet",
                   "NDA, NEET, JEE, CUET specialists available",
-                ].map(pt => (
-                  <li key={pt} className="flex items-center gap-3 text-[13px] text-slate-300">
-                    <CheckCircle2 size={15} className="text-violet-400 shrink-0" />
+                ].map((pt, i) => (
+                  <motion.li key={pt} initial={{ opacity:0, x:20 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }}
+                    transition={{ delay: i*0.1 }} className="flex items-center gap-3 text-[13px] text-slate-300">
+                    <motion.div initial={{ scale:0 }} whileInView={{ scale:1 }} viewport={{ once:true }}
+                      transition={{ delay: i*0.1+0.2, type:"spring", stiffness:300 }}>
+                      <CheckCircle2 size={15} className="text-violet-400 shrink-0" />
+                    </motion.div>
                     {pt}
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
-              <Link to="/mentors" className="mt-8 inline-flex items-center gap-2 text-violet-400 font-bold text-sm hover:text-violet-300 transition-colors">
-                Find Your Mentor <ArrowRight size={14} />
-              </Link>
+              <motion.div initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={{ once:true }} className="mt-8">
+                <Link to="/mentors" className="inline-flex items-center gap-2 text-violet-400 font-bold text-sm hover:text-violet-300 transition-colors group">
+                  Browse all mentors <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          PREPARE SECTION
+      {/* ══════════════════════════════════════
+          PREPARE SECTION — 6-card grid
       ══════════════════════════════════════ */}
-      <section className="relative py-24 px-5 overflow-hidden">
-        <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-emerald-500/6 blur-[160px]" />
+      <section className="relative py-28 px-5 overflow-hidden">
+        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-emerald-600/[0.06] blur-[180px]" />
         <div className="max-w-6xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
+          <div className="text-center mb-16">
             <Label color="emerald"><BookOpen size={10} /> Prepare</Label>
-            <h2 className="mt-5 text-4xl md:text-5xl font-black tracking-tight text-white">
-              Everything you need to{" "}
-              <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">crack your exam.</span>
+            <h2 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05]">
+              <RevealText>Everything you need</RevealText><br />
+              <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">
+                <RevealText delay={0.2}>to crack the exam.</RevealText>
+              </span>
             </h2>
-            <p className="mt-4 text-slate-400 max-w-xl mx-auto text-base leading-relaxed">
-              From study planners and bridge courses to document checklists and exam resources — all in one place, completely free.
-            </p>
-          </motion.div>
+            <motion.p initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={{ once:true }}
+              transition={{ delay:0.4 }} className="mt-4 text-slate-400 text-base max-w-xl mx-auto leading-relaxed">
+              From daily study planning to bridge courses and document checklists — all the tools serious aspirants need, in one place.
+            </motion.p>
+          </div>
 
-          {/* Feature grid */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { icon: Target,       label: "Study Planner",       sub: "Set goals, log sessions, track progress with cloud sync", color: "indigo",  link: "/planner"   },
-              { icon: BookOpen,     label: "Bridge Courses",       sub: "Free courses to fill gaps before your first college year", color: "emerald", link: "/bridge"    },
-              { icon: GraduationCap,label: "Resource Hub",        sub: "Curated notes, PYQs, and educator channels by subject",   color: "violet",  link: "/resources" },
-              { icon: Shield,       label: "Document Checklist",  sub: "Never miss a document — smart checklist for admissions",  color: "amber",   link: "/documents" },
-              { icon: TrendingUp,   label: "Plan B Analyzer",     sub: "Smart backup college suggestions based on your profile",  color: "rose",    link: "/plan-b"    },
-              { icon: Zap,          label: "AI Skill Matcher",    sub: "Find out which stream and career actually fits you",      color: "teal",    link: "/skill-matcher" },
-            ].map((f, i) => {
-              const c = {
-                indigo:  { bg: "from-indigo-500/10 to-transparent",  border: "border-indigo-500/15",  icon: "bg-indigo-500/10 text-indigo-400",  dot: "bg-indigo-400" },
-                emerald: { bg: "from-emerald-500/10 to-transparent", border: "border-emerald-500/15", icon: "bg-emerald-500/10 text-emerald-400", dot: "bg-emerald-400" },
-                violet:  { bg: "from-violet-500/10 to-transparent",  border: "border-violet-500/15",  icon: "bg-violet-500/10 text-violet-400",  dot: "bg-violet-400" },
-                amber:   { bg: "from-amber-500/10 to-transparent",   border: "border-amber-500/15",   icon: "bg-amber-500/10 text-amber-400",   dot: "bg-amber-400" },
-                rose:    { bg: "from-rose-500/10 to-transparent",    border: "border-rose-500/15",    icon: "bg-rose-500/10 text-rose-400",    dot: "bg-rose-400" },
-                teal:    { bg: "from-teal-500/10 to-transparent",    border: "border-teal-500/15",    icon: "bg-teal-500/10 text-teal-400",    dot: "bg-teal-400" },
-              }[f.color]
+              { icon:Calendar,       label:"Study Planner",        sub:"Daily goals, weekly targets, cloud-synced progress",          color:"indigo",  to:"/planner"    },
+              { icon:Layers,         label:"Bridge Courses",        sub:"Fill knowledge gaps before college starts",                   color:"emerald", to:"/bridge"     },
+              { icon:FileText,       label:"Document Checklist",    sub:"Never miss a form, certificate or deadline again",            color:"amber",   to:"/documents"  },
+              { icon:Brain,          label:"Doubt Forum",           sub:"Anonymous Q&A — real answers from students & mentors",        color:"violet",  to:"/forum"      },
+              { icon:Target,         label:"Plan B Analyser",       sub:"Backup strategy if things don't go as planned",              color:"rose",    to:"/plan-b"     },
+              { icon:Rocket,         label:"Skill Matcher",         sub:"Discover career paths that match your strengths",             color:"purple",  to:"/skill-matcher"},
+            ].map((c, i) => {
+              const Icon = c.icon
+              const colorMap = {
+                indigo:  { bg:"rgba(99,102,241,0.10)",   text:"#6366f1", border:"rgba(99,102,241,0.20)"   },
+                emerald: { bg:"rgba(16,185,129,0.10)",   text:"#10b981", border:"rgba(16,185,129,0.20)"   },
+                amber:   { bg:"rgba(245,158,11,0.10)",   text:"#f59e0b", border:"rgba(245,158,11,0.20)"   },
+                violet:  { bg:"rgba(139,92,246,0.10)",   text:"#8b5cf6", border:"rgba(139,92,246,0.20)"   },
+                rose:    { bg:"rgba(244,63,94,0.10)",    text:"#f43f5e", border:"rgba(244,63,94,0.20)"    },
+                purple:  { bg:"rgba(168,85,247,0.10)",   text:"#a855f7", border:"rgba(168,85,247,0.20)"   },
+              }
+              const col = colorMap[c.color]
               return (
-                <motion.div key={f.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.07 }}>
-                  <Link to={f.link} className={`group block rounded-2xl border ${c.border} bg-gradient-to-br ${c.bg} p-5 hover:scale-[1.02] transition-transform`}>
-                    <div className={`w-10 h-10 rounded-xl ${c.icon} flex items-center justify-center mb-4`}>
-                      <f.icon size={18} />
-                    </div>
-                    <p className="text-[13px] font-bold text-white mb-1.5">{f.label}</p>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">{f.sub}</p>
-                    <div className={`mt-4 w-5 h-0.5 rounded-full ${c.dot} group-hover:w-8 transition-all`} />
-                  </Link>
+                <motion.div key={c.label}
+                  initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+                  transition={{ delay: i*0.08, type:"spring", stiffness:100 }}>
+                  <SpotlightCard>
+                    <Link to={c.to}>
+                      <motion.div whileHover={{ y:-3 }} transition={{ type:"spring", stiffness:400, damping:25 }}
+                        className="group flex flex-col gap-4 rounded-2xl border bg-white/[0.03] p-5 hover:bg-white/[0.06] transition-colors h-full cursor-pointer"
+                        style={{ borderColor:"rgba(255,255,255,0.06)" }}>
+                        <div className="flex items-center justify-between">
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: col.bg }}>
+                            <Icon size={18} style={{ color: col.text }} />
+                          </div>
+                          <ArrowRight size={13} className="opacity-0 group-hover:opacity-60 group-hover:translate-x-0.5 transition-all" style={{ color: col.text }} />
+                        </div>
+                        <div>
+                          <p className="text-[14px] font-bold text-white">{c.label}</p>
+                          <p className="mt-1 text-[12px] text-slate-500 leading-relaxed">{c.sub}</p>
+                        </div>
+                        <div className="mt-auto h-[2px] w-0 group-hover:w-full rounded-full transition-all duration-500" style={{ background: col.text }} />
+                      </motion.div>
+                    </Link>
+                  </SpotlightCard>
                 </motion.div>
               )
             })}
@@ -556,173 +846,290 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
+      {/* ══════════════════════════════════════
           COMMUNITY SECTION
       ══════════════════════════════════════ */}
-      <section className="relative py-24 px-5 overflow-hidden">
-        <div className="pointer-events-none absolute top-1/2 right-0 w-[500px] h-[500px] -translate-y-1/2 rounded-full bg-violet-500/8 blur-[130px]" />
+      <section className="relative py-28 px-5 overflow-hidden">
+        <div className="pointer-events-none absolute top-1/2 left-0 w-[500px] h-[500px] -translate-y-1/2 rounded-full bg-violet-600/[0.07] blur-[160px]" />
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left: text */}
-            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
-              <Label color="violet"><MessageSquare size={10} /> Community</Label>
-              <h2 className="mt-5 text-4xl md:text-5xl font-black tracking-tight leading-[1.05] text-white">
-                A community that<br />
-                <span className="bg-gradient-to-r from-violet-400 to-indigo-300 bg-clip-text text-transparent">actually helps.</span>
+            <motion.div initial={{ opacity:0, x:-50 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }}
+              transition={{ duration:0.8, ease: PHANTOM_EASE.smooth }}>
+              <Label color="amber"><MessageSquare size={10} /> Community</Label>
+              <h2 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05]">
+                <RevealText>No judgment.</RevealText><br />
+                <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
+                  <RevealText delay={0.3}>Just real answers.</RevealText>
+                </span>
               </h2>
-              <p className="mt-5 text-slate-400 text-base leading-relaxed max-w-md">
-                Ask doubts anonymously, get answers from real seniors, connect with future classmates, and check in on your mental wellness — because exams are stressful, and that's okay.
-              </p>
+              <motion.p initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={{ once:true }}
+                transition={{ delay:0.5 }} className="mt-6 text-slate-400 text-base leading-relaxed max-w-md">
+                Ask doubts anonymously, connect with students preparing for the same exam, join pre-freshers groups and beat the stress together.
+              </motion.p>
               <div className="mt-8 grid grid-cols-2 gap-3">
-                <FeatureChip icon={MessageSquare} label="Doubt Forum"         sub="Anonymous · no judgment" />
-                <FeatureChip icon={Shield}         label="Defence Corner"      sub="NDA, CDS & SSB community" />
-                <FeatureChip icon={Users}          label="Pre-Freshers"        sub="Meet your future batchmates" />
-                <FeatureChip icon={Zap}            label="Wellness Check-in"  sub="Mental health matters too" />
+                <FeatureChip icon={MessageSquare} label="Doubt Forum"       sub="Anonymous, real-time Q&A"           />
+                <FeatureChip icon={Heart}          label="Wellness Check-in" sub="Stress tracking & mental wellness"  />
+                <FeatureChip icon={Users}          label="Pre-Freshers"      sub="Connect before your first day"      />
+                <FeatureChip icon={Shield}         label="Defence Prep"      sub="NDA, CDS & SSB specialist group"    />
               </div>
-              <Link to="/community" className="mt-8 inline-flex items-center gap-2 text-violet-400 font-bold text-sm hover:text-violet-300 transition-colors">
-                Join the Community <ArrowRight size={14} />
-              </Link>
+              <motion.div initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={{ once:true }} className="mt-8">
+                <Link to="/community" className="inline-flex items-center gap-2 text-amber-400 font-bold text-sm hover:text-amber-300 transition-colors group">
+                  Join the community <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
             </motion.div>
-
-            {/* Right: mockup */}
-            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.15 }}>
-              <CommunityMockup />
-            </motion.div>
+            <ParallaxCard depth={0.5}><CommunityMockup /></ParallaxCard>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          TRUST SECTION
+      {/* ══════════════════════════════════════
+          DEFENCE SPECIAL SECTION
       ══════════════════════════════════════ */}
-      <section className="relative py-20 px-5 overflow-hidden">
-        <div className="max-w-4xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            className="rounded-3xl border border-white/[0.07] bg-white/[0.03] p-10 md:p-14 text-center relative overflow-hidden">
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-indigo-500/8 via-transparent to-emerald-500/8" />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#05080f]/60" />
+      <section className="relative py-20 px-5">
+        <div className="max-w-5xl mx-auto">
+          <motion.div initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+            className="relative rounded-3xl overflow-hidden border border-rose-500/20 p-10 md:p-14 text-center"
+            style={{ background:"linear-gradient(135deg,rgba(239,68,68,0.08),rgba(251,113,133,0.04),rgba(139,92,246,0.06))" }}>
+            <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 via-transparent to-violet-500/5 pointer-events-none" />
             <div className="relative z-10">
-              <p className="text-[11px] text-slate-500 font-black uppercase tracking-widest mb-6">Why students choose Takshak</p>
-              <div className="grid sm:grid-cols-3 gap-8 mb-10">
-                {[
-                  { icon: Shield, title: "No spam, ever",          sub: "We never sell your data or flood your inbox. Your information stays yours." },
-                  { icon: CheckCircle2, title: "Verified mentors", sub: "Every mentor is verified with college ID before they can take sessions." },
-                  { icon: Zap,    title: "Free to start",          sub: "Core features are always free. No credit card, no trial — just sign up." },
-                ].map(t => (
-                  <div key={t.title} className="text-center">
-                    <div className="inline-flex items-center justify-center w-11 h-11 rounded-2xl border border-white/[0.08] bg-white/[0.04] mb-4">
-                      <t.icon size={20} className="text-indigo-400" />
-                    </div>
-                    <p className="text-[13px] font-bold text-white mb-2">{t.title}</p>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">{t.sub}</p>
-                  </div>
-                ))}
-              </div>
+              <Label color="rose"><Shield size={10} /> Defence</Label>
+              <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl font-black tracking-tight leading-[1.05]">
+                <RevealText>NDA. CDS. SSB.</RevealText><br />
+                <span className="bg-gradient-to-r from-rose-400 to-orange-400 bg-clip-text text-transparent">
+                  <RevealText delay={0.2}>First session free — always.</RevealText>
+                </span>
+              </h2>
+              <motion.p initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={{ once:true }}
+                transition={{ delay:0.4 }} className="mt-4 text-slate-400 text-base max-w-lg mx-auto leading-relaxed">
+                Verified ex-servicemen mentors help you prepare for every stage — written, physical and SSB interview — with personalised guidance.
+              </motion.p>
+              <motion.div initial={{ opacity:0, y:10 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+                transition={{ delay:0.6 }} className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link to="/defence">
+                  <motion.div whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }}
+                    className="inline-flex items-center gap-2 rounded-full bg-rose-500 text-white font-black text-sm px-7 py-3.5 shadow-lg shadow-rose-500/30 hover:bg-rose-400 transition-colors">
+                    <Sword size={15} /> Explore Defence Prep
+                  </motion.div>
+                </Link>
+                <Link to="/mentors" className="text-sm text-slate-400 hover:text-white transition-colors font-medium">
+                  Browse defence mentors →
+                </Link>
+              </motion.div>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          FINAL CTA
+      {/* ══════════════════════════════════════
+          TESTIMONIALS
       ══════════════════════════════════════ */}
-      <section className="relative py-28 px-5 text-center overflow-hidden">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-indigo-600/15 blur-[150px]" />
-        </div>
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative z-10 max-w-3xl mx-auto">
-          <h2 className="text-5xl md:text-6xl font-black tracking-tight text-white leading-[1.05] mb-6">
-            Start your journey<br />
-            <span className="bg-gradient-to-r from-indigo-400 via-violet-300 to-emerald-400 bg-clip-text text-transparent">
-              today. It's free.
-            </span>
-          </h2>
-          <p className="text-slate-400 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-            Join 20,000+ students who are using Takshak to get into the colleges they deserve.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/signup"
-              className="inline-flex items-center gap-2 rounded-full bg-white text-[#05080f] font-black text-base px-8 py-4 hover:scale-[1.03] transition-transform shadow-2xl shadow-white/10">
-              Create Free Account <ArrowRight size={16} />
-            </Link>
-            <Link to="/mentors"
-              className="inline-flex items-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.04] text-white font-semibold text-base px-8 py-4 hover:bg-white/[0.08] transition-colors">
-              Browse Mentors
-            </Link>
+      <section className="relative py-28 px-5 overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <Label color="indigo"><Star size={10} /> Student Stories</Label>
+            <h2 className="mt-6 text-4xl md:text-5xl font-black tracking-tight">
+              <RevealText>Real students.</RevealText>{" "}
+              <span className="bg-gradient-to-r from-indigo-400 to-violet-300 bg-clip-text text-transparent">
+                <RevealText delay={0.2}>Real results.</RevealText>
+              </span>
+            </h2>
           </div>
-        </motion.div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { name:"Ananya Sharma",   exam:"NEET 2025",    score:"AIR 1,842",   text:"The mentor sessions changed everything. My AIIMS mentor showed me exactly where I was losing marks in Zoology. Booked within 3 days of joining TAKSHAK.",  color:"emerald" },
+              { name:"Rohan Patil",     exam:"JEE Advanced", score:"AIR 3,210",   text:"The cutoff predictor was scary accurate. It told me I had 87% chance at NIT Trichy CSE — and I got exactly that. Stopped guessing, started targeting.",       color:"indigo"  },
+              { name:"Priya Nambiar",   exam:"NDA 1 2025",   score:"Selected",    text:"First session with my NDA mentor was free — he gave me a 90-day SSB strategy in that one call. I'd never have figured that out from YouTube videos.",          color:"rose"    },
+              { name:"Kartik Mehta",    exam:"CUET 2025",    score:"DU Economics",text:"The application tracker kept me sane during admission season. I was managing 12 colleges simultaneously and never missed a single deadline.",                  color:"amber"   },
+              { name:"Simran Kaur",     exam:"CAT 2025",     score:"99.2 %ile",   text:"Used the study planner for 6 months. The streak tracking and weekly review made me consistent in a way no coaching institute ever did.",                        color:"violet"  },
+              { name:"Aditya Verma",    exam:"CLAT 2025",    score:"NLSIU Seat",  text:"Scholarship finder helped me get a 60% fee waiver I didn't even know I was eligible for. That one feature paid for itself 10× over.",                          color:"teal"    },
+            ].map((t, i) => {
+              const colorMap = { emerald:"#10b981", indigo:"#6366f1", rose:"#f43f5e", amber:"#f59e0b", violet:"#8b5cf6", teal:"#14b8a6" }
+              return (
+                <motion.div key={t.name} initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+                  transition={{ delay: i*0.1, type:"spring", stiffness:100 }}>
+                  <SpotlightCard>
+                    <motion.div whileHover={{ y:-3 }} transition={{ type:"spring", stiffness:400, damping:25 }}
+                      className="flex flex-col gap-4 rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5 hover:bg-white/[0.05] transition-colors h-full">
+                      <div className="flex items-center gap-1">
+                        {[1,2,3,4,5].map(s => <Star key={s} size={11} className="text-amber-400 fill-amber-400" />)}
+                      </div>
+                      <p className="text-[13px] text-slate-300 leading-relaxed flex-1">"{t.text}"</p>
+                      <div className="flex items-center gap-3 pt-3 border-t border-white/[0.06]">
+                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-black text-white shrink-0"
+                          style={{ background:`linear-gradient(135deg, ${colorMap[t.color]}40, ${colorMap[t.color]}20)`, border:`1px solid ${colorMap[t.color]}30` }}>
+                          {t.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="text-[12px] font-bold text-white">{t.name}</p>
+                          <p className="text-[10px] text-slate-500">{t.exam} · {t.score}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </SpotlightCard>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
       </section>
 
-      {/* ═══════════════════════════════════════
+      {/* ══════════════════════════════════════
+          FINAL CTA
+      ══════════════════════════════════════ */}
+      <section className="relative py-28 px-5 overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-indigo-950/20 to-transparent" />
+        <div className="max-w-3xl mx-auto text-center relative z-10">
+          <motion.div initial={{ opacity:0, scale:0.9 }} whileInView={{ opacity:1, scale:1 }} viewport={{ once:true }}
+            transition={{ duration:0.6, type:"spring", stiffness:100 }}>
+            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-indigo-500/40">
+              <Sparkles size={36} className="text-white" />
+            </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-[-0.04em] leading-[1.05] mb-6">
+              <RevealText>Your dream college</RevealText><br />
+              <span className="bg-gradient-to-r from-indigo-400 via-violet-300 to-purple-400 bg-clip-text text-transparent">
+                <RevealText delay={0.2}>is one plan away.</RevealText>
+              </span>
+            </h2>
+            <motion.p initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={{ once:true }}
+              transition={{ delay:0.4 }} className="text-slate-400 text-lg leading-relaxed mb-10">
+              Join 20,000+ students already using TAKSHAK to prepare smarter, find mentors, and navigate college admissions with confidence.
+            </motion.p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link to="/signup">
+                <MagneticButton className="inline-flex items-center gap-2 rounded-full bg-white text-[#0a0a1a] font-black text-[15px] px-10 py-4 shadow-2xl shadow-white/15 hover:shadow-white/25 transition-shadow">
+                  Get Started Free <ArrowRight size={16} />
+                </MagneticButton>
+              </Link>
+              <Link to="/mentors"
+                className="inline-flex items-center gap-2 text-slate-400 hover:text-white font-semibold text-sm transition-colors">
+                Browse mentors <ArrowRight size={13} />
+              </Link>
+            </div>
+            <p className="mt-6 text-[12px] text-slate-600">No credit card required · Free forever for students</p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
           FOOTER
       ══════════════════════════════════════ */}
-      <footer className="border-t border-white/[0.05] px-5 pt-14 pb-10">
+      <footer className="relative border-t border-white/[0.06] pt-16 pb-10 px-5">
         <div className="max-w-6xl mx-auto">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-10 mb-14">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-14">
             {/* Brand */}
-            <div className="lg:col-span-2">
-              <div className="flex items-center gap-2.5 mb-4">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 via-violet-500 to-emerald-400 flex items-center justify-center">
-                  <Zap size={14} className="text-white" />
-                </div>
-                <span className="text-[15px] font-black tracking-tight text-white">TAKSHAK</span>
-              </div>
-              <p className="text-[12px] text-slate-500 leading-relaxed max-w-xs">
-                The all-in-one platform for Indian students navigating JEE, NEET, CUET, and beyond. Built by students, for students.
+            <div className="col-span-2 md:col-span-1">
+              <Link to="/" className="flex items-center gap-2.5 mb-4 group">
+                <img src="/takshak_logo.jpg" alt="TAKSHAK" className="w-8 h-8 rounded-xl object-cover" />
+                <span className="text-[14px] font-black text-white">TAKSHAK</span>
+              </Link>
+              <p className="text-[12px] text-slate-500 leading-relaxed mb-5">
+                Your complete college admission & exam prep platform — built for India's students.
               </p>
-            </div>
-
-            {/* Links */}
-            {[
-              { title: "Product", links: [["Discover Colleges","/discover"],["Cutoff Predictor","/cutoff"],["Mentors","/mentors"],["Study Planner","/planner"],["Scholarships","/scholarships"]] },
-              { title: "Prepare", links: [["Resource Hub","/resources"],["Bridge Courses","/bridge"],["Document Checklist","/documents"],["Exam Timeline","/timeline"],["Plan B Analyzer","/plan-b"]] },
-              { title: "Company", links: [["Sign Up","/signup"],["Login","/login"],["Community","/community"],["Defence Corner","/defence"],["Doubt Forum","/forum"]] },
-            ].map(col => (
-              <div key={col.title}>
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{col.title}</p>
-                <ul className="space-y-2.5">
-                  {col.links.map(([label, href]) => (
-                    <li key={label}>
-                      <Link to={href} className="text-[12px] text-slate-500 hover:text-white transition-colors">{label}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* Social + Legal bottom bar */}
-          <div className="border-t border-white/[0.05] pt-8">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
-              {/* Social handles */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 {[
-                  { href: "https://x.com/takshaked",                     icon: <IconX />,         label: "X / Twitter" },
-                  { href: "https://instagram.com/takshak.ed",            icon: <IconInstagram />, label: "Instagram" },
-                  { href: "https://linkedin.com/company/takshak-ed",     icon: <IconLinkedIn />,  label: "LinkedIn" },
-                  { href: "https://youtube.com/@takshaked",              icon: <IconYouTube />,   label: "YouTube" },
-                  { href: "mailto:takshak.info@gmail.com",               icon: <Mail size={14} />,label: "Email" },
-                ].map(s => (
-                  <a key={s.label} href={s.href} target={s.href.startsWith("mailto") ? undefined : "_blank"}
-                    rel="noopener noreferrer" aria-label={s.label}
-                    className="w-8 h-8 rounded-xl border border-white/[0.07] bg-white/[0.03] flex items-center justify-center text-slate-500 hover:text-white hover:border-white/[0.15] hover:bg-white/[0.06] transition-all">
-                    {s.icon}
-                  </a>
+                  { href:"https://x.com/takshaked",              icon:<IconX /> },
+                  { href:"https://instagram.com/takshak.ed",     icon:<IconInstagram /> },
+                  { href:"https://linkedin.com/company/takshak-ed", icon:<IconLinkedIn /> },
+                  { href:"https://youtube.com/@takshaked",       icon:<IconYouTube /> },
+                ].map(({ href, icon }) => (
+                  <motion.a key={href} href={href} target="_blank" rel="noopener noreferrer"
+                    whileHover={{ scale:1.2, y:-2 }} whileTap={{ scale:0.9 }}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.04] text-slate-400 hover:text-white hover:border-white/20 transition-colors">
+                    {icon}
+                  </motion.a>
                 ))}
               </div>
-
-              {/* Legal links */}
-              <div className="flex items-center gap-5 flex-wrap justify-center">
-                <Link to="/privacy" className="text-[11px] text-slate-600 hover:text-white transition-colors">Privacy Policy</Link>
-                <Link to="/terms"   className="text-[11px] text-slate-600 hover:text-white transition-colors">Terms of Service</Link>
-                <Link to="/cookies" className="text-[11px] text-slate-600 hover:text-white transition-colors">Cookie Policy</Link>
-                <a href="mailto:takshak.info@gmail.com" className="text-[11px] text-slate-600 hover:text-white transition-colors">Contact</a>
-              </div>
             </div>
 
-            <p className="text-[11px] text-slate-700 mt-5 text-center sm:text-left">
-              © 2025 Takshak. Made with ♥ for every Indian student. All rights reserved.
+            {/* Platform */}
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-4">Platform</p>
+              <ul className="space-y-2.5">
+                {[
+                  { label:"Discover Colleges", to:"/discover"    },
+                  { label:"Cutoff Predictor",  to:"/cutoff"      },
+                  { label:"Rank Reality",      to:"/rank-reality"},
+                  { label:"Scholarship Finder",to:"/scholarships"},
+                  { label:"Compare Colleges",  to:"/compare"     },
+                ].map(l => (
+                  <li key={l.label}>
+                    <Link to={l.to} className="text-[12.5px] text-slate-500 hover:text-white transition-colors">{l.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Mentors */}
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-4">Mentors</p>
+              <ul className="space-y-2.5">
+                {[
+                  { label:"Find a Mentor",       to:"/mentors"           },
+                  { label:"Book a Session",       to:"/mentors"           },
+                  { label:"My Sessions",          to:"/sessions"          },
+                  { label:"Become a Mentor",      to:"/mentors"           },
+                  { label:"Defence Specialists",  to:"/defence"           },
+                ].map(l => (
+                  <li key={l.label}>
+                    <Link to={l.to} className="text-[12.5px] text-slate-500 hover:text-white transition-colors">{l.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-4">Resources</p>
+              <ul className="space-y-2.5">
+                {[
+                  { label:"Study Planner",      to:"/planner"       },
+                  { label:"Exam Timeline",      to:"/prepare"       },
+                  { label:"Document Checklist", to:"/documents"     },
+                  { label:"Bridge Courses",     to:"/bridge"        },
+                  { label:"Doubt Forum",        to:"/forum"         },
+                ].map(l => (
+                  <li key={l.label}>
+                    <Link to={l.to} className="text-[12.5px] text-slate-500 hover:text-white transition-colors">{l.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-4">Legal</p>
+              <ul className="space-y-2.5">
+                {[
+                  { label:"Privacy Policy",  to:"/privacy" },
+                  { label:"Terms of Service",to:"/terms"   },
+                  { label:"Cookie Policy",   to:"/cookies" },
+                ].map(l => (
+                  <li key={l.label}>
+                    <Link to={l.to} className="text-[12.5px] text-slate-500 hover:text-white transition-colors">{l.label}</Link>
+                  </li>
+                ))}
+                <li>
+                  <a href="mailto:takshak.info@gmail.com" className="text-[12.5px] text-slate-500 hover:text-white transition-colors flex items-center gap-1.5">
+                    <Mail size={11} /> Contact
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 border-t border-white/[0.06] pt-6">
+            <p className="text-[11px] text-slate-600">
+              © {new Date().getFullYear()} TAKSHAK. Made with ❤️ for India's students.
             </p>
+            <div className="flex items-center gap-4">
+              {["/privacy","/terms","/cookies"].map((to, i) => (
+                <Link key={to} to={to} className="text-[11px] text-slate-600 hover:text-slate-400 transition-colors">
+                  {["Privacy","Terms","Cookies"][i]}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </footer>

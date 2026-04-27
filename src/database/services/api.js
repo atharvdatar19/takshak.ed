@@ -169,27 +169,13 @@ export async function getColleges(params = {}) {
 export async function getExamsTimeline(params = {}) {
   if (!supabase || isDemoMode) return DEMO_EXAMS
 
-  const { stream = "", state = "", targetExam = "" } = params
-
-  let query = supabase
+  const { data, error } = await supabase
     .from("exams_timeline")
     .select("*")
     .order("start_date", { ascending: true })
 
-  if (stream) query = query.eq("stream", stream)
-  if (targetExam) query = query.eq("exam_name", targetExam)
-
-  if (state) {
-    query = query.eq("state", state)
-  }
-
-  const { data, error } = await query
-
-  if (error || !data || data.length === 0) {
-    return DEMO_EXAMS
-  }
-
-  return data
+  if (error) return DEMO_EXAMS
+  return data || []
 }
 
 export async function getMentors(params = {}) {

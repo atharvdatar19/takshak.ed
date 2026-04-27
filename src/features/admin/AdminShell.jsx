@@ -5,7 +5,7 @@ import {
     LayoutDashboard, Users, GraduationCap, CalendarDays,
     DollarSign, AlertTriangle, BookOpen, Building2, Clock,
     ShieldCheck, Menu, X, LogOut, Shield, Wifi, WifiOff,
-    ChevronLeft, ChevronRight, Zap
+    ChevronLeft, ChevronRight
 } from "lucide-react"
 import { useAuth } from "@auth/AuthContext"
 import supabase from "@database/supabaseClient"
@@ -54,9 +54,7 @@ export default function AdminShell() {
         <>
             {/* Logo */}
             <div className="flex items-center gap-3 px-4 h-16 border-b border-white/[0.04]">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <Zap size={16} className="text-white" />
-                </div>
+                <img src="/takshak_logo.jpg" alt="TAKSHAK" className="w-8 h-8 rounded-xl object-cover shadow-lg shadow-indigo-500/20" />
                 {sidebarOpen && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 min-w-0">
                         <span className="text-sm font-black tracking-tight text-white">TAKSHAK</span>

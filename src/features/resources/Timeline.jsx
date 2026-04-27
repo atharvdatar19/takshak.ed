@@ -53,7 +53,8 @@ export default function Timeline() {
         description: d.description
       }))
 
-      setTimeline([...(data || []), ...eduraMapped])
+      const dbExams = (data || []).map(e => ({ ...e, event_type: e.event_type || "Exam" }))
+      setTimeline([...dbExams, ...eduraMapped])
     } catch (err) {
       setError(err.message || "Failed to load timeline")
     } finally {
@@ -75,10 +76,10 @@ export default function Timeline() {
       ? timeline
       : timeline.filter(item => item.event_type === selectedType)
 
-    const upcoming = filteredTimeline.filter(
-      (item) =>
-        new Date(item.start_date || item.exam_date) >= now
-    )
+    const upcoming = filteredTimeline.filter((item) => {
+      const checkDate = item.exam_date || item.end_date || item.start_date
+      return checkDate && new Date(checkDate) >= now
+    })
 
     const closingSoon = upcoming.filter((item) => {
       const end = item.end_date || item.exam_date
@@ -190,7 +191,7 @@ function TimelineColumn({ title, items, tone }) {
                 <div className="flex items-start justify-between gap-3 relative z-10">
                   <div className="flex-1">
                     <p className="font-bold text-slate-900 leading-tight">
-                      {item.title || item.exam_name}
+                      {item.name || item.title || item.exam_name}
                     </p>
 
                     {item.organizingBody && (
@@ -200,7 +201,7 @@ function TimelineColumn({ title, items, tone }) {
                     )}
 
                     <p className="text-xs text-slate-600 mb-1.5 leading-relaxed">
-                      {item.description || `${item.event_type || "Exam"} • ${item.stream || "General"}`}
+                      {item.description || `${item.category || item.stream || "General"} • ${item.is_national ? "National" : "State"}`}
                     </p>
 
                     {item.prizeOrStipend && item.prizeOrStipend !== 'N/A' && (
