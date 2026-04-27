@@ -88,10 +88,10 @@ export function matchIncomePaths(selectedSkills = [], selectedInterests = [], pr
 /**
  * Save user's skill profile to Supabase (or localStorage in demo mode)
  */
-export async function saveSkillProfile(userId, profile) {
+export async function saveSkillProfile(userEmail, profile) {
     if (isDemoMode || !supabase) {
         try {
-            localStorage.setItem(`skill_profile_${userId || "demo"}`, JSON.stringify(profile))
+            localStorage.setItem(`skill_profile_${userEmail || "demo"}`, JSON.stringify(profile))
         } catch { /* silent */ }
         return profile
     }
@@ -99,32 +99,29 @@ export async function saveSkillProfile(userId, profile) {
     const { data, error } = await supabase
         .from("skill_profiles")
         .upsert({
-            user_id: userId,
+            user_email: userEmail,
             skills: profile.skills,
             interests: profile.interests,
             preferences: profile.preferences,
             updated_at: new Date().toISOString(),
-        }, { onConflict: "user_id" })
+        }, { onConflict: "user_email" })
         .select()
         .single()
 
     if (error) {
         console.warn("Skill profile save error, falling back to localStorage:", error.message)
         try {
-            localStorage.setItem(`skill_profile_${userId}`, JSON.stringify(profile))
+            localStorage.setItem(`skill_profile_${userEmail}`, JSON.stringify(profile))
         } catch { /* silent */ }
         return profile
     }
     return data
 }
 
-/**
- * Retrieve saved skill profile
- */
-export async function getSavedProfile(userId) {
+export async function getSavedProfile(userEmail) {
     if (isDemoMode || !supabase) {
         try {
-            const stored = localStorage.getItem(`skill_profile_${userId || "demo"}`)
+            const stored = localStorage.getItem(`skill_profile_${userEmail || "demo"}`)
             return stored ? JSON.parse(stored) : null
         } catch {
             return null
@@ -134,11 +131,9 @@ export async function getSavedProfile(userId) {
     const { data, error } = await supabase
         .from("skill_profiles")
         .select("*")
-        .eq("user_id", userId)
-        .single()
+        .eq("user_email", userEmail)
+        .maybeSingle()
 
-    if (error && error.code !== "PGRST116") {
-        console.warn("Skill profile fetch error:", error.message)
-    }
+    if (error) console.warn("Skill profile fetch error:", error.message)
     return data || null
 }

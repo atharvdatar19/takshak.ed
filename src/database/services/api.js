@@ -300,17 +300,15 @@ export async function getResources(params = {}) {
   return data
 }
 
-export async function upvoteResource(resourceId, userId) {
+export async function upvoteResource(resourceId, userEmail) {
   if (!supabase || isDemoMode) return { success: true }
 
-  // Upsert into resource_upvotes
   const { error: upvoteErr } = await supabase
     .from("resource_upvotes")
-    .upsert({ user_id: userId, resource_id: resourceId }, { onConflict: "user_id,resource_id" })
+    .upsert({ user_email: userEmail, resource_id: resourceId }, { onConflict: "user_email,resource_id" })
 
   if (upvoteErr) throw upvoteErr
 
-  // Increment upvotes via RPC or manual update
   const { data: resource } = await supabase.from("resource_links").select("upvotes").eq("id", resourceId).single()
   if (resource) {
     await supabase.from("resource_links").update({ upvotes: (resource.upvotes || 0) + 1 }).eq("id", resourceId)
@@ -447,15 +445,15 @@ export async function getMyTransactions(userId) {
   return data
 }
 
-export async function toggleEducatorUpvote(educatorId, userId, hasUpvoted) {
+export async function toggleEducatorUpvote(educatorId, userEmail, hasUpvoted) {
   if (!supabase || isDemoMode) return { success: true }
 
   if (hasUpvoted) {
-    await supabase.from("educator_upvotes").delete().eq("user_id", userId).eq("educator_id", educatorId)
+    await supabase.from("educator_upvotes").delete().eq("user_email", userEmail).eq("educator_id", educatorId)
     const { data: edu } = await supabase.from("educators").select("upvotes").eq("id", educatorId).single()
     if (edu) await supabase.from("educators").update({ upvotes: Math.max(0, (edu.upvotes || 0) - 1) }).eq("id", educatorId)
   } else {
-    await supabase.from("educator_upvotes").upsert({ user_id: userId, educator_id: educatorId })
+    await supabase.from("educator_upvotes").upsert({ user_email: userEmail, educator_id: educatorId })
     const { data: edu } = await supabase.from("educators").select("upvotes").eq("id", educatorId).single()
     if (edu) await supabase.from("educators").update({ upvotes: (edu.upvotes || 0) + 1 }).eq("id", educatorId)
   }

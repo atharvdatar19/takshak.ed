@@ -1,107 +1,107 @@
-import supabase, { isDemoMode } from "@database/supabaseClient"
+import supabase from '@database/supabaseClient'
 
-// --- DEMO DATA FALLBACKS ---
-const LISTINGS = [
-    {
-        id: 1,
-        title: "Allen JEE Main & Adv Complete Modules (2024)",
-        seller: "Rohan K.",
-        verified: true,
-        exam: "JEE",
-        type: "Modules",
-        price: 3500,
-        mrp: 12000,
-        condition: "Good",
-        location: "Kothrud, Pune",
-        image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=400&h=300",
-        description: "Complete set of 11th & 12th PCM modules. Minor highlights in Physics vol 1, rest are completely clean. Need to sell urgently."
-    },
-    {
-        id: 2,
-        title: "Cengage Mathematics series (Full 5 Books)",
-        seller: "Aditi S.",
-        verified: true,
-        exam: "JEE",
-        type: "Books",
-        price: 1800,
-        mrp: 4500,
-        condition: "Excellent",
-        location: "Viman Nagar, Pune",
-        image: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=400&h=300",
-        description: "Like new. Only Algebra book has some pencil marks. Remaining 4 books are untouched."
-    },
-    {
-        id: 3,
-        title: "Resonance NEET Rank Booster Notes",
-        seller: "Vikram R.",
-        verified: false,
-        exam: "NEET",
-        type: "Notes",
-        price: 800,
-        mrp: 2000,
-        condition: "Fair",
-        location: "Aundh, Pune",
-        image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=400&h=300",
-        description: "Handwritten toppers notes bundled with resonance short notes. Binding is slightly loose but pages are fine."
-    },
-    {
-        id: 4,
-        title: "HC Verma Vol 1 & 2 - Latest Edition",
-        seller: "Pooja M.",
-        verified: true,
-        exam: "JEE/NEET",
-        type: "Books",
-        price: 600,
-        mrp: 950,
-        condition: "Like New",
-        location: "Baner, Pune",
-        image: "https://images.unsplash.com/photo-1605371924599-2d0365da1ae0?auto=format&fit=crop&q=80&w=400&h=300",
-        description: "Just bought 3 months ago. Decided not to prepare for JEE."
-    }
-]
-
-// --- SERVICES ---
-
-export async function getMarketplaceListings() {
-    if (isDemoMode) return LISTINGS
-
-    const { data, error } = await supabase
-        .from('marketplace_listings')
-        .select(`*, users(full_name)`)
-        .eq('status', 'available')
-        .order('created_at', { ascending: false })
-
-    if (error || !data || data.length === 0) return LISTINGS
-
-    return data.map(item => ({
-        id: item.id,
-        title: item.title,
-        seller: item.users?.full_name || "Anonymous User",
-        verified: false, // We can add verification logic later
-        exam: item.exam,
-        type: item.material_type,
-        price: item.price,
-        mrp: item.mrp || item.price * 2,
-        condition: item.condition,
-        location: `${item.city}, ${item.state || ""}`.replace(/,\s*$/, ""),
-        image: item.photos && item.photos.length > 0 ? item.photos[0] : "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=400&h=300",
-        description: ""
-    }))
+async function safeQuery(queryBuilder, fallback = []) {
+  if (!queryBuilder) return fallback
+  const { data, error } = await queryBuilder
+  if (error) { console.error('[marketplace]', error.message); return fallback }
+  return data ?? fallback
 }
 
-export async function createMarketplaceListing(listing) {
-    if (isDemoMode) return { success: true }
+export async function getListings({ exam, type, condition, maxPrice, search, limit = 20, offset = 0 } = {}) {
+  if (!supabase) return []
+  let q = supabase
+    .from('marketplace_listings')
+    .select('*, users(name, avatar_url)')
+    .eq('status', 'available')
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1)
 
-    const { data: userData } = await supabase.auth.getUser()
-    if (!userData?.user) throw new Error("Not logged in")
+  if (exam) q = q.eq('exam', exam)
+  if (type) q = q.eq('material_type', type)
+  if (condition) q = q.eq('condition', condition)
+  if (maxPrice) q = q.lte('price', maxPrice)
+  if (search) q = q.or(`title.ilike.%${search}%,description.ilike.%${search}%`)
 
-    const { error } = await supabase
-        .from('marketplace_listings')
-        .insert({
-            seller_id: userData.user.id,
-            ...listing
-        })
-
-    if (error) throw error
-    return { success: true }
+  return safeQuery(q)
 }
+
+export async function getListingById(id) {
+  if (!supabase || !id) return null
+  const { data } = await supabase
+    .from('marketplace_listings')
+    .select('*, users(name, avatar_url)')
+    .eq('id', id)
+    .maybeSingle()
+  return data
+}
+
+export async function getUserListings(userEmail) {
+  if (!supabase || !userEmail) return []
+  return safeQuery(
+    supabase
+      .from('marketplace_listings')
+      .select('*')
+      .eq('seller_email', userEmail)
+      .order('created_at', { ascending: false })
+  )
+}
+
+export async function createListing({ sellerEmail, title, description, exam, materialType, condition, price, mrp, photos = [], city, state }) {
+  if (!supabase) return { error: 'Not connected' }
+  const { data, error } = await supabase
+    .from('marketplace_listings')
+    .insert({
+      seller_email: sellerEmail,
+      title,
+      description,
+      exam,
+      material_type: materialType,
+      condition,
+      price,
+      mrp,
+      photos,
+      city,
+      state,
+      status: 'available',
+    })
+    .select()
+    .single()
+  return { data, error: error?.message }
+}
+
+export async function updateListingStatus(listingId, sellerEmail, status) {
+  if (!supabase) return { error: 'Not connected' }
+  const validStatuses = ['available', 'sold', 'reserved', 'removed']
+  if (!validStatuses.includes(status)) return { error: 'Invalid status' }
+  const { error } = await supabase
+    .from('marketplace_listings')
+    .update({ status })
+    .eq('id', listingId)
+    .eq('seller_email', sellerEmail)
+  return { error: error?.message }
+}
+
+export async function deleteListing(listingId, sellerEmail) {
+  if (!supabase) return { error: 'Not connected' }
+  const { error } = await supabase
+    .from('marketplace_listings')
+    .delete()
+    .eq('id', listingId)
+    .eq('seller_email', sellerEmail)
+  return { error: error?.message }
+}
+
+export async function getExamOptions() {
+  return ['JEE', 'NEET', 'UPSC', 'CAT', 'GATE', 'CUET', 'Defence', 'Board', 'Other']
+}
+
+export async function getMaterialTypes() {
+  return ['Books', 'Modules', 'Notes', 'Test Papers', 'Study Material', 'Other']
+}
+
+export async function getConditionOptions() {
+  return ['Like New', 'Good', 'Fair', 'Acceptable']
+}
+
+// Backwards-compatible alias
+export const getMarketplaceListings = () => getListings()
