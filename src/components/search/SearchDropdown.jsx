@@ -87,9 +87,12 @@ export default function SearchDropdown({ query, visible, onSelect }) {
   }, [query, visible])
 
   const handleSelect = (item) => {
-    const path = item.type === 'exam' ? `/exams/${item.slug}` : `/courses/${item.slug}`
     onSelect(item)
-    navigate(path)
+    if (item.type === 'exam') {
+      navigate(`/timeline?q=${encodeURIComponent(item.title)}`)
+    } else {
+      navigate(`/marketplace?q=${encodeURIComponent(item.title)}`)
+    }
   }
 
   // Escape key to close

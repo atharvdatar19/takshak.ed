@@ -1,23 +1,31 @@
 import { useRef, useState } from 'react'
 import { Search, X } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import SearchDropdown from './SearchDropdown'
 
-/**
- * Full-width hero search bar — Edura-inspired, Takshak dark theme.
- *
- * @prop {string[]} popularTags - tags shown below the bar
- * @prop {Function} onNavigate  - optional callback on result click
- */
 export default function SearchBar({ popularTags = [], onNavigate }) {
   const [query, setQuery] = useState('')
   const [focused, setFocused] = useState(false)
   const inputRef = useRef(null)
+  const navigate = useNavigate()
 
   const showDropdown = focused && query.trim().length >= 2
+
+  const handleSearch = () => {
+    const q = query.trim()
+    if (!q) return
+    setFocused(false)
+    navigate(`/colleges?q=${encodeURIComponent(q)}`)
+  }
 
   const handleTagClick = (tag) => {
     setQuery(tag)
     inputRef.current?.focus()
+    navigate(`/colleges?q=${encodeURIComponent(tag)}`)
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handleSearch()
   }
 
   const handleClear = () => {
@@ -49,17 +57,11 @@ export default function SearchBar({ popularTags = [], onNavigate }) {
           padding: '0 16px',
         }}
       >
-        {/* Left icon */}
         <Search
           size={20}
-          style={{
-            color: 'var(--obsidian-primary)',
-            flexShrink: 0,
-            transition: 'color 0.2s ease',
-          }}
+          style={{ color: 'var(--obsidian-primary)', flexShrink: 0, transition: 'color 0.2s ease' }}
         />
 
-        {/* Input */}
         <input
           ref={inputRef}
           type="text"
@@ -67,6 +69,7 @@ export default function SearchBar({ popularTags = [], onNavigate }) {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
+          onKeyDown={handleKeyDown}
           placeholder="Search exams, colleges, educators..."
           style={{
             flex: 1,
@@ -80,47 +83,30 @@ export default function SearchBar({ popularTags = [], onNavigate }) {
           }}
         />
 
-        {/* Clear button */}
         {query && (
           <button
             type="button"
             onClick={handleClear}
             aria-label="Clear search"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '24px',
-              height: '24px',
-              borderRadius: '50%',
-              background: 'var(--obsidian-outline)',
-              border: 'none',
-              cursor: 'pointer',
-              color: 'var(--obsidian-on-surface-variant)',
-              flexShrink: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '24px', height: '24px', borderRadius: '50%',
+              background: 'var(--obsidian-outline)', border: 'none', cursor: 'pointer',
+              color: 'var(--obsidian-on-surface-variant)', flexShrink: 0,
             }}
           >
             <X size={14} />
           </button>
         )}
 
-        {/* Search pill button */}
         <button
           type="button"
-          onClick={() => {}}
+          onClick={handleSearch}
           style={{
-            flexShrink: 0,
-            height: '36px',
-            padding: '0 20px',
-            borderRadius: '10px',
-            background: 'var(--obsidian-primary)',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '13px',
-            fontWeight: 700,
-            color: 'var(--obsidian-bg)',
-            whiteSpace: 'nowrap',
-            transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+            flexShrink: 0, height: '36px', padding: '0 20px', borderRadius: '10px',
+            background: 'var(--obsidian-primary)', border: 'none', cursor: 'pointer',
+            fontSize: '13px', fontWeight: 700, color: 'var(--obsidian-bg)',
+            whiteSpace: 'nowrap', transition: 'transform 0.15s ease, box-shadow 0.15s ease',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-1px)'
@@ -146,24 +132,10 @@ export default function SearchBar({ popularTags = [], onNavigate }) {
         }}
       />
 
-      {/* ── Popular tags row ── */}
+      {/* ── Popular tags ── */}
       {popularTags.length > 0 && (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            marginTop: '14px',
-            flexWrap: 'wrap',
-          }}
-        >
-          <span
-            style={{
-              fontSize: '13px',
-              fontWeight: 600,
-              color: 'var(--obsidian-on-surface-variant)',
-            }}
-          >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '14px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--obsidian-on-surface-variant)' }}>
             Popular:
           </span>
           {popularTags.map((tag) => (
@@ -172,23 +144,13 @@ export default function SearchBar({ popularTags = [], onNavigate }) {
               type="button"
               onClick={() => handleTagClick(tag)}
               style={{
-                height: '32px',
-                padding: '0 14px',
-                borderRadius: '9999px',
-                background: 'var(--accent-glow)',
-                border: '1px solid var(--accent-glow-intense)',
-                color: 'var(--obsidian-primary)',
-                fontSize: '13px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'background 0.15s ease, border-color 0.15s ease',
+                height: '32px', padding: '0 14px', borderRadius: '9999px',
+                background: 'var(--accent-glow)', border: '1px solid var(--accent-glow-intense)',
+                color: 'var(--obsidian-primary)', fontSize: '13px', fontWeight: 600,
+                cursor: 'pointer', transition: 'background 0.15s ease',
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--accent-glow-intense)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'var(--accent-glow)'
-              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--accent-glow-intense)' }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--accent-glow)' }}
             >
               {tag}
             </button>

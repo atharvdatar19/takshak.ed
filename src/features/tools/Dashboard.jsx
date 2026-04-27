@@ -22,6 +22,7 @@ import LoadingSkeleton from "@components/LoadingSkeleton"
 import NotificationBell from "@components/NotificationBell"
 
 import { getDashboardBundle } from "@database/services/superapp"
+import supabase from "@database/supabaseClient"
 import { formatDate, getDaysLeft, isWithinRange } from "@lib/date"
 import { takshakCourses, takshakEducators, takshakDeadlines } from "@/data/takshakData"
 import { Bookmark, ShieldCheck, PlayCircle } from "lucide-react"
@@ -54,6 +55,7 @@ const QUICK_ACTIONS = [
 export default function Dashboard() {
   const [bundle, setBundle] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState({ students: 10000, colleges: 500, mentors: 50 })
 
   useEffect(() => {
     async function loadBundle() {
@@ -75,7 +77,27 @@ export default function Dashboard() {
         setLoading(false)
       }
     }
+
+    async function loadStats() {
+      if (!supabase) return
+      try {
+        const [usersRes, collegesRes, mentorsRes] = await Promise.all([
+          supabase.from("users").select("id", { count: "exact", head: true }),
+          supabase.from("colleges").select("id", { count: "exact", head: true }),
+          supabase.from("mentors").select("id", { count: "exact", head: true }),
+        ])
+        setStats({
+          students: usersRes.count || 10000,
+          colleges: collegesRes.count || 500,
+          mentors: mentorsRes.count || 50,
+        })
+      } catch {
+        // keep defaults on error
+      }
+    }
+
     loadBundle()
+    loadStats()
   }, [])
 
   const computed = useMemo(() => {
@@ -220,9 +242,9 @@ export default function Dashboard() {
             style={{ display: 'flex', alignItems: 'center', gap: 32, marginTop: 28, flexWrap: 'wrap' }}
           >
             {[
-              { target: 10000, suffix: '+', label: 'Students' },
-              { target: 500, suffix: '+', label: 'Colleges' },
-              { target: 50, suffix: '+', label: 'Mentors' },
+              { target: stats.students, suffix: '+', label: 'Students' },
+              { target: stats.colleges, suffix: '+', label: 'Colleges' },
+              { target: stats.mentors, suffix: '+', label: 'Mentors' },
             ].map(({ target, suffix, label }) => (
               <div key={label} style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
                 <CountUp
