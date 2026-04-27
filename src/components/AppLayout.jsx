@@ -1,4 +1,4 @@
-import { Component, Suspense, lazy, useState } from "react"
+import { Component, Suspense, lazy, useState, useEffect } from "react"
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import { useAuth } from "@auth/AuthContext"
@@ -251,15 +251,28 @@ function MobileBottomBar() {
 export default function AppLayout() {
   const location = useLocation()
   const { isScrolled } = useScrollProgress()
+  const [isDark, setIsDark] = useState(() =>
+    typeof window !== "undefined" && document.documentElement.classList.contains("dark")
+  )
+
+  useEffect(() => {
+    const observer = new MutationObserver(() =>
+      setIsDark(document.documentElement.classList.contains("dark"))
+    )
+    observer.observe(document.documentElement, { attributeFilter: ["class"] })
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <div className="relative flex min-h-screen bg-app">
-      {/* 3D Background */}
-      <SafeBoundary>
-        <Suspense fallback={null}>
-          <FloatingBackground />
-        </Suspense>
-      </SafeBoundary>
+      {/* 3D Background — only in dark mode */}
+      {isDark && (
+        <SafeBoundary>
+          <Suspense fallback={null}>
+            <FloatingBackground />
+          </Suspense>
+        </SafeBoundary>
+      )}
 
       {/* ── Desktop Sidebar ── */}
       <aside
