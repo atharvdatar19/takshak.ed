@@ -550,7 +550,7 @@ function DiscoverMockup() {
    Main LandingPage
 ───────────────────────────────────────────── */
 export default function LandingPage() {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll()
