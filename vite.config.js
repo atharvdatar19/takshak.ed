@@ -27,6 +27,7 @@ export default defineConfig({
       '@database': path.resolve(__dirname, 'src/database'),
       '@hooks': path.resolve(__dirname, 'src/hooks'),
       '@lib': path.resolve(__dirname, 'src/lib'),
+      '@pages': path.resolve(__dirname, 'src/pages'),
     }
   }
 })

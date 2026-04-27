@@ -1,5 +1,13 @@
 User-agent: *
 Allow: /
 
-# Sitemaps
-Sitemap: https://mentorbhaiyaaa.vercel.app/sitemap.xml
+# Block admin panel from indexing
+Disallow: /admin
+Disallow: /admin/
+
+# Block auth pages (no SEO value)
+Disallow: /login
+Disallow: /signup
+
+# Sitemap
+Sitemap: https://takshak.ed/sitemap.xml

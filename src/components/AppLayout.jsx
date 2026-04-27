@@ -43,7 +43,7 @@ class SafeBoundary extends Component {
 
 // Primary nav — 5 items max
 const PRIMARY_NAV = [
-  { to: "/",         label: "Home",      icon: LayoutDashboard, exact: true },
+  { to: "/dashboard", label: "Home",      icon: LayoutDashboard, exact: true },
   { to: "/discover", label: "Discover",  icon: Compass },
   { to: "/mentors",  label: "Mentors",   icon: Users },
   { to: "/prepare",  label: "Prepare",   icon: BookOpen },

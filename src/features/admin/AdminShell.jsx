@@ -11,26 +11,26 @@ import { useAuth } from "@auth/AuthContext"
 import supabase from "@database/supabaseClient"
 
 const NAV_ITEMS = [
-    { to: "/admin", label: "Dashboard", icon: LayoutDashboard, roles: ["admin", "moderator", "content_editor", "finance_viewer"], end: true },
-    { to: "/admin/users", label: "Users", icon: Users, roles: ["admin", "moderator"] },
-    { to: "/admin/mentor-apps", label: "Mentor Apps", icon: GraduationCap, roles: ["admin", "moderator"] },
-    { to: "/admin/sessions", label: "Sessions", icon: CalendarDays, roles: ["admin", "finance_viewer"] },
-    { to: "/admin/payouts", label: "Payouts", icon: DollarSign, roles: ["admin", "finance_viewer"] },
-    { to: "/admin/reports", label: "Reports", icon: AlertTriangle, roles: ["admin", "moderator"] },
-    { to: "/admin/educators", label: "Educators", icon: BookOpen, roles: ["admin", "content_editor"] },
-    { to: "/admin/colleges", label: "Colleges", icon: Building2, roles: ["admin", "content_editor"] },
-    { to: "/admin/exams", label: "Exams", icon: Clock, roles: ["admin", "content_editor"] },
-    { to: "/admin/team", label: "Team", icon: ShieldCheck, roles: ["admin"] },
+    { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
+    { to: "/admin/users", label: "Users", icon: Users },
+    { to: "/admin/mentor-apps", label: "Mentor Apps", icon: GraduationCap },
+    { to: "/admin/sessions", label: "Sessions", icon: CalendarDays },
+    { to: "/admin/payouts", label: "Payouts", icon: DollarSign },
+    { to: "/admin/reports", label: "Reports", icon: AlertTriangle },
+    { to: "/admin/educators", label: "Educators", icon: BookOpen },
+    { to: "/admin/colleges", label: "Colleges", icon: Building2 },
+    { to: "/admin/exams", label: "Exams", icon: Clock },
+    { to: "/admin/team", label: "Team", icon: ShieldCheck },
 ]
 
 export default function AdminShell() {
     const [sidebarOpen, setSidebarOpen] = useState(true)
     const [mobileOpen, setMobileOpen] = useState(false)
     const [isConnected, setIsConnected] = useState(!!supabase)
-    const { user, role, signOut } = useAuth()
+    const { user, signOut } = useAuth()
     const navigate = useNavigate()
 
-    const visibleNav = NAV_ITEMS.filter(item => item.roles.includes(role))
+    const visibleNav = NAV_ITEMS
 
     // Monitor realtime connection
     useEffect(() => {
@@ -109,7 +109,7 @@ export default function AdminShell() {
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-[11px] font-semibold text-white truncate">{user?.email || "admin"}</p>
-                            <p className="text-[9px] text-indigo-400 font-black uppercase tracking-[0.15em]">{role}</p>
+                            <p className="text-[9px] text-indigo-400 font-black uppercase tracking-[0.15em]">Super Admin</p>
                         </div>
                         <button onClick={handleSignOut} className="p-1.5 rounded-lg hover:bg-rose-500/10 text-slate-500 hover:text-rose-400 transition">
                             <LogOut size={14} />

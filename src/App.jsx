@@ -5,6 +5,14 @@ import { ToastProvider } from "@components/Toast"
 import SplashScreen from "@components/SplashScreen"
 import AppLayout from "@components/AppLayout"
 import ProtectedRoute from "@components/ProtectedRoute"
+import CookieBanner from "@components/CookieBanner"
+
+// ── Landing & Legal ───────────────────────────────────────────
+const LandingPage   = lazy(() => import("@pages/LandingPage"))
+const PrivacyPolicy = lazy(() => import("@pages/PrivacyPolicy"))
+const TermsOfService= lazy(() => import("@pages/TermsOfService"))
+const CookiePolicy  = lazy(() => import("@pages/CookiePolicy"))
+const NotFound      = lazy(() => import("@pages/NotFound"))
 
 // ── Auth ──────────────────────────────────────────────────────
 const AuthPage = lazy(() => import("@auth/AuthPage"))
@@ -124,14 +132,16 @@ export default function App() {
             <AppErrorBoundary>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
+                  {/* ── Landing (no layout) ── */}
+                  <Route path="/" element={<LandingPage />} />
+
                   {/* ── Auth Pages (no layout) ── */}
                   <Route path="/login" element={<AuthPage defaultTab="login" />} />
                   <Route path="/signup" element={<AuthPage defaultTab="signup" />} />
 
                   {/* ── App Pages (with layout) ── */}
                   <Route element={<AppLayout />}>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/dashboard" element={<Navigate to="/" replace />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
 
                     {/* Hub pages */}
                     <Route path="/discover" element={<DiscoverHub />} />
@@ -190,10 +200,17 @@ export default function App() {
                     <Route path="team" element={<AdminTeamAccess />} />
                   </Route>
 
-                  <Route path="*" element={<Navigate to="/" replace />} />
+                  {/* ── Legal Pages (no layout) ── */}
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/terms"   element={<TermsOfService />} />
+                  <Route path="/cookies" element={<CookiePolicy />} />
+
+                  {/* ── 404 ── */}
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
             </AppErrorBoundary>
+            <CookieBanner />
           </BrowserRouter>
         </SplashScreen>
       </ToastProvider>

@@ -1,43 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.1">
-  <url>
-    <loc>https://mentorbhaiyaaa.vercel.app/</loc>
-    <lastmod>2024-03-01</lastmod>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://mentorbhaiyaaa.vercel.app/colleges</loc>
-    <lastmod>2024-03-01</lastmod>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://mentorbhaiyaaa.vercel.app/cutoff</loc>
-    <lastmod>2024-03-01</lastmod>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://mentorbhaiyaaa.vercel.app/scholarships</loc>
-    <lastmod>2024-03-01</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mentorbhaiyaaa.vercel.app/rank-reality</loc>
-    <lastmod>2024-03-01</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mentorbhaiyaaa.vercel.app/plan-b</loc>
-    <lastmod>2024-03-01</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://mentorbhaiyaaa.vercel.app/timeline</loc>
-    <lastmod>2024-03-01</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://mentorbhaiyaaa.vercel.app/forum</loc>
-    <lastmod>2024-03-01</lastmod>
-    <priority>0.6</priority>
-  </url>
+  <!-- Landing & Core -->
+  <url><loc>https://takshak.ed/</loc><lastmod>2025-04-27</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+
+  <!-- Discover -->
+  <url><loc>https://takshak.ed/discover</loc><lastmod>2025-04-27</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://takshak.ed/colleges</loc><lastmod>2025-04-27</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://takshak.ed/cutoff</loc><lastmod>2025-04-27</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://takshak.ed/rank-reality</loc><lastmod>2025-04-27</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://takshak.ed/plan-b</loc><lastmod>2025-04-27</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://takshak.ed/scholarships</loc><lastmod>2025-04-27</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://takshak.ed/timeline</loc><lastmod>2025-04-27</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+
+  <!-- Prepare -->
+  <url><loc>https://takshak.ed/prepare</loc><lastmod>2025-04-27</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://takshak.ed/resources</loc><lastmod>2025-04-27</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://takshak.ed/bridge</loc><lastmod>2025-04-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- Mentors -->
+  <url><loc>https://takshak.ed/mentors</loc><lastmod>2025-04-27</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+
+  <!-- Community -->
+  <url><loc>https://takshak.ed/community</loc><lastmod>2025-04-27</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://takshak.ed/defence</loc><lastmod>2025-04-27</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+
+  <!-- Legal -->
+  <url><loc>https://takshak.ed/privacy</loc><lastmod>2025-04-27</lastmod><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://takshak.ed/terms</loc><lastmod>2025-04-27</lastmod><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://takshak.ed/cookies</loc><lastmod>2025-04-27</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>

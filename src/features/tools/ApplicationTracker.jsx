@@ -1,225 +1,411 @@
-import { motion, AnimatePresence } from "framer-motion"
-import {
-    ChevronRight,
-    GraduationCap,
-    Kanban,
-    Plus,
-    Trash2,
-    X,
-    Briefcase,
-    CodeXml,
-    Award
-} from "lucide-react"
 import { useEffect, useState } from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import { Helmet } from "react-helmet-async"
+import {
+  Plus, X, Trash2, ChevronRight, GraduationCap, Briefcase,
+  CodeXml, Award, Clock, CheckCircle2, AlertCircle, Loader2,
+  ClipboardList,
+} from "lucide-react"
 import { useAuth } from "@auth/AuthContext"
-import { formatDate, getDaysLeft } from "@lib/date"
+import {
+  getUserApplications,
+  createApplication,
+  updateApplicationStatus,
+  deleteApplication,
+} from "@database/services/applications"
+
+// ── Constants ─────────────────────────────────────────────────────────────────
 
 const COLUMNS = [
-    { id: "wishlist", label: "📋 Wishlist", color: "border-slate-300 bg-slate-50" },
-    { id: "applied", label: "📝 Applied", color: "border-blue-300 bg-blue-50" },
-    { id: "docs_sent", label: "📄 In Progress", color: "border-amber-300 bg-amber-50" },
-    { id: "admitted", label: "🎉 Accepted/Won", color: "border-emerald-300 bg-emerald-50" },
+  { id: "planning",         label: "Planning",         color: "#94a3b8", bg: "rgba(148,163,184,0.08)"  },
+  { id: "applied",          label: "Applied",           color: "#6366f1", bg: "rgba(99,102,241,0.08)"  },
+  { id: "documents_pending",label: "Docs Pending",      color: "#f59e0b", bg: "rgba(245,158,11,0.08)"  },
+  { id: "under_review",     label: "Under Review",      color: "#06b6d4", bg: "rgba(6,182,212,0.08)"   },
+  { id: "accepted",         label: "Accepted",          color: "#10b981", bg: "rgba(16,185,129,0.08)"  },
+  { id: "rejected",         label: "Rejected",          color: "#ef4444", bg: "rgba(239,68,68,0.08)"   },
 ]
 
-// Demo data for when there's no auth
-const DEMO_APPS = [
-    { id: "d1", title: "IIT Bombay", type: "College", city: "Mumbai", state: "Maharashtra", status: "wishlist", deadline: "2026-04-15", notes: "" },
-    { id: "d2", title: "Google STEP Internship", type: "Internship", city: "Remote", state: "", status: "applied", deadline: "2026-03-20", notes: "Application submitted" },
-    { id: "d3", title: "Flipkart GRiD", type: "Hackathon", city: "Online", state: "", status: "docs_sent", deadline: "2026-03-25", notes: "Round 1 cleared" },
-]
-
-const TYPE_CONFIG = {
-    College: { icon: GraduationCap, color: "text-blue-600 bg-blue-100" },
-    Internship: { icon: Briefcase, color: "text-amber-600 bg-amber-100" },
-    Hackathon: { icon: CodeXml, color: "text-purple-600 bg-purple-100" },
-    Scholarship: { icon: Award, color: "text-emerald-600 bg-emerald-100" }
+const STATUS_FLOW = {
+  planning: "applied",
+  applied: "documents_pending",
+  documents_pending: "under_review",
+  under_review: "accepted",
 }
 
-export default function ApplicationTracker() {
-    const { user } = useAuth?.() || {}
-    const [apps, setApps] = useState(DEMO_APPS)
-    const [showAdd, setShowAdd] = useState(false)
-    const [newApp, setNewApp] = useState({ title: "", type: "College", deadline: "", notes: "" })
+const TYPE_CONFIG = {
+  College:     { icon: GraduationCap, color: "#6366f1" },
+  Internship:  { icon: Briefcase,     color: "#f59e0b" },
+  Hackathon:   { icon: CodeXml,       color: "#8b5cf6" },
+  Scholarship: { icon: Award,         color: "#10b981" },
+}
 
-    function addApplication() {
-        if (!newApp.title) return
-        const app = {
-            id: "new-" + Date.now(),
-            ...newApp,
-            status: "wishlist",
-            city: "",
-            state: "",
-        }
-        setApps(prev => [app, ...prev])
-        setNewApp({ title: "", type: "College", deadline: "", notes: "" })
-        setShowAdd(false)
-    }
+const DEMO_APPS = [
+  { id: "d1", title: "IIT Bombay — B.Tech CSE", type: "College", status: "planning", deadline: "2026-06-15", notes: "JEE Advanced required" },
+  { id: "d2", title: "Google STEP Internship", type: "Internship", status: "applied", deadline: "2026-05-01", notes: "Resume submitted" },
+  { id: "d3", title: "Flipkart GRiD 6.0", type: "Hackathon", status: "under_review", deadline: "2026-05-10", notes: "Round 1 cleared" },
+]
 
-    function moveApp(id, newStatus) {
-        setApps(prev => prev.map(a => a.id === id ? { ...a, status: newStatus } : a))
-    }
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
-    function removeApp(id) {
-        setApps(prev => prev.filter(a => a.id !== id))
-    }
+function daysLeft(dateStr) {
+  if (!dateStr) return null
+  const diff = Math.ceil((new Date(dateStr) - new Date()) / 86400000)
+  return diff
+}
 
-    const nextStatus = { wishlist: "applied", applied: "docs_sent", docs_sent: "admitted" }
+function DeadlineBadge({ deadline }) {
+  if (!deadline) return null
+  const d = daysLeft(deadline)
+  if (d < 0) return <span className="text-[10px] font-bold" style={{ color: "#ef4444" }}>Expired</span>
+  if (d <= 3) return <span className="flex items-center gap-1 text-[10px] font-bold" style={{ color: "#ef4444" }}><AlertCircle size={10} /> {d}d left</span>
+  if (d <= 10) return <span className="text-[10px] font-bold" style={{ color: "#f59e0b" }}>{d}d left</span>
+  return <span className="text-[10px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>{d}d left</span>
+}
 
-    return (
-        <div className="space-y-6">
-            {/* Hero */}
-            <motion.section
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="card-gradient-teal rounded-3xl p-8 text-center text-white shadow-xl md:p-10"
-            >
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 shadow-lg">
-                    <Kanban size={40} />
-                </div>
-                <h1 className="text-4xl font-extrabold md:text-5xl">Opportunity Tracker</h1>
-                <p className="mt-3 text-lg text-white/80">Track everything: College Apps, Internships, Hackathons, and Scholarships</p>
-            </motion.section>
+// ── App Card ─────────────────────────────────────────────────────────────────
 
-            {/* Add Button */}
-            <div className="flex justify-end">
-                <button
-                    type="button"
-                    onClick={() => setShowAdd(true)}
-                    className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl"
-                >
-                    <Plus size={16} /> Add Opportunity
-                </button>
-            </div>
+function AppCard({ app, onMove, onDelete, isDemo }) {
+  const cfg = TYPE_CONFIG[app.type] || TYPE_CONFIG.College
+  const Icon = cfg.icon
+  const next = STATUS_FLOW[app.status]
+  const nextLabel = COLUMNS.find(c => c.id === next)?.label
 
-            {/* Add Modal */}
-            <AnimatePresence>
-                {showAdd && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.95 }}
-                            animate={{ scale: 1 }}
-                            exit={{ scale: 0.95 }}
-                            className="mx-4 w-full max-w-md space-y-4 rounded-3xl bg-white p-6 shadow-2xl"
-                        >
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-bold text-slate-900">Add to Tracker</h3>
-                                <button type="button" onClick={() => setShowAdd(false)} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
-                            </div>
-
-                            <select
-                                value={newApp.type}
-                                onChange={e => setNewApp(p => ({ ...p, type: e.target.value }))}
-                                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-indigo-400 font-semibold"
-                            >
-                                <option value="College">🎓 College Application</option>
-                                <option value="Internship">💼 Internship / Job</option>
-                                <option value="Hackathon">💻 Hackathon / Competition</option>
-                                <option value="Scholarship">🏆 Scholarship</option>
-                            </select>
-
-                            <input
-                                value={newApp.title}
-                                onChange={e => setNewApp(p => ({ ...p, title: e.target.value }))}
-                                placeholder="Name (e.g. Google STEP, IIT B)"
-                                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-indigo-400"
-                            />
-                            <input
-                                type="date"
-                                value={newApp.deadline}
-                                onChange={e => setNewApp(p => ({ ...p, deadline: e.target.value }))}
-                                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm"
-                            />
-                            <input
-                                value={newApp.notes}
-                                onChange={e => setNewApp(p => ({ ...p, notes: e.target.value }))}
-                                placeholder="Notes (optional)"
-                                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none"
-                            />
-                            <button
-                                type="button"
-                                onClick={addApplication}
-                                disabled={!newApp.title}
-                                className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50"
-                            >
-                                Track Opportunity
-                            </button>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* Kanban Board */}
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                {COLUMNS.map(col => {
-                    const colApps = apps.filter(a => a.status === col.id)
-                    return (
-                        <div key={col.id} className={`rounded-3xl border p-4 ${col.color}`}>
-                            <h3 className="mb-3 text-sm font-bold text-slate-700">
-                                {col.label} <span className="ml-1 text-slate-400">({colApps.length})</span>
-                            </h3>
-                            <div className="space-y-3">
-                                <AnimatePresence>
-                                    {colApps.map(app => {
-                                        const daysLeft = app.deadline ? getDaysLeft(app.deadline) : null
-                                        const TypeIcon = TYPE_CONFIG[app.type]?.icon || GraduationCap;
-
-                                        return (
-                                            <motion.div
-                                                key={app.id}
-                                                layout
-                                                initial={{ opacity: 0, y: 8 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, scale: 0.95 }}
-                                                className="scroll-3d-card rounded-2xl border border-white bg-white p-4 shadow-card transition hover:-translate-y-0.5"
-                                            >
-                                                <div className="flex items-start justify-between gap-2 mb-2">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className={`p-1.5 rounded-md ${TYPE_CONFIG[app.type]?.color || 'bg-slate-100'}`}>
-                                                            <TypeIcon size={14} />
-                                                        </div>
-                                                        <p className="text-sm font-bold text-slate-900 leading-tight">{app.title}</p>
-                                                    </div>
-                                                    <button type="button" onClick={() => removeApp(app.id)} className="text-slate-300 hover:text-rose-500 shrink-0">
-                                                        <Trash2 size={13} />
-                                                    </button>
-                                                </div>
-
-                                                {app.city && <p className="text-[11px] font-medium text-slate-500 mb-1">{app.city}{app.state ? `, ${app.state}` : ""}</p>}
-
-                                                {app.deadline && (
-                                                    <p className={`text-xs font-medium ${daysLeft <= 5 ? "text-rose-600 font-bold bg-rose-50 px-1 inline-block rounded" : "text-slate-500"}`}>
-                                                        ⏳ {formatDate(app.deadline)} {daysLeft >= 0 ? `(${daysLeft}d left)` : ""}
-                                                    </p>
-                                                )}
-
-                                                {app.notes && <p className="mt-2 text-xs italic text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-100">{app.notes}</p>}
-
-                                                {nextStatus[col.id] && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => moveApp(app.id, nextStatus[col.id])}
-                                                        className="mt-3 flex items-center justify-center w-full gap-1 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 p-1.5 rounded-lg transition-colors"
-                                                    >
-                                                        Move Next <ChevronRight size={12} />
-                                                    </button>
-                                                )}
-                                            </motion.div>
-                                        )
-                                    })}
-                                </AnimatePresence>
-                                {colApps.length === 0 && (
-                                    <p className="py-6 text-center text-xs font-medium text-slate-400 bg-white/50 rounded-xl border border-dashed border-slate-300">Empty Area</p>
-                                )}
-                            </div>
-                        </div>
-                    )
-                })}
-            </div>
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      className="group rounded-xl p-3.5 space-y-2.5"
+      style={{
+        background: "var(--obsidian-surface)",
+        border: "1px solid var(--obsidian-outline-variant)",
+      }}
+    >
+      {/* Header */}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg" style={{ background: `${cfg.color}18` }}>
+            <Icon size={13} style={{ color: cfg.color }} />
+          </div>
+          <p className="text-[13px] font-bold leading-snug" style={{ color: "var(--obsidian-on-surface)" }}>
+            {app.title}
+          </p>
         </div>
-    )
+        <button
+          type="button"
+          onClick={() => onDelete(app.id)}
+          className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+          style={{ color: "var(--obsidian-on-surface-variant)" }}
+        >
+          <Trash2 size={12} />
+        </button>
+      </div>
+
+      {/* Deadline */}
+      <div className="flex items-center justify-between">
+        {app.deadline && (
+          <div className="flex items-center gap-1" style={{ color: "var(--obsidian-on-surface-variant)" }}>
+            <Clock size={10} />
+            <span className="text-[10px]">{new Date(app.deadline).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span>
+          </div>
+        )}
+        <DeadlineBadge deadline={app.deadline} />
+      </div>
+
+      {/* Notes */}
+      {app.notes && (
+        <p className="text-[11px] italic leading-relaxed" style={{ color: "var(--obsidian-on-surface-variant)", borderLeft: `2px solid var(--obsidian-outline-variant)`, paddingLeft: "8px" }}>
+          {app.notes}
+        </p>
+      )}
+
+      {/* Move next */}
+      {next && !isDemo && (
+        <button
+          type="button"
+          onClick={() => onMove(app.id, next)}
+          className="flex w-full items-center justify-center gap-1 rounded-lg py-1.5 text-[11px] font-bold transition hover:opacity-80"
+          style={{ background: `${cfg.color}14`, color: cfg.color }}
+        >
+          → {nextLabel} <ChevronRight size={11} />
+        </button>
+      )}
+    </motion.div>
+  )
+}
+
+// ── Add Modal ─────────────────────────────────────────────────────────────────
+
+function AddModal({ onClose, onAdd }) {
+  const [form, setForm] = useState({ title: "", type: "College", deadline: "", notes: "" })
+  const [saving, setSaving] = useState(false)
+
+  const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
+
+  async function submit() {
+    if (!form.title) return
+    setSaving(true)
+    await onAdd(form)
+    setSaving(false)
+    onClose()
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+      style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }}
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }}
+        onClick={e => e.stopPropagation()}
+        className="w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 space-y-4"
+        style={{ background: "var(--obsidian-surface)", border: "1px solid var(--obsidian-outline-variant)" }}
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-bold" style={{ color: "var(--obsidian-on-surface)" }}>Add to Tracker</h3>
+          <button type="button" onClick={onClose} style={{ color: "var(--obsidian-on-surface-variant)" }}><X size={18} /></button>
+        </div>
+
+        {/* Type select */}
+        <select
+          value={form.type}
+          onChange={e => set("type", e.target.value)}
+          className="w-full rounded-xl px-4 py-3 text-sm font-semibold outline-none"
+          style={{ background: "var(--accent-glow)", color: "var(--obsidian-on-surface)", border: "1px solid var(--obsidian-outline-variant)" }}
+        >
+          <option value="College">🎓 College Application</option>
+          <option value="Internship">💼 Internship / Job</option>
+          <option value="Hackathon">💻 Hackathon / Competition</option>
+          <option value="Scholarship">🏆 Scholarship</option>
+        </select>
+
+        <input
+          value={form.title}
+          onChange={e => set("title", e.target.value)}
+          placeholder="Name (e.g. IIT Bombay B.Tech CSE)"
+          className="w-full rounded-xl px-4 py-3 text-sm outline-none"
+          style={{ background: "var(--accent-glow)", color: "var(--obsidian-on-surface)", border: "1px solid var(--obsidian-outline-variant)" }}
+        />
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="mb-1 block text-[11px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>Deadline</label>
+            <input
+              type="date"
+              value={form.deadline}
+              onChange={e => set("deadline", e.target.value)}
+              className="w-full rounded-xl px-3 py-2.5 text-sm"
+              style={{ background: "var(--accent-glow)", color: "var(--obsidian-on-surface)", border: "1px solid var(--obsidian-outline-variant)" }}
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-[11px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>Type</label>
+            <div className="flex items-center h-[42px] rounded-xl px-3 text-[11px] font-bold" style={{ background: `${TYPE_CONFIG[form.type]?.color}18`, color: TYPE_CONFIG[form.type]?.color }}>
+              {form.type}
+            </div>
+          </div>
+        </div>
+
+        <textarea
+          value={form.notes}
+          onChange={e => set("notes", e.target.value)}
+          placeholder="Notes (optional)"
+          rows={2}
+          className="w-full rounded-xl px-4 py-3 text-sm resize-none outline-none"
+          style={{ background: "var(--accent-glow)", color: "var(--obsidian-on-surface)", border: "1px solid var(--obsidian-outline-variant)" }}
+        />
+
+        <button
+          type="button"
+          onClick={submit}
+          disabled={!form.title || saving}
+          className="flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold text-white disabled:opacity-50"
+          style={{ background: "linear-gradient(135deg, var(--obsidian-primary), var(--obsidian-secondary))" }}
+        >
+          {saving ? <Loader2 size={15} className="animate-spin" /> : <Plus size={15} />}
+          Track Opportunity
+        </button>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+
+export default function ApplicationTracker() {
+  const { user } = useAuth?.() || {}
+  const [apps, setApps] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [showAdd, setShowAdd] = useState(false)
+  const isDemo = !user
+
+  useEffect(() => {
+    if (!user) { setApps(DEMO_APPS); setLoading(false); return }
+    getUserApplications(user.email).then(data => {
+      setApps(data.length ? data : [])
+      setLoading(false)
+    })
+  }, [user])
+
+  async function handleAdd(form) {
+    if (!user) { setApps(p => [{ id: "demo-" + Date.now(), ...form, status: "planning" }, ...p]); return }
+    const { data } = await createApplication({
+      userEmail: user.email,
+      collegeId: null,
+      programName: form.title,
+      applicationDeadline: form.deadline || null,
+      notes: form.notes,
+    })
+    if (data) setApps(p => [data, ...p])
+  }
+
+  async function handleMove(id, newStatus) {
+    setApps(p => p.map(a => a.id === id ? { ...a, status: newStatus } : a))
+    if (user) await updateApplicationStatus(id, user.email, newStatus)
+  }
+
+  async function handleDelete(id) {
+    setApps(p => p.filter(a => a.id !== id))
+    if (user) await deleteApplication(id, user.email)
+  }
+
+  // Sort: soonest deadline first within each column
+  function colApps(status) {
+    return apps
+      .filter(a => a.status === status)
+      .sort((a, b) => {
+        if (!a.deadline) return 1
+        if (!b.deadline) return -1
+        return new Date(a.deadline) - new Date(b.deadline)
+      })
+  }
+
+  // Summary stats
+  const stats = COLUMNS.slice(0, 4).map(c => ({ label: c.label, count: apps.filter(a => a.status === c.id).length, color: c.color }))
+
+  return (
+    <>
+      <Helmet><title>Application Tracker — TAKSHAK</title></Helmet>
+
+      <div className="space-y-6">
+        {/* ── Page header ── */}
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <ClipboardList size={18} style={{ color: "var(--obsidian-primary)" }} />
+              <h1 className="text-xl font-black" style={{ color: "var(--obsidian-on-surface)" }}>Application Tracker</h1>
+            </div>
+            <p className="text-sm" style={{ color: "var(--obsidian-on-surface-variant)" }}>
+              Track every college, internship, hackathon and scholarship in one board.
+              {isDemo && <span className="ml-1 font-semibold" style={{ color: "#f59e0b" }}>Sign in to save your data.</span>}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowAdd(true)}
+            className="flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-white"
+            style={{ background: "linear-gradient(135deg, var(--obsidian-primary), var(--obsidian-secondary))" }}
+          >
+            <Plus size={15} /> Add
+          </button>
+        </div>
+
+        {/* ── Summary strip ── */}
+        <div className="grid grid-cols-4 gap-3">
+          {stats.map(s => (
+            <div key={s.label} className="rounded-xl p-3 text-center" style={{ background: "var(--obsidian-surface)", border: "1px solid var(--obsidian-outline-variant)" }}>
+              <p className="text-2xl font-black" style={{ color: s.color }}>{s.count}</p>
+              <p className="text-[11px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>{s.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* ── Kanban ── */}
+        {loading ? (
+          <div className="flex justify-center py-16">
+            <Loader2 size={28} className="animate-spin" style={{ color: "var(--obsidian-primary)" }} />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+            {COLUMNS.map(col => {
+              const items = colApps(col.status || col.id)
+              return (
+                <div
+                  key={col.id}
+                  className="flex flex-col gap-3 rounded-2xl p-3"
+                  style={{ background: col.bg, border: `1px solid ${col.color}30`, minHeight: "180px" }}
+                >
+                  {/* Column header */}
+                  <div className="flex items-center justify-between px-1">
+                    <span className="text-[12px] font-bold" style={{ color: col.color }}>{col.label}</span>
+                    <span
+                      className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black"
+                      style={{ background: `${col.color}20`, color: col.color }}
+                    >
+                      {items.length}
+                    </span>
+                  </div>
+
+                  {/* Cards */}
+                  <div className="flex flex-col gap-2">
+                    <AnimatePresence>
+                      {items.map(app => (
+                        <AppCard
+                          key={app.id}
+                          app={app}
+                          onMove={handleMove}
+                          onDelete={handleDelete}
+                          isDemo={isDemo}
+                        />
+                      ))}
+                    </AnimatePresence>
+                    {items.length === 0 && (
+                      <div className="flex items-center justify-center rounded-xl py-6 text-[11px] font-medium" style={{ color: `${col.color}60`, border: `1px dashed ${col.color}30` }}>
+                        Empty
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        {/* ── Accepted / Rejected row (full width) ── */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {[COLUMNS[4], COLUMNS[5]].map(col => {
+            const items = colApps(col.id)
+            return (
+              <div key={col.id} className="rounded-2xl p-4 space-y-2" style={{ background: col.bg, border: `1px solid ${col.color}30` }}>
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-[13px] font-bold" style={{ color: col.color }}>
+                    {col.id === "accepted" ? <CheckCircle2 size={15} /> : <X size={15} />} {col.label}
+                  </span>
+                  <span className="text-[12px] font-black" style={{ color: col.color }}>{items.length}</span>
+                </div>
+                {items.length === 0 ? (
+                  <p className="text-[11px]" style={{ color: `${col.color}60` }}>None yet</p>
+                ) : (
+                  items.map(app => (
+                    <div key={app.id} className="flex items-center justify-between rounded-lg px-3 py-2" style={{ background: "var(--obsidian-surface)", border: "1px solid var(--obsidian-outline-variant)" }}>
+                      <span className="text-[13px] font-semibold" style={{ color: "var(--obsidian-on-surface)" }}>{app.title}</span>
+                      <button type="button" onClick={() => handleDelete(app.id)} style={{ color: "var(--obsidian-on-surface-variant)" }}><Trash2 size={12} /></button>
+                    </div>
+                  ))
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Add modal */}
+      <AnimatePresence>
+        {showAdd && <AddModal onClose={() => setShowAdd(false)} onAdd={handleAdd} />}
+      </AnimatePresence>
+    </>
+  )
 }

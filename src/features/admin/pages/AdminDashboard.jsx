@@ -1,168 +1,217 @@
 import { useCallback, useEffect, useState } from "react"
+import { motion } from "framer-motion"
 import {
-    AlertTriangle,
-    Building2,
-    CalendarDays,
-    GraduationCap,
-    ShieldCheck,
-    TrendingUp,
-    Users,
+  AlertTriangle, Building2, CalendarDays, CheckCircle2,
+  GraduationCap, IndianRupee, Loader2, RefreshCw,
+  TrendingUp, Users, Clock, FileWarning, BookOpen,
+  ShieldAlert, Zap,
 } from "lucide-react"
 import { adminGetDataHealth } from "@database/services/admin"
+import { useAuth } from "@auth/AuthContext"
 
-export default function AdminDashboard() {
-    const [health, setHealth] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState("")
-
-    const load = useCallback(async () => {
-        setLoading(true)
-        setError("")
-        try {
-            const result = await adminGetDataHealth()
-            setHealth(result)
-        } catch (err) {
-            setError(err.message || "Failed to load data health")
-        } finally {
-            setLoading(false)
-        }
-    }, [])
-
-    useEffect(() => { load() }, [load])
-
-    if (loading) {
-        return (
-            <div className="grid gap-4 md:grid-cols-3">
-                {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="h-28 animate-pulse rounded-xl bg-slate-200" />
-                ))}
-            </div>
-        )
-    }
-
-    if (error) {
-        return (
-            <div className="rounded-xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-700">
-                {error}
-            </div>
-        )
-    }
-
-    if (!health) return null
-
-    const { totals, health: dataHealth, distributions } = health
-
-    const totalMetrics = [
-        { icon: Building2, label: "Total Colleges", value: totals.colleges, color: "indigo" },
-        { icon: CalendarDays, label: "Total Exams", value: totals.exams, color: "blue" },
-        { icon: GraduationCap, label: "Total Mentors", value: totals.mentors, color: "emerald" },
-        { icon: Users, label: "Total Users", value: totals.users, color: "violet" },
-        { icon: ShieldCheck, label: "Total Bookings", value: totals.bookings, color: "amber" },
-        { icon: TrendingUp, label: "Premium Users", value: dataHealth.premiumUsers, color: "rose" },
-    ]
-
-    const healthFlags = [
-        { label: "Colleges missing official link", value: dataHealth.missingLinks, severity: dataHealth.missingLinks > 0 ? "warn" : "ok" },
-        { label: "Mentors with 0 rating", value: dataHealth.lowRatingMentors, severity: dataHealth.lowRatingMentors > 3 ? "warn" : "ok" },
-        { label: "Unverified mentors", value: dataHealth.unverifiedMentors, severity: dataHealth.unverifiedMentors > 0 ? "info" : "ok" },
-        { label: "Exams missing start date", value: dataHealth.missingDates, severity: dataHealth.missingDates > 0 ? "warn" : "ok" },
-        { label: "Pending bookings", value: dataHealth.pendingBookings, severity: dataHealth.pendingBookings > 5 ? "warn" : "info" },
-    ]
-
-    const severityClasses = {
-        ok: "bg-emerald-50 text-emerald-700 border-emerald-200",
-        info: "bg-blue-50 text-blue-700 border-blue-200",
-        warn: "bg-amber-50 text-amber-700 border-amber-200",
-    }
-
-    const colorMap = {
-        indigo: "bg-indigo-100 text-indigo-700",
-        blue: "bg-blue-100 text-blue-700",
-        emerald: "bg-emerald-100 text-emerald-700",
-        violet: "bg-violet-100 text-violet-700",
-        amber: "bg-amber-100 text-amber-700",
-        rose: "bg-rose-100 text-rose-700",
-    }
-
-    return (
-        <div className="space-y-6">
-            {/* ── Total Metrics ── */}
-            <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {totalMetrics.map(metric => (
-                    <article key={metric.label} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                        <div className={`mb-3 inline-flex rounded-lg p-2 ${colorMap[metric.color]}`}>
-                            <metric.icon size={16} />
-                        </div>
-                        <p className="text-sm text-slate-500">{metric.label}</p>
-                        <p className="mt-1 text-2xl font-semibold text-slate-900">{metric.value}</p>
-                    </article>
-                ))}
-            </section>
-
-            {/* ── Data Health ── */}
-            <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="mb-4 flex items-center gap-2 text-base font-semibold text-slate-900">
-                    <AlertTriangle size={16} className="text-amber-600" />
-                    Data Health Monitor
-                </h3>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {healthFlags.map(flag => (
-                        <div
-                            key={flag.label}
-                            className={`rounded-lg border px-4 py-3 ${severityClasses[flag.severity]}`}
-                        >
-                            <p className="text-sm font-medium">{flag.label}</p>
-                            <p className="mt-1 text-xl font-semibold">{flag.value}</p>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            {/* ── Distribution Charts ── */}
-            <section className="grid gap-5 xl:grid-cols-2">
-                <DistributionCard title="Colleges by State" data={distributions.collegesByState} color="indigo" />
-                <DistributionCard title="Mentors by Stream" data={distributions.mentorsByStream} color="emerald" />
-                <DistributionCard title="Users by Stream" data={distributions.usersByStream} color="violet" />
-                <DistributionCard title="Bookings by Status" data={distributions.bookingsByStatus} color="amber" />
-            </section>
-        </div>
-    )
+function StatCard({ icon: Icon, label, value, sub, color, delay = 0 }) {
+  const colorMap = {
+    indigo:  { bg: "bg-indigo-500/8",  border: "border-indigo-500/15",  text: "text-indigo-400",  icon: "bg-indigo-500/12" },
+    emerald: { bg: "bg-emerald-500/8", border: "border-emerald-500/15", text: "text-emerald-400", icon: "bg-emerald-500/12" },
+    violet:  { bg: "bg-violet-500/8",  border: "border-violet-500/15",  text: "text-violet-400",  icon: "bg-violet-500/12" },
+    amber:   { bg: "bg-amber-500/8",   border: "border-amber-500/15",   text: "text-amber-400",   icon: "bg-amber-500/12" },
+    rose:    { bg: "bg-rose-500/8",    border: "border-rose-500/15",    text: "text-rose-400",    icon: "bg-rose-500/12" },
+    blue:    { bg: "bg-blue-500/8",    border: "border-blue-500/15",    text: "text-blue-400",    icon: "bg-blue-500/12" },
+    teal:    { bg: "bg-teal-500/8",    border: "border-teal-500/15",    text: "text-teal-400",    icon: "bg-teal-500/12" },
+  }
+  const c = colorMap[color] || colorMap.indigo
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }}
+      className={`rounded-2xl border ${c.border} ${c.bg} p-5 space-y-3`}>
+      <div className={`inline-flex items-center justify-center w-9 h-9 rounded-xl ${c.icon} ${c.text}`}>
+        <Icon size={17} />
+      </div>
+      <div>
+        <p className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider">{label}</p>
+        <p className={`text-2xl font-black mt-0.5 ${c.text}`}>{value ?? "—"}</p>
+        {sub && <p className="text-[10px] text-slate-600 mt-0.5">{sub}</p>}
+      </div>
+    </motion.article>
+  )
 }
 
-function DistributionCard({ title, data, color }) {
-    const entries = Object.entries(data || {}).sort((a, b) => b[1] - a[1])
-    const max = entries.length > 0 ? Math.max(...entries.map(e => e[1])) : 1
+function HealthFlag({ label, value, severity }) {
+  const s = {
+    ok:   { bg: "bg-emerald-500/6 border-emerald-500/12", text: "text-emerald-400", dot: "bg-emerald-400" },
+    info: { bg: "bg-blue-500/6 border-blue-500/12",       text: "text-blue-400",    dot: "bg-blue-400" },
+    warn: { bg: "bg-amber-500/6 border-amber-500/12",     text: "text-amber-400",   dot: "bg-amber-400" },
+    crit: { bg: "bg-rose-500/6 border-rose-500/12",       text: "text-rose-400",    dot: "bg-rose-400" },
+  }[severity] || { bg: "bg-slate-500/6 border-slate-500/12", text: "text-slate-400", dot: "bg-slate-400" }
 
-    const barColor = {
-        indigo: "bg-indigo-500",
-        emerald: "bg-emerald-500",
-        violet: "bg-violet-500",
-        amber: "bg-amber-500",
+  return (
+    <div className={`rounded-xl border ${s.bg} px-4 py-3 flex items-center justify-between gap-3`}>
+      <div className="flex items-center gap-2">
+        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${s.dot}`} />
+        <span className="text-xs text-slate-400">{label}</span>
+      </div>
+      <span className={`text-lg font-black ${s.text}`}>{value}</span>
+    </div>
+  )
+}
+
+export default function AdminDashboard() {
+  const { user } = useAuth()
+  const [health, setHealth] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError("")
+    try {
+      const result = await adminGetDataHealth()
+      setHealth(result)
+    } catch (err) {
+      setError(err.message || "Failed to load data")
+    } finally {
+      setLoading(false)
     }
+  }, [])
 
-    return (
-        <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h4 className="mb-4 text-sm font-semibold text-slate-900">{title}</h4>
-            {entries.length === 0 ? (
-                <p className="text-sm text-slate-400">No data available.</p>
-            ) : (
-                <ul className="space-y-2">
-                    {entries.slice(0, 8).map(([key, count]) => (
-                        <li key={key}>
-                            <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
-                                <span>{key}</span>
-                                <span className="font-medium">{count}</span>
-                            </div>
-                            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-                                <div
-                                    className={`h-full rounded-full ${barColor[color]}`}
-                                    style={{ width: `${(count / max) * 100}%` }}
-                                />
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </article>
-    )
+  useEffect(() => { load() }, [load])
+
+  const fmt = (n) => n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n ?? 0)
+  const fmtRupee = (n) => n >= 100000
+    ? `₹${(n / 100000).toFixed(1)}L`
+    : n >= 1000
+      ? `₹${(n / 1000).toFixed(1)}k`
+      : `₹${n ?? 0}`
+
+  const name = user?.displayName || user?.email?.split("@")[0] || "Admin"
+
+  return (
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-2xl font-black text-white tracking-tight">
+            Welcome back, {name} 👋
+          </h1>
+          <p className="text-[11px] text-slate-600 mt-1">
+            {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+          </p>
+        </div>
+        <button onClick={load} disabled={loading}
+          className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.05] text-slate-500 hover:text-indigo-400 transition text-xs font-medium">
+          {loading ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />} Refresh
+        </button>
+      </div>
+
+      {error && (
+        <div className="rounded-xl bg-rose-500/8 border border-rose-500/15 px-4 py-3 text-xs text-rose-400 flex items-center gap-2">
+          <AlertTriangle size={14} /> {error}
+        </div>
+      )}
+
+      {loading && !health ? (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="h-28 rounded-2xl bg-white/[0.02] animate-pulse border border-white/[0.03]" />
+          ))}
+        </div>
+      ) : health ? (
+        <>
+          {/* ── Core Metrics ── */}
+          <section>
+            <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+              <Zap size={10} /> Platform Totals
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <StatCard icon={Users}        label="Total Users"     value={fmt(health.totals.users)}       color="indigo"  delay={0.00} />
+              <StatCard icon={GraduationCap} label="Total Mentors"  value={fmt(health.totals.mentors)}     color="emerald" delay={0.04} />
+              <StatCard icon={Building2}    label="Colleges"        value={fmt(health.totals.colleges)}    color="violet"  delay={0.08} />
+              <StatCard icon={CalendarDays} label="Exams Listed"    value={fmt(health.totals.exams)}       color="blue"    delay={0.12} />
+              <StatCard icon={Clock}        label="Total Sessions"  value={fmt(health.totals.sessions)}
+                sub={`${health.health.completedSessions} completed`}                                       color="teal"    delay={0.16} />
+              <StatCard icon={CheckCircle2} label="Done Sessions"   value={fmt(health.health.completedSessions)} color="emerald" delay={0.20} />
+              <StatCard icon={IndianRupee}  label="Total Revenue"   value={fmtRupee(health.health.totalRevenue)}
+                sub="captured transactions"                                                                color="amber"   delay={0.24} />
+              <StatCard icon={TrendingUp}   label="Platform Fees"   value={fmtRupee(health.health.platformFees)}
+                sub="Takshak's cut"                                                                        color="rose"    delay={0.28} />
+            </div>
+          </section>
+
+          {/* ── Health Monitor ── */}
+          <section>
+            <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+              <ShieldAlert size={10} /> Action Required
+            </p>
+            <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+              <HealthFlag
+                label="Unverified mentor applications"
+                value={health.health.unverifiedMentors}
+                severity={health.health.unverifiedMentors > 0 ? "warn" : "ok"}
+              />
+              <HealthFlag
+                label="Open reports"
+                value={health.health.openReports}
+                severity={health.health.openReports > 2 ? "crit" : health.health.openReports > 0 ? "warn" : "ok"}
+              />
+              <HealthFlag
+                label="Pending / confirmed sessions"
+                value={health.health.pendingSessions}
+                severity={health.health.pendingSessions > 10 ? "warn" : "info"}
+              />
+              <HealthFlag
+                label="Total transactions logged"
+                value={health.totals.transactions}
+                severity="info"
+              />
+              <HealthFlag
+                label="Total reports filed"
+                value={health.totals.reports}
+                severity={health.totals.reports > 5 ? "warn" : "ok"}
+              />
+              <HealthFlag
+                label="Revenue vs fees ratio"
+                value={health.health.totalRevenue > 0
+                  ? `${((health.health.platformFees / health.health.totalRevenue) * 100).toFixed(1)}%`
+                  : "—"}
+                severity="info"
+              />
+            </div>
+          </section>
+
+          {/* ── Quick Access ── */}
+          <section>
+            <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+              <BookOpen size={10} /> Quick Access
+            </p>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                { href: "/admin/mentor-apps", label: "Review Mentor Applications", badge: health.health.unverifiedMentors, color: "indigo" },
+                { href: "/admin/reports",     label: "Handle Open Reports",         badge: health.health.openReports,       color: "rose" },
+                { href: "/admin/sessions",    label: "View Pending Sessions",       badge: health.health.pendingSessions,   color: "amber" },
+                { href: "/admin/users",       label: "Manage Users",                badge: health.totals.users,             color: "violet" },
+                { href: "/admin/payouts",     label: "Process Payouts",             badge: null,                           color: "emerald" },
+                { href: "/admin/colleges",    label: "Update College Data",         badge: health.totals.colleges,          color: "blue" },
+              ].map(link => (
+                <a key={link.href} href={link.href}
+                  className="flex items-center justify-between rounded-xl border border-white/[0.04] bg-white/[0.02] hover:bg-white/[0.04] px-4 py-3.5 transition group">
+                  <span className="text-xs font-semibold text-slate-400 group-hover:text-white transition">{link.label}</span>
+                  {link.badge != null && link.badge > 0 && (
+                    <span className={`text-[9px] font-black px-2 py-0.5 rounded-full
+                      ${link.color === "rose"    ? "bg-rose-500/15 text-rose-400" :
+                        link.color === "amber"   ? "bg-amber-500/15 text-amber-400" :
+                        link.color === "emerald" ? "bg-emerald-500/15 text-emerald-400" :
+                        link.color === "violet"  ? "bg-violet-500/15 text-violet-400" :
+                        link.color === "blue"    ? "bg-blue-500/15 text-blue-400" :
+                        "bg-indigo-500/15 text-indigo-400"}`}>
+                      {link.badge}
+                    </span>
+                  )}
+                </a>
+              ))}
+            </div>
+          </section>
+        </>
+      ) : null}
+    </div>
+  )
 }
