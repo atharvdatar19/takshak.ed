@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://mentorbhaiyaaa.vercel.app/sitemap.xml
