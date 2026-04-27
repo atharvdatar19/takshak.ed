@@ -11,6 +11,8 @@ const AuthPage = lazy(() => import("@auth/AuthPage"))
 
 // ── Tools / Dashboard ─────────────────────────────────────────
 const Dashboard = lazy(() => import("@features/tools/Dashboard"))
+const DiscoverHub = lazy(() => import("@features/tools/DiscoverHub"))
+const PrepareHub = lazy(() => import("@features/tools/PrepareHub"))
 const RankReality = lazy(() => import("@features/tools/RankReality"))
 const PlanBAnalyzer = lazy(() => import("@features/tools/PlanBAnalyzer"))
 const ApplicationTracker = lazy(() => import("@features/tools/ApplicationTracker"))
@@ -38,6 +40,7 @@ const ScholarshipFinder = lazy(() => import("@features/resources/ScholarshipFind
 const Alerts = lazy(() => import("@features/resources/Alerts"))
 
 // ── Community ─────────────────────────────────────────────────
+const CommunityHub = lazy(() => import("@features/community/CommunityHub"))
 const DoubtForum = lazy(() => import("@features/community/DoubtForum"))
 const StressCheckin = lazy(() => import("@features/community/StressCheckin"))
 const PreFreshers = lazy(() => import("@features/community/PreFreshers"))
@@ -129,6 +132,11 @@ export default function App() {
                   <Route element={<AppLayout />}>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/dashboard" element={<Navigate to="/" replace />} />
+
+                    {/* Hub pages */}
+                    <Route path="/discover" element={<DiscoverHub />} />
+                    <Route path="/prepare" element={<PrepareHub />} />
+                    <Route path="/community" element={<CommunityHub />} />
 
                     {/* Public */}
                     <Route path="/colleges" element={<CollegeDirectory />} />
