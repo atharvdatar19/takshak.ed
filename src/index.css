@@ -1,5 +1,5 @@
-/* ── Google Fonts: Manrope + Inter ── */
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* ── Google Fonts: Playfair Display + Plus Jakarta Sans ── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -11,27 +11,27 @@
    ═══════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Takshak Obsidian Design Tokens (Light Mode Core) ── */
-  --obsidian-bg: #f8fafc; /* Crisp blue-slate background */
-  --obsidian-surface: #ffffff; /* Pure white surface */
-  --obsidian-surface-high: #f1f5f9; /* Off-white elevated surface */
-  --obsidian-surface-highest: #e2e8f0; /* Deepest light surface */
-  --obsidian-surface-variant: #cbd5e1; /* Slate variant */
-  
-  --obsidian-primary: #10b981; /* Emerald-500 (Vibrant but legible on white) */
-  --obsidian-primary-container: #059669; /* Emerald-600 */
-  --obsidian-secondary: #6366f1; /* Indigo-500 */
-  --obsidian-secondary-container: #4f46e5; /* Indigo-600 */
-  --obsidian-tertiary: #f43f5e; /* Rose-500 */
-  
-  --obsidian-on-surface: #0f172a; /* Near black (slate-900) */
-  --obsidian-on-surface-variant: #475569; /* Slate-600 */
-  --obsidian-outline: rgba(0, 0, 0, 0.08); /* Subtle dark border */
+  /* ── TAKक्षक Design Tokens — Warm Editorial Light Mode ── */
+  --obsidian-bg: #fafaf8;              /* Warm off-white, not harsh */
+  --obsidian-surface: #ffffff;          /* Pure white surface */
+  --obsidian-surface-high: #f5f5f2;    /* Warm elevated surface */
+  --obsidian-surface-highest: #edede9; /* Deep warm surface */
+  --obsidian-surface-variant: #e0e0db; /* Warm variant */
+
+  --obsidian-primary: #4f46e5;         /* Indigo-600 — brand accent */
+  --obsidian-primary-container: #4338ca; /* Indigo-700 */
+  --obsidian-secondary: #6366f1;       /* Indigo-500 */
+  --obsidian-secondary-container: #4f46e5;
+  --obsidian-tertiary: #f43f5e;        /* Rose-500 */
+
+  --obsidian-on-surface: #111111;      /* Near black — editorial */
+  --obsidian-on-surface-variant: #6b7280; /* Gray-500 — secondary text */
+  --obsidian-outline: rgba(0, 0, 0, 0.08);
   --obsidian-outline-variant: rgba(0, 0, 0, 0.04);
 
   /* ── Semantic Glass Colors ── */
-  --bg-glass: rgba(255, 255, 255, 0.85);
-  --border-glass: rgba(0, 0, 0, 0.06);
+  --bg-glass: rgba(255, 255, 255, 0.9);
+  --border-glass: rgba(0, 0, 0, 0.07);
   --shadow-glass: rgba(0, 0, 0, 0.04);
 
   /* ── Animation Easing ── */
@@ -39,9 +39,13 @@
   --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
 
-  /* ── Accent Glows ── */
-  --accent-glow: rgba(16, 185, 129, 0.15); /* Emerald glow */
-  --accent-glow-intense: rgba(16, 185, 129, 0.3);
+  /* ── Accent Glows (indigo) ── */
+  --accent-glow: rgba(79, 70, 229, 0.10);
+  --accent-glow-intense: rgba(79, 70, 229, 0.22);
+
+  /* ── Typography ── */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
 html.dark {
@@ -78,12 +82,21 @@ html {
 }
 
 body {
-  font-family: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.01em;
   background: var(--obsidian-bg);
   color: var(--obsidian-on-surface);
+}
+
+/* ── Display font — Playfair Display for brand/headings ── */
+.font-display {
+  font-family: var(--font-display) !important;
+}
+
+h1:not(.no-display), h2:not(.no-display) {
+  font-family: var(--font-display);
 }
 
 /* Global Dark Mode transition removed to fix severe React/FramerMotion animation lag */
@@ -219,9 +232,9 @@ body {
 }
 
 .sidebar-glass {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  background: rgba(250, 250, 248, 0.92);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
   border-right: 1px solid var(--border-glass);
 }
 
@@ -286,7 +299,7 @@ body {
 }
 
 .shimmer {
-  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background: linear-gradient(90deg, #edede9 25%, #f5f5f2 50%, #edede9 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }

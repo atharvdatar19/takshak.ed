@@ -97,7 +97,7 @@ function SidebarContent({ onNavigate }) {
       {/* ── Brand ── */}
       <Link to="/" className="flex items-center gap-3 px-5 pb-4 pt-5 hover:opacity-80 transition-opacity">
         <img src="/takshak_logo.jpg" alt="TAKक्षक" className="h-9 w-auto rounded-xl" />
-        <span className="text-sm font-black tracking-wide" style={{ color: "var(--obsidian-on-surface)" }}>
+        <span className="font-display text-base font-bold tracking-tight" style={{ color: "var(--obsidian-on-surface)" }}>
           TAKक्षक
         </span>
       </Link>
@@ -283,7 +283,7 @@ export default function AppLayout() {
       >
         <div className="flex items-center gap-2">
           <img src="/takshak_logo.jpg" alt="TAKक्षक" className="h-8 w-auto rounded-lg" />
-          <span className="text-sm font-black tracking-wide" style={{ color: "var(--obsidian-on-surface)" }}>
+          <span className="font-display text-base font-bold tracking-tight" style={{ color: "var(--obsidian-on-surface)" }}>
             TAKक्षक
           </span>
         </div>
