@@ -204,7 +204,7 @@ export default function PlanBAnalyzer() {
                                             </div>
                                         </div>
                                         <div className="mt-4 pt-4 border-t border-slate-200">
-                                            <p className="text-[11px] text-slate-400 flex items-start gap-1">
+                                            <p className="text-[14px] text-slate-400 flex items-start gap-1">
                                                 <Info size={12} className="shrink-0 mt-0.5" />
                                                 *Calculated over 4 working years instead of 5 to account for the gap year, ensuring true apples-to-apples comparison. Risk-adjusted ROI factors in the {(100 - successProbability)}% chance of failure returning to current state.
                                             </p>

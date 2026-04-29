@@ -61,7 +61,7 @@ export default function CommunityHub() {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <span
-              className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider"
+              className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[14px] font-bold uppercase tracking-wider"
               style={{ background: "var(--accent-glow)", color: "var(--obsidian-primary)" }}
             >
               <MessageSquare size={10} /> Community

@@ -139,7 +139,7 @@ export default function DefenceAspirants() {
                         
                         <div className="mt-10 flex flex-wrap justify-center gap-3">
                             {[{ icon: Zap, label: "First Session FREE" }, { icon: Shield, label: "Expert Defence Mentors" }, { icon: Award, label: "AIR 371 NDA Mentor" }].map((badge, i) => (
-                                <span key={i} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md px-5 py-2.5 text-[11px] font-black uppercase tracking-widest text-white shadow-sm">
+                                <span key={i} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md px-5 py-2.5 text-[14px] font-black uppercase tracking-widest text-white shadow-sm">
                                     <badge.icon size={14} className="text-emerald-400" /> {badge.label}
                                 </span>
                             ))}
@@ -177,7 +177,7 @@ export default function DefenceAspirants() {
                                         <span key={tag} className="rounded-xl border border-indigo-500/20 bg-indigo-500/10 px-3 py-1.5 text-[10px] font-black text-indigo-300 uppercase tracking-widest">{tag}</span>
                                     ))}
                                 </div>
-                                <div className="flex items-center gap-6 text-[11px] font-black uppercase tracking-widest text-[#6d758c]">
+                                <div className="flex items-center gap-6 text-[14px] font-black uppercase tracking-widest text-[#6d758c]">
                                     <span className="flex items-center gap-1.5"><Star size={14} className="text-amber-400 fill-amber-400" /> 5.0</span>
                                     <span className="flex items-center gap-1.5"><Users size={14} /> 3 yr exp</span>
                                 </div>
@@ -212,7 +212,7 @@ export default function DefenceAspirants() {
                                         <span key={tag} className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-[10px] font-black text-emerald-300 uppercase tracking-widest">{tag}</span>
                                     ))}
                                 </div>
-                                <div className="flex items-center gap-6 text-[11px] font-black uppercase tracking-widest text-[#6d758c]">
+                                <div className="flex items-center gap-6 text-[14px] font-black uppercase tracking-widest text-[#6d758c]">
                                     <span className="flex items-center gap-1.5"><Star size={14} className="text-amber-400 fill-amber-400" /> 5.0</span>
                                     <span className="flex items-center gap-1.5"><Users size={14} /> 50+ students</span>
                                     <span className="flex items-center gap-1.5"><Award size={14} className="text-emerald-400" /> 5× Written</span>
@@ -246,7 +246,7 @@ export default function DefenceAspirants() {
                                         <div className="flex items-center justify-center gap-2 mt-4">
                                             <span className="text-5xl font-black text-white tracking-tight">{plan.price}</span>
                                         </div>
-                                        <span className="text-[11px] font-black uppercase tracking-widest text-[#6d758c] mt-2 block">{plan.priceNote}</span>
+                                        <span className="text-[14px] font-black uppercase tracking-widest text-[#6d758c] mt-2 block">{plan.priceNote}</span>
                                         {plan.mentor && <p className="text-xs text-indigo-400 font-bold mt-3">with {plan.mentor}</p>}
                                     </div>
 

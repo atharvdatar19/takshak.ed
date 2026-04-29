@@ -427,7 +427,7 @@ export default function AuthPage({ defaultTab = "signup" }) {
                                                     </StaggerItem>
                                                     <StaggerItem>
                                                         <div className="flex justify-end">
-                                                            <button type="button" onClick={() => { setDirection(1); setShowForgot(true) }} className="text-[11px] font-black uppercase tracking-wider text-indigo-400 hover:text-indigo-300 transition-colors">
+                                                            <button type="button" onClick={() => { setDirection(1); setShowForgot(true) }} className="text-[14px] font-black uppercase tracking-wider text-indigo-400 hover:text-indigo-300 transition-colors">
                                                                 Forgot password?
                                                             </button>
                                                         </div>

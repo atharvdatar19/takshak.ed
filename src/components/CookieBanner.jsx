@@ -55,7 +55,7 @@ export default function CookieBanner() {
               </button>
             </div>
 
-            <p className="text-[11px] text-slate-400 leading-relaxed mb-4">
+            <p className="text-[14px] text-slate-400 leading-relaxed mb-4">
               We use essential cookies to keep you logged in, and optional analytics cookies to improve Takshak. We never use ad-tracking cookies.{" "}
               <Link to="/cookies" className="text-indigo-400 hover:underline">Cookie Policy</Link>
               {" "}·{" "}
@@ -75,7 +75,7 @@ export default function CookieBanner() {
                     ].map(c => (
                       <div key={c.name} className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-[11px] font-bold text-white">{c.name}</p>
+                          <p className="text-[14px] font-bold text-white">{c.name}</p>
                           <p className="text-[10px] text-slate-500 mt-0.5">{c.desc}</p>
                         </div>
                         <span className={`text-[9px] font-black px-2 py-0.5 rounded-full shrink-0 mt-0.5 ${
@@ -92,15 +92,15 @@ export default function CookieBanner() {
             {/* Buttons */}
             <div className="flex items-center gap-2">
               <button onClick={() => accept("all")}
-                className="flex-1 rounded-xl bg-white text-[#05080f] text-[11px] font-black py-2.5 hover:bg-indigo-50 transition-colors">
+                className="flex-1 rounded-xl bg-white text-[#05080f] text-[14px] font-black py-2.5 hover:bg-indigo-50 transition-colors">
                 Accept All
               </button>
               <button onClick={() => accept("essential")}
-                className="flex-1 rounded-xl border border-white/[0.08] bg-white/[0.04] text-slate-300 text-[11px] font-semibold py-2.5 hover:bg-white/[0.07] transition-colors">
+                className="flex-1 rounded-xl border border-white/[0.08] bg-white/[0.04] text-slate-300 text-[14px] font-semibold py-2.5 hover:bg-white/[0.07] transition-colors">
                 Essential Only
               </button>
               <button onClick={() => setShowDetails(v => !v)}
-                className="rounded-xl border border-white/[0.06] bg-white/[0.03] text-slate-500 text-[11px] font-medium px-2.5 py-2.5 hover:text-white transition-colors whitespace-nowrap">
+                className="rounded-xl border border-white/[0.06] bg-white/[0.03] text-slate-500 text-[14px] font-medium px-2.5 py-2.5 hover:text-white transition-colors whitespace-nowrap">
                 {showDetails ? "Less" : "Details"}
               </button>
             </div>

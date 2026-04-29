@@ -13,7 +13,7 @@ export default function LegalLayout({ title, lastUpdated, children }) {
             </div>
             <span className="text-[13px] font-black tracking-tight text-white">TAKक्षक</span>
           </Link>
-          <Link to="/" className="inline-flex items-center gap-1.5 text-[11px] text-slate-500 hover:text-white transition-colors font-medium">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-[14px] text-slate-500 hover:text-white transition-colors font-medium">
             <ArrowLeft size={12} /> Back to home
           </Link>
         </div>
@@ -35,11 +35,11 @@ export default function LegalLayout({ title, lastUpdated, children }) {
       {/* Footer strip */}
       <footer className="border-t border-white/[0.05] px-5 py-6">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[11px] text-slate-600">© 2025 TAKक्षक. All rights reserved.</p>
+          <p className="text-[14px] text-slate-600">© 2025 TAKक्षक. All rights reserved.</p>
           <div className="flex items-center gap-5">
-            <Link to="/privacy" className="text-[11px] text-slate-600 hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to="/terms"   className="text-[11px] text-slate-600 hover:text-white transition-colors">Terms of Service</Link>
-            <Link to="/cookies" className="text-[11px] text-slate-600 hover:text-white transition-colors">Cookie Policy</Link>
+            <Link to="/privacy" className="text-[14px] text-slate-600 hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/terms"   className="text-[14px] text-slate-600 hover:text-white transition-colors">Terms of Service</Link>
+            <Link to="/cookies" className="text-[14px] text-slate-600 hover:text-white transition-colors">Cookie Policy</Link>
           </div>
         </div>
       </footer>

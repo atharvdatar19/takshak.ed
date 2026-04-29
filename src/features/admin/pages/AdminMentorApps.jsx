@@ -57,7 +57,7 @@ export default function AdminMentorApps() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-black text-white tracking-tight">Mentor Applications</h1>
-                    <p className="text-[11px] text-slate-600 mt-1">{apps.length} pending applications</p>
+                    <p className="text-[14px] text-slate-600 mt-1">{apps.length} pending applications</p>
                 </div>
                 <button onClick={loadApps} disabled={loading}
                     className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.05] text-slate-500 hover:text-indigo-400 transition text-xs font-medium">

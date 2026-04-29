@@ -181,7 +181,7 @@ export default function ResourceHub() {
                                             </div>
 
                                             {educator.city_origin && (
-                                                <p className="text-[11px] text-slate-400 mt-1.5 flex items-center gap-1">
+                                                <p className="text-[14px] text-slate-400 mt-1.5 flex items-center gap-1">
                                                     <MapPin size={10} /> From {educator.city_origin} 📍
                                                 </p>
                                             )}

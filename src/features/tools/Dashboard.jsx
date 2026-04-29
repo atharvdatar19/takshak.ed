@@ -105,7 +105,7 @@ function SideWidget({ title, icon: Icon, iconColor, children, linkTo, linkLabel 
           {title}
         </h3>
         {linkTo && (
-          <Link to={linkTo} className="text-[11px] font-semibold transition-opacity hover:opacity-70" style={{ color: "var(--obsidian-primary)" }}>
+          <Link to={linkTo} className="text-[14px] font-semibold transition-opacity hover:opacity-70" style={{ color: "var(--obsidian-primary)" }}>
             {linkLabel || "View all"}
           </Link>
         )}
@@ -213,7 +213,7 @@ function SessionsWidget({ bookings }) {
           {upcoming.map(b => (
             <div key={b.id} className="flex items-center gap-2.5 rounded-xl px-2 py-2">
               <div
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[14px] font-bold text-white"
                 style={{ background: "linear-gradient(135deg, var(--obsidian-primary), var(--obsidian-secondary))" }}
               >
                 {(b.mentors?.name || "M").charAt(0)}
@@ -549,7 +549,7 @@ export default function Dashboard() {
             transition={{ duration: 0.4, delay: 0.15 }}
           >
             <h2
-              className="mb-3 flex items-center gap-2 text-[11px] font-black uppercase tracking-widest"
+              className="mb-3 flex items-center gap-2 text-[14px] font-black uppercase tracking-widest"
               style={{ color: "var(--obsidian-on-surface-variant)" }}
             >
               <Zap size={12} /> Quick Access
@@ -595,7 +595,7 @@ export default function Dashboard() {
               transition={{ duration: 0.35, delay: 0.22 }}
             >
               <h2
-                className="mb-3 flex items-center gap-2 text-[11px] font-black uppercase tracking-widest"
+                className="mb-3 flex items-center gap-2 text-[14px] font-black uppercase tracking-widest"
                 style={{ color: "var(--obsidian-on-surface-variant)" }}
               >
                 <TrendingUp size={12} /> Your Activity
@@ -638,7 +638,7 @@ export default function Dashboard() {
                     className="flex flex-col gap-1.5 rounded-xl p-3.5"
                     style={{ background: "var(--obsidian-surface)", border: "1px solid var(--obsidian-outline-variant)" }}
                   >
-                    <span className="text-[11px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>
+                    <span className="text-[14px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>
                       {label}
                     </span>
                     <span className="text-[22px] font-black leading-none" style={{ color }}>
@@ -649,7 +649,7 @@ export default function Dashboard() {
                         {action.label}
                       </Link>
                     ) : (
-                      <span className="text-[11px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>{sub}</span>
+                      <span className="text-[14px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>{sub}</span>
                     )}
                   </div>
                 ))}
@@ -704,7 +704,7 @@ export default function Dashboard() {
             ].map(({ target, suffix, label }) => (
               <div key={label} className="flex items-baseline gap-1.5">
                 <CountUp target={target} suffix={suffix} className="stat-number" duration={1600} />
-                <span className="text-[11px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>
+                <span className="text-[14px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>
                   {label}
                 </span>
               </div>
@@ -731,7 +731,7 @@ export default function Dashboard() {
           >
             <div className="flex items-center gap-2 mb-2">
               <GraduationCap size={14} style={{ color: "#6366f1" }} />
-              <span className="text-[11px] font-black uppercase tracking-widest" style={{ color: "var(--obsidian-on-surface-variant)" }}>
+              <span className="text-[14px] font-black uppercase tracking-widest" style={{ color: "var(--obsidian-on-surface-variant)" }}>
                 Mentor Tip
               </span>
             </div>
@@ -770,7 +770,7 @@ function MobileExamStrip({ exams }) {
 
   return (
     <div>
-      <p className="mb-2 text-[11px] font-black uppercase tracking-widest" style={{ color: "var(--obsidian-on-surface-variant)" }}>
+      <p className="mb-2 text-[14px] font-black uppercase tracking-widest" style={{ color: "var(--obsidian-on-surface-variant)" }}>
         Upcoming Exams
       </p>
       <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">

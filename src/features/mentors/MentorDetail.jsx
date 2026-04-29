@@ -174,7 +174,7 @@ export default function MentorDetail() {
                     {/* Bio */}
                     {mentor.bio && (
                         <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(64, 72, 93, 0.2)' }}>
-                            <h2 className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: '#6d758c' }}>About {name.split(" ")[0]}</h2>
+                            <h2 className="text-[14px] font-black uppercase tracking-widest mb-3" style={{ color: '#6d758c' }}>About {name.split(" ")[0]}</h2>
                             <p className="text-sm leading-relaxed" style={{ color: '#a3aac4' }}>{mentor.bio}</p>
                         </div>
                     )}
@@ -201,7 +201,7 @@ export default function MentorDetail() {
                                 className="p-1.5 rounded-md transition disabled:opacity-30" style={{ color: '#a3aac4' }}
                                 onMouseEnter={(e) => { if (calendarOffset !== 0) e.currentTarget.style.background = 'rgba(64, 72, 93, 0.3)' }}
                                 onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}><ChevronLeft size={16} /></button>
-                            <span className="text-[11px] font-bold px-2 uppercase tracking-wide" style={{ color: '#dee5ff' }}>
+                            <span className="text-[14px] font-bold px-2 uppercase tracking-wide" style={{ color: '#dee5ff' }}>
                                 {calendarOffset === 0 ? "Next 14 days" : `Week ${calendarOffset + 1}`}
                             </span>
                             <button onClick={() => setCalendarOffset(calendarOffset + 1)}

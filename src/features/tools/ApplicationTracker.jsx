@@ -115,7 +115,7 @@ function AppCard({ app, onMove, onDelete, isDemo }) {
 
       {/* Notes */}
       {app.notes && (
-        <p className="text-[11px] italic leading-relaxed" style={{ color: "var(--obsidian-on-surface-variant)", borderLeft: `2px solid var(--obsidian-outline-variant)`, paddingLeft: "8px" }}>
+        <p className="text-[14px] italic leading-relaxed" style={{ color: "var(--obsidian-on-surface-variant)", borderLeft: `2px solid var(--obsidian-outline-variant)`, paddingLeft: "8px" }}>
           {app.notes}
         </p>
       )}
@@ -125,7 +125,7 @@ function AppCard({ app, onMove, onDelete, isDemo }) {
         <button
           type="button"
           onClick={() => onMove(app.id, next)}
-          className="flex w-full items-center justify-center gap-1 rounded-lg py-1.5 text-[11px] font-bold transition hover:opacity-80"
+          className="flex w-full items-center justify-center gap-1 rounded-lg py-1.5 text-[14px] font-bold transition hover:opacity-80"
           style={{ background: `${cfg.color}14`, color: cfg.color }}
         >
           → {nextLabel} <ChevronRight size={11} />
@@ -192,7 +192,7 @@ function AddModal({ onClose, onAdd }) {
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="mb-1 block text-[11px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>Deadline</label>
+            <label className="mb-1 block text-[14px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>Deadline</label>
             <input
               type="date"
               value={form.deadline}
@@ -202,8 +202,8 @@ function AddModal({ onClose, onAdd }) {
             />
           </div>
           <div>
-            <label className="mb-1 block text-[11px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>Type</label>
-            <div className="flex items-center h-[42px] rounded-xl px-3 text-[11px] font-bold" style={{ background: `${TYPE_CONFIG[form.type]?.color}18`, color: TYPE_CONFIG[form.type]?.color }}>
+            <label className="mb-1 block text-[14px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>Type</label>
+            <div className="flex items-center h-[42px] rounded-xl px-3 text-[14px] font-bold" style={{ background: `${TYPE_CONFIG[form.type]?.color}18`, color: TYPE_CONFIG[form.type]?.color }}>
               {form.type}
             </div>
           </div>
@@ -318,7 +318,7 @@ export default function ApplicationTracker() {
           {stats.map(s => (
             <div key={s.label} className="rounded-xl p-3 text-center" style={{ background: "var(--obsidian-surface)", border: "1px solid var(--obsidian-outline-variant)" }}>
               <p className="text-2xl font-black" style={{ color: s.color }}>{s.count}</p>
-              <p className="text-[11px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>{s.label}</p>
+              <p className="text-[14px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>{s.label}</p>
             </div>
           ))}
         </div>
@@ -363,7 +363,7 @@ export default function ApplicationTracker() {
                       ))}
                     </AnimatePresence>
                     {items.length === 0 && (
-                      <div className="flex items-center justify-center rounded-xl py-6 text-[11px] font-medium" style={{ color: `${col.color}60`, border: `1px dashed ${col.color}30` }}>
+                      <div className="flex items-center justify-center rounded-xl py-6 text-[14px] font-medium" style={{ color: `${col.color}60`, border: `1px dashed ${col.color}30` }}>
                         Empty
                       </div>
                     )}
@@ -387,7 +387,7 @@ export default function ApplicationTracker() {
                   <span className="text-[12px] font-black" style={{ color: col.color }}>{items.length}</span>
                 </div>
                 {items.length === 0 ? (
-                  <p className="text-[11px]" style={{ color: `${col.color}60` }}>None yet</p>
+                  <p className="text-[14px]" style={{ color: `${col.color}60` }}>None yet</p>
                 ) : (
                   items.map(app => (
                     <div key={app.id} className="flex items-center justify-between rounded-lg px-3 py-2" style={{ background: "var(--obsidian-surface)", border: "1px solid var(--obsidian-outline-variant)" }}>

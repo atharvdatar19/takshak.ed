@@ -72,7 +72,7 @@ export default function AdminEducators() {
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
                     <h1 className="text-2xl font-black text-white tracking-tight">Educator CMS</h1>
-                    <p className="text-[11px] text-slate-600 mt-1">{educators.length} educators</p>
+                    <p className="text-[14px] text-slate-600 mt-1">{educators.length} educators</p>
                 </div>
                 <div className="flex gap-2">
                     <button onClick={startNew}

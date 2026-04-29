@@ -30,7 +30,7 @@ export default function CookiePolicy() {
 
       <Section title="3. Cookies We Use">
         <div className="overflow-x-auto mt-3">
-          <table className="w-full text-[11px] border-collapse">
+          <table className="w-full text-[14px] border-collapse">
             <thead>
               <tr className="border-b border-white/[0.08]">
                 {["Cookie Name", "Type", "Purpose", "Duration"].map(h => (
@@ -71,8 +71,8 @@ export default function CookiePolicy() {
           You can also manage cookies directly through your browser settings. Note that disabling essential cookies will prevent login and core features from working.
         </P>
         <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 text-[12px] text-slate-400 mt-2">
-          <p className="text-white font-semibold mb-2 text-[11px]">Browser cookie guides:</p>
-          <div className="grid grid-cols-2 gap-1 text-[11px]">
+          <p className="text-white font-semibold mb-2 text-[14px]">Browser cookie guides:</p>
+          <div className="grid grid-cols-2 gap-1 text-[14px]">
             {[
               ["Chrome", "https://support.google.com/chrome/answer/95647"],
               ["Firefox", "https://support.mozilla.org/en-US/kb/cookies-information-websites-store-on-your-computer"],

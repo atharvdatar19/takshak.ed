@@ -28,7 +28,7 @@ function StatCard({ icon: Icon, label, value, sub, color, delay = 0 }) {
         <Icon size={17} />
       </div>
       <div>
-        <p className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider">{label}</p>
+        <p className="text-[14px] text-slate-500 font-semibold uppercase tracking-wider">{label}</p>
         <p className={`text-2xl font-black mt-0.5 ${c.text}`}>{value ?? "—"}</p>
         {sub && <p className="text-[10px] text-slate-600 mt-0.5">{sub}</p>}
       </div>
@@ -93,7 +93,7 @@ export default function AdminDashboard() {
           <h1 className="text-2xl font-black text-white tracking-tight">
             Welcome back, {name} 👋
           </h1>
-          <p className="text-[11px] text-slate-600 mt-1">
+          <p className="text-[14px] text-slate-600 mt-1">
             {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
           </p>
         </div>

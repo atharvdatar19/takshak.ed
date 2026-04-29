@@ -1,5 +1,6 @@
-import { Component, Suspense, lazy } from "react"
+import { Component, Suspense, lazy, useEffect } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import Lenis from "lenis"
 import { AuthProvider } from "@auth/AuthContext"
 import { ToastProvider } from "@components/Toast"
 import SplashScreen from "@components/SplashScreen"
@@ -123,7 +124,31 @@ class AppErrorBoundary extends Component {
   }
 }
 
+function useSmoothScroll() {
+  useEffect(() => {
+    // Only on desktop — skip touch/mobile devices
+    if (!window.matchMedia("(pointer: fine)").matches) return
+
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 0,
+    })
+
+    function raf(time) {
+      lenis.raf(time)
+      requestAnimationFrame(raf)
+    }
+    requestAnimationFrame(raf)
+
+    return () => lenis.destroy()
+  }, [])
+}
+
 export default function App() {
+  useSmoothScroll()
   return (
     <AuthProvider>
       <ToastProvider>

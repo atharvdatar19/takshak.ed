@@ -138,7 +138,7 @@ export default function CommandPalette() {
                         </ul>
 
                         {/* Footer hint */}
-                        <div className="border-t border-slate-200 px-4 py-2 text-[11px] text-slate-400 dark:border-slate-700">
+                        <div className="border-t border-slate-200 px-4 py-2 text-[14px] text-slate-400 dark:border-slate-700">
                             <span className="mr-3">↑↓ Navigate</span>
                             <span className="mr-3">↵ Select</span>
                             <span>Esc Close</span>

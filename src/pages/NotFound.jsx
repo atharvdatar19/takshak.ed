@@ -15,7 +15,7 @@ export default function NotFound() {
           <Zap size={24} className="text-white" />
         </div>
 
-        <p className="text-[11px] text-indigo-400 font-black uppercase tracking-widest mb-3">404 — Page Not Found</p>
+        <p className="text-[14px] text-indigo-400 font-black uppercase tracking-widest mb-3">404 — Page Not Found</p>
 
         <h1 className="text-5xl font-black text-white tracking-tight mb-4">
           Lost in the{" "}

@@ -62,7 +62,7 @@ export default function AdminColleges() {
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
                     <h1 className="text-2xl font-black text-white tracking-tight">College CMS</h1>
-                    <p className="text-[11px] text-slate-600 mt-1">{colleges.length} colleges</p>
+                    <p className="text-[14px] text-slate-600 mt-1">{colleges.length} colleges</p>
                 </div>
                 <div className="flex gap-2">
                     <button onClick={startNew}

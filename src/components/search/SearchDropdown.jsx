@@ -221,7 +221,7 @@ export default function SearchDropdown({ query, visible, onSelect }) {
                     flexShrink: 0,
                     padding: '3px 10px',
                     borderRadius: '9999px',
-                    fontSize: '11px',
+                    fontSize: '14px',
                     fontWeight: 700,
                     background: isExam
                       ? 'rgba(99,102,241,0.1)'

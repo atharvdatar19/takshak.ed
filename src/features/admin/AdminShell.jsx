@@ -106,7 +106,7 @@ export default function AdminShell() {
                             {(user?.email || "A")[0].toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-[11px] font-semibold text-white truncate">{user?.email || "admin"}</p>
+                            <p className="text-[14px] font-semibold text-white truncate">{user?.email || "admin"}</p>
                             <p className="text-[9px] text-indigo-400 font-black uppercase tracking-[0.15em]">Super Admin</p>
                         </div>
                         <button onClick={handleSignOut} className="p-1.5 rounded-lg hover:bg-rose-500/10 text-slate-500 hover:text-rose-400 transition">
@@ -155,7 +155,7 @@ export default function AdminShell() {
                         <button onClick={() => setMobileOpen(true)} className="p-2 rounded-lg hover:bg-white/[0.04] text-slate-500 lg:hidden">
                             <Menu size={18} />
                         </button>
-                        <button onClick={() => navigate("/")} className="text-[11px] text-slate-600 hover:text-indigo-400 transition flex items-center gap-1 font-medium">
+                        <button onClick={() => navigate("/")} className="text-[14px] text-slate-600 hover:text-indigo-400 transition flex items-center gap-1 font-medium">
                             ← Back to App
                         </button>
                     </div>

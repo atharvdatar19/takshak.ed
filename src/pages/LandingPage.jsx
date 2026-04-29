@@ -9,6 +9,8 @@ import {
   FileText, Brain, Heart, Sword,
 } from "lucide-react"
 import { useAuth } from "@auth/AuthContext"
+import { MeshGradient } from "@paper-design/shaders-react"
+import { ShinyButton } from "@components/ui/ShinyButton"
 
 /* ─────────────────────────────────────────────
    PHANTOM-INSPIRED: Custom easing curves
@@ -51,25 +53,17 @@ function FloatingMascot() {
 }
 
 /* ─────────────────────────────────────────────
-   Ethereal background orbs + grid + noise
+   Mesh Gradient Background
 ───────────────────────────────────────────── */
 function EtherealBackground() {
   return (
-    <div className="pointer-events-none fixed inset-0 overflow-hidden">
-      <motion.div animate={{ x:[0,100,0], y:[0,-50,0] }} transition={{ duration:20, repeat:Infinity, ease:"linear" }}
-        className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] rounded-full bg-purple-600/15 blur-[150px]" />
-      <motion.div animate={{ x:[0,-80,0], y:[0,100,0] }} transition={{ duration:25, repeat:Infinity, ease:"linear" }}
-        className="absolute top-[20%] right-[-15%] w-[600px] h-[600px] rounded-full bg-indigo-500/12 blur-[130px]" />
-      <motion.div animate={{ x:[0,60,0], y:[0,80,0] }} transition={{ duration:18, repeat:Infinity, ease:"linear" }}
-        className="absolute bottom-[-10%] left-[20%] w-[700px] h-[700px] rounded-full bg-violet-500/10 blur-[140px]" />
-      <motion.div animate={{ scale:[1,1.2,1], opacity:[0.05,0.1,0.05] }} transition={{ duration:10, repeat:Infinity, ease:"easeInOut" }}
-        className="absolute top-[40%] left-[50%] -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-fuchsia-500/8 blur-[120px]" />
-      {/* Grid */}
-      <div className="absolute inset-0 opacity-[0.02]"
-        style={{ backgroundImage:`linear-gradient(rgba(139,92,246,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.5) 1px,transparent 1px)`, backgroundSize:"80px 80px" }} />
-      {/* Noise */}
-      <div className="absolute inset-0 opacity-[0.03]"
-        style={{ backgroundImage:`url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")` }} />
+    <div className="pointer-events-none fixed inset-0 z-0">
+      <MeshGradient
+        className="w-full h-full"
+        colors={["#0a0a1a", "#1a1040", "#2e1065", "#0f172a"]}
+        speed={0.4}
+        backgroundColor="#0a0a1a"
+      />
     </div>
   )
 }
@@ -278,7 +272,7 @@ function PlannerPreviewCard() {
           { label:"Maths — Integration",   done:false },
         ].map((g, i) => (
           <motion.div key={g.label} initial={{ opacity:0, x:-10 }} whileInView={{ opacity:1, x:0 }}
-            transition={{ delay: i*0.15 }} className="flex items-center gap-2.5 text-[11px]">
+            transition={{ delay: i*0.15 }} className="flex items-center gap-2.5 text-[14px]">
             <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${g.done ? "bg-emerald-500 border-emerald-500" : "border-slate-600"}`}>
               {g.done && <CheckCircle2 size={10} className="text-white" />}
             </div>
@@ -331,27 +325,44 @@ function Navbar({ scrolled }) {
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((l, i) => (
             <motion.div key={l.label} onHoverStart={() => setHoveredLink(i)} onHoverEnd={() => setHoveredLink(null)} className="relative">
-              <Link to={l.href} className="text-[13px] font-medium text-slate-400 hover:text-white transition-colors py-2">
-                {l.label}
+              <Link
+                to={l.href}
+                className="relative px-4 py-2 rounded-xl block transition-colors duration-200"
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: "13.5px",
+                  fontWeight: 500,
+                  color: hoveredLink === i ? "#fff" : "rgba(255,255,255,0.55)",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                {hoveredLink === i && (
+                  <motion.span
+                    layoutId="navPill"
+                    className="absolute inset-0 rounded-xl"
+                    style={{ background: "rgba(255,255,255,0.07)" }}
+                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{l.label}</span>
               </Link>
-              {hoveredLink === i && (
-                <motion.div layoutId="navHover"
-                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full"
-                  transition={{ type:"spring", stiffness:300, damping:30 }} />
-              )}
             </motion.div>
           ))}
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
-          <Link to="/login" className="text-[13px] font-medium text-slate-400 hover:text-white transition-colors">Sign In</Link>
+          <Link
+            to="/login"
+            style={{ fontFamily:"'Inter',sans-serif", fontSize:"13.5px", fontWeight:500, color:"rgba(255,255,255,0.5)", letterSpacing:"-0.01em" }}
+            className="hover:text-white transition-colors duration-200"
+          >
+            Sign In
+          </Link>
           <Link to="/signup">
-            <MagneticButton className="inline-flex items-center gap-1.5 rounded-full bg-white text-[#0a0a1a] text-[12px] font-black px-5 py-2.5 hover:bg-indigo-50 transition-colors shadow-lg shadow-white/10">
-              Get Started <ArrowRight size={12} />
-            </MagneticButton>
+            <ShinyButton>Get Started <ArrowRight size={13} /></ShinyButton>
           </Link>
         </div>
 
@@ -378,15 +389,18 @@ function Navbar({ scrolled }) {
             <nav className="flex flex-col gap-4 pt-4">
               {NAV_LINKS.map((l, i) => (
                 <motion.div key={l.label} initial={{ opacity:0, x:-20 }} animate={{ opacity:1, x:0 }} transition={{ delay: i*0.1 }}>
-                  <Link to={l.href} onClick={() => setMobileOpen(false)}
-                    className="text-sm font-medium text-slate-300 hover:text-white transition-colors block py-2">{l.label}</Link>
+                  <Link
+                    to={l.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="block py-2 hover:text-white transition-colors duration-200"
+                    style={{ fontFamily:"'Inter',sans-serif", fontSize:"15px", fontWeight:500, color:"rgba(255,255,255,0.6)", letterSpacing:"-0.01em" }}
+                  >{l.label}</Link>
                 </motion.div>
               ))}
               <hr className="border-white/[0.06]" />
               <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.4 }}>
-                <Link to="/signup" onClick={() => setMobileOpen(false)}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-full bg-white text-[#0a0a1a] text-sm font-black px-5 py-2.5 w-full">
-                  Get Started Free <ArrowRight size={13} />
+                <Link to="/signup" onClick={() => setMobileOpen(false)} className="w-full block">
+                  <ShinyButton className="w-full justify-center">Get Started Free</ShinyButton>
                 </Link>
               </motion.div>
             </nav>
@@ -411,7 +425,7 @@ function Label({ children, color = "indigo" }) {
   }
   return (
     <motion.span whileHover={{ scale:1.05 }}
-      className={`inline-flex items-center gap-2 rounded-full border bg-gradient-to-r ${colors[color]} px-4 py-1.5 text-[11px] font-black uppercase tracking-widest shadow-lg backdrop-blur-sm`}>
+      className={`inline-flex items-center gap-2 rounded-full border bg-gradient-to-r ${colors[color]} px-4 py-1.5 text-[14px] font-black uppercase tracking-widest shadow-lg backdrop-blur-sm`}>
       {children}
     </motion.span>
   )
@@ -430,7 +444,7 @@ function FeatureChip({ icon: Icon, label, sub }) {
         </div>
         <div>
           <p className="text-[13px] font-bold text-white">{label}</p>
-          <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">{sub}</p>
+          <p className="text-[14px] text-slate-500 mt-0.5 leading-relaxed">{sub}</p>
         </div>
       </motion.div>
     </SpotlightCard>
@@ -461,7 +475,7 @@ function MentorsMockup() {
             {m.initials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-bold text-white truncate">{m.name}</p>
+            <p className="text-[14px] font-bold text-white truncate">{m.name}</p>
             <p className="text-[9px] text-slate-500 truncate">{m.field}</p>
           </div>
           <div className="flex items-center gap-1 shrink-0">
@@ -556,9 +570,9 @@ export default function LandingPage() {
   const { scrollYProgress } = useScroll()
 
   const smoothProgress = useSpring(scrollYProgress, { stiffness:100, damping:30, restDelta:0.001 })
-  const heroY       = useTransform(smoothProgress, [0,0.3], [0,-100])
-  const heroOpacity = useTransform(smoothProgress, [0,0.2], [1,0])
-  const heroScale   = useTransform(smoothProgress, [0,0.3], [1,0.95])
+  const heroY       = useTransform(smoothProgress, [0,0.3], [0,-120])
+  const heroOpacity = useTransform(smoothProgress, [0,0.18], [1,0])
+  const heroScale   = useTransform(smoothProgress, [0,0.25], [1,0.92])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -596,7 +610,7 @@ export default function LandingPage() {
           {/* Badge */}
           <motion.div initial={{ opacity:0, y:20, scale:0.9 }} animate={{ opacity:1, y:0, scale:1 }}
             transition={{ duration:0.6, delay:0.2 }}
-            className="inline-flex items-center gap-2 rounded-full border border-purple-500/25 bg-purple-500/[0.08] px-4 py-1.5 text-[11px] font-bold text-purple-300 mb-8 backdrop-blur-sm">
+            className="inline-flex items-center gap-2 rounded-full border border-purple-500/25 bg-purple-500/[0.08] px-4 py-1.5 text-[14px] font-bold text-purple-300 mb-8 backdrop-blur-sm">
             <motion.span animate={{ scale:[1,1.3,1] }} transition={{ duration:2, repeat:Infinity }}
               className="w-1.5 h-1.5 rounded-full bg-purple-400" />
             Trusted by 20,000+ students across India
@@ -621,9 +635,7 @@ export default function LandingPage() {
           <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:1.1 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/signup">
-              <MagneticButton className="inline-flex items-center gap-2 rounded-full bg-white text-[#0a0a1a] font-black text-[14px] px-8 py-4 shadow-2xl shadow-white/10 hover:shadow-white/20 transition-shadow">
-                Get Started Free <ArrowRight size={15} />
-              </MagneticButton>
+              <ShinyButton>Get Started Free <ArrowRight size={15} /></ShinyButton>
             </Link>
             <motion.div whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }}>
               <Link to="/discover"
@@ -681,7 +693,7 @@ export default function LandingPage() {
                 className="text-3xl md:text-4xl font-black text-white mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-violet-400 transition-all duration-300">
                 {s.value}
               </motion.p>
-              <p className="text-[11px] text-slate-500 font-medium uppercase tracking-wider">{s.label}</p>
+              <p className="text-[14px] text-slate-500 font-medium uppercase tracking-wider">{s.label}</p>
             </motion.div>
           ))}
         </div>
@@ -951,7 +963,7 @@ export default function LandingPage() {
                       </div>
                       <p className="text-[13px] text-slate-300 leading-relaxed flex-1">"{t.text}"</p>
                       <div className="flex items-center gap-3 pt-3 border-t border-white/[0.06]">
-                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-black text-white shrink-0"
+                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-black text-white shrink-0"
                           style={{ background:`linear-gradient(135deg, ${colorMap[t.color]}40, ${colorMap[t.color]}20)`, border:`1px solid ${colorMap[t.color]}30` }}>
                           {t.name.charAt(0)}
                         </div>
@@ -992,9 +1004,7 @@ export default function LandingPage() {
             </motion.p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link to="/signup">
-                <MagneticButton className="inline-flex items-center gap-2 rounded-full bg-white text-[#0a0a1a] font-black text-[15px] px-10 py-4 shadow-2xl shadow-white/15 hover:shadow-white/25 transition-shadow">
-                  Get Started Free <ArrowRight size={16} />
-                </MagneticButton>
+                <ShinyButton>Get Started Free <ArrowRight size={16} /></ShinyButton>
               </Link>
               <Link to="/mentors"
                 className="inline-flex items-center gap-2 text-slate-400 hover:text-white font-semibold text-sm transition-colors">
@@ -1039,7 +1049,7 @@ export default function LandingPage() {
 
             {/* Platform */}
             <div>
-              <p className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-4">Platform</p>
+              <p className="text-[14px] font-black uppercase tracking-widest text-slate-500 mb-4">Platform</p>
               <ul className="space-y-2.5">
                 {[
                   { label:"Discover Colleges", to:"/discover"    },
@@ -1057,7 +1067,7 @@ export default function LandingPage() {
 
             {/* Mentors */}
             <div>
-              <p className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-4">Mentors</p>
+              <p className="text-[14px] font-black uppercase tracking-widest text-slate-500 mb-4">Mentors</p>
               <ul className="space-y-2.5">
                 {[
                   { label:"Find a Mentor",       to:"/mentors"           },
@@ -1075,7 +1085,7 @@ export default function LandingPage() {
 
             {/* Resources */}
             <div>
-              <p className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-4">Resources</p>
+              <p className="text-[14px] font-black uppercase tracking-widest text-slate-500 mb-4">Resources</p>
               <ul className="space-y-2.5">
                 {[
                   { label:"Study Planner",      to:"/planner"       },
@@ -1093,7 +1103,7 @@ export default function LandingPage() {
 
             {/* Legal */}
             <div>
-              <p className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-4">Legal</p>
+              <p className="text-[14px] font-black uppercase tracking-widest text-slate-500 mb-4">Legal</p>
               <ul className="space-y-2.5">
                 {[
                   { label:"Privacy Policy",  to:"/privacy" },
@@ -1115,12 +1125,12 @@ export default function LandingPage() {
 
           {/* Bottom bar */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-3 border-t border-white/[0.06] pt-6">
-            <p className="text-[11px] text-slate-600">
+            <p className="text-[14px] text-slate-600">
               © {new Date().getFullYear()} TAKक्षक. Made with ❤️ for India's students.
             </p>
             <div className="flex items-center gap-4">
               {["/privacy","/terms","/cookies"].map((to, i) => (
-                <Link key={to} to={to} className="text-[11px] text-slate-600 hover:text-slate-400 transition-colors">
+                <Link key={to} to={to} className="text-[14px] text-slate-600 hover:text-slate-400 transition-colors">
                   {["Privacy","Terms","Cookies"][i]}
                 </Link>
               ))}

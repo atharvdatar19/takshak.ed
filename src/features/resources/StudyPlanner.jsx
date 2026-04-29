@@ -91,7 +91,7 @@ function GoalCard({ goal, onToggle }) {
       <div className="flex-1 min-w-0">
         <p className="text-[13px] font-semibold" style={{ color: "var(--obsidian-on-surface)", textDecoration: done ? "line-through" : "none" }}>{goal.title}</p>
         {goal.target_date && (
-          <p className="text-[11px]" style={{ color: daysLeft(goal.target_date) <= 3 ? "#ef4444" : "var(--obsidian-on-surface-variant)" }}>
+          <p className="text-[14px]" style={{ color: daysLeft(goal.target_date) <= 3 ? "#ef4444" : "var(--obsidian-on-surface-variant)" }}>
             {daysLeft(goal.target_date)}d left
           </p>
         )}
@@ -295,7 +295,7 @@ export default function StudyPlanner() {
               </h3>
 
               <div>
-                <label className="mb-1.5 block text-[11px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>Target Exam</label>
+                <label className="mb-1.5 block text-[14px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>Target Exam</label>
                 <select value={examChoice} onChange={e => setExamChoice(e.target.value)}
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none"
                   style={{ background: "var(--accent-glow)", color: "var(--obsidian-on-surface)", border: "1px solid var(--obsidian-outline-variant)" }}>
@@ -304,7 +304,7 @@ export default function StudyPlanner() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-[11px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>Exam Date</label>
+                <label className="mb-1.5 block text-[14px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>Exam Date</label>
                 <input type="date" value={examDate} onChange={e => setExamDate(e.target.value)} min={new Date().toISOString().split("T")[0]}
                   className="w-full rounded-xl px-3 py-2.5 text-sm"
                   style={{ background: "var(--accent-glow)", color: "var(--obsidian-on-surface)", border: "1px solid var(--obsidian-outline-variant)" }} />
@@ -312,7 +312,7 @@ export default function StudyPlanner() {
 
               <div>
                 <div className="mb-1 flex justify-between">
-                  <label className="text-[11px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>Hours per day</label>
+                  <label className="text-[14px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>Hours per day</label>
                   <span className="text-[12px] font-black" style={{ color: "var(--obsidian-primary)" }}>{hoursPerDay}h</span>
                 </div>
                 <input type="range" min={2} max={12} step={0.5} value={hoursPerDay} onChange={e => setHoursPerDay(+e.target.value)} className="w-full" />
@@ -320,7 +320,7 @@ export default function StudyPlanner() {
 
               {examDate && plan && (
                 <div className="rounded-xl p-3 text-center" style={{ background: "var(--accent-glow)" }}>
-                  <p className="text-[11px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>
+                  <p className="text-[14px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>
                     <span className="text-lg font-black" style={{ color: "var(--obsidian-primary)" }}>{daysLeft(examDate)}</span> days left
                     · <span className="font-bold">{plan.weeksLeft}</span> weeks
                   </p>
@@ -384,7 +384,7 @@ export default function StudyPlanner() {
                       transition={{ duration: 0.8, ease: "easeOut" }}
                     />
                   </div>
-                  <p className="mt-1 text-[11px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>
+                  <p className="mt-1 text-[14px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>
                     {completedCount} of {allTasks.length} tasks completed
                   </p>
                 </div>
@@ -395,7 +395,7 @@ export default function StudyPlanner() {
                     {/* Phase header */}
                     <div className="flex items-center justify-between px-4 py-3" style={{ background: phase.accent }}>
                       <h4 className="text-[13px] font-bold" style={{ color: phase.color }}>{phase.label}</h4>
-                      <span className="text-[11px] font-semibold" style={{ color: phase.color }}>{phase.weeks}w</span>
+                      <span className="text-[14px] font-semibold" style={{ color: phase.color }}>{phase.weeks}w</span>
                     </div>
                     {/* Tasks */}
                     <div className="divide-y" style={{ divideColor: "var(--obsidian-outline-variant)" }}>
@@ -415,7 +415,7 @@ export default function StudyPlanner() {
                             <p className="text-[13px] font-semibold" style={{ color: "var(--obsidian-on-surface)", textDecoration: checked[task.id] ? "line-through" : "none", opacity: checked[task.id] ? 0.5 : 1 }}>
                               {task.task}
                             </p>
-                            <p className="text-[11px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>
+                            <p className="text-[14px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>
                               {task.subject !== "All" && `${task.subject} · `}{task.hours}h planned
                             </p>
                           </div>

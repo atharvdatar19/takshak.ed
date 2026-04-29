@@ -294,7 +294,7 @@ export default function CutoffPredictor() {
                             {/* Data Freshness Badge */}
                             {records.length > 0 && (
                                 <div className="mt-6 flex justify-center">
-                                    <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-slate-100 text-[11px] font-bold uppercase tracking-widest text-slate-500">
+                                    <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-slate-100 text-[14px] font-bold uppercase tracking-widest text-slate-500">
                                         📊 Data: JoSAA 2024 · Official Source
                                     </span>
                                 </div>

@@ -223,7 +223,7 @@ function TimelineColumn({ title, items, tone }) {
                   </div>
 
                   <span
-                    className={`shrink-0 inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-[11px] font-extrabold ${toneClasses[tone]} shadow-sm`}
+                    className={`shrink-0 inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-[14px] font-extrabold ${toneClasses[tone]} shadow-sm`}
                   >
                     <BellRing size={12} />
                     {daysLeft}d

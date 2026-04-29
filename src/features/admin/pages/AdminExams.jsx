@@ -54,7 +54,7 @@ export default function AdminExams() {
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
                     <h1 className="text-2xl font-black text-white tracking-tight">Exam Timeline</h1>
-                    <p className="text-[11px] text-slate-600 mt-1">{exams.length} exams</p>
+                    <p className="text-[14px] text-slate-600 mt-1">{exams.length} exams</p>
                 </div>
                 <div className="flex gap-2">
                     <button onClick={startNew}

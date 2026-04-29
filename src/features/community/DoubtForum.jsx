@@ -68,7 +68,7 @@ function AskModal({ categories, onClose, onSubmit }) {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold" style={{ color: "var(--obsidian-on-surface)" }}>Ask Anonymously</h3>
-            <p className="text-[11px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>🔒 Your identity is never shared</p>
+            <p className="text-[14px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>🔒 Your identity is never shared</p>
           </div>
           <button type="button" onClick={onClose} style={{ color: "var(--obsidian-on-surface-variant)" }}><X size={18} /></button>
         </div>
@@ -173,7 +173,7 @@ function ReplySection({ postId, userEmail, isDemo, ownsPost }) {
             <div className="flex items-center gap-2">
               {r.is_accepted && <CheckCircle2 size={13} style={{ color: "#10b981" }} />}
               <span
-                className="text-[11px] font-bold"
+                className="text-[14px] font-bold"
                 style={{ color: isMentor(r.user_email) ? "var(--obsidian-primary)" : "var(--obsidian-on-surface-variant)" }}
               >
                 {isMentor(r.user_email) ? "✨ Mentor" : (r.users?.name || "Anonymous")}
@@ -187,13 +187,13 @@ function ReplySection({ postId, userEmail, isDemo, ownsPost }) {
             <button
               type="button"
               onClick={() => toggleUpvoteReply(r.id)}
-              className="flex items-center gap-1 text-[11px] font-semibold transition"
+              className="flex items-center gap-1 text-[14px] font-semibold transition"
               style={{ color: upvoted[r.id] ? "var(--obsidian-primary)" : "var(--obsidian-on-surface-variant)" }}
             >
               <ArrowUp size={12} /> {r.upvote_count + (upvoted[r.id] ? 1 : 0)}
             </button>
             {ownsPost && !r.is_accepted && (
-              <button type="button" onClick={() => acceptReply(r.id)} className="text-[11px] font-semibold" style={{ color: "#10b981" }}>
+              <button type="button" onClick={() => acceptReply(r.id)} className="text-[14px] font-semibold" style={{ color: "#10b981" }}>
                 ✓ Accept
               </button>
             )}
@@ -276,7 +276,7 @@ function PostCard({ post, userEmail, isDemo }) {
             >
               {post.category}
             </span>
-            <span className="text-[11px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>{timeAgo(post.created_at)}</span>
+            <span className="text-[14px]" style={{ color: "var(--obsidian-on-surface-variant)" }}>{timeAgo(post.created_at)}</span>
           </div>
 
           <h3 className="text-[15px] font-bold leading-snug" style={{ color: "var(--obsidian-on-surface)" }}>{post.title}</h3>

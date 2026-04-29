@@ -59,7 +59,7 @@ export default function AdminTeamAccess() {
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
                     <h1 className="text-2xl font-black text-white tracking-tight">Team Access</h1>
-                    <p className="text-[11px] text-slate-600 mt-1">{team.length} team members with admin roles</p>
+                    <p className="text-[14px] text-slate-600 mt-1">{team.length} team members with admin roles</p>
                 </div>
                 <button onClick={loadTeam} disabled={loading}
                     className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.05] text-slate-500 hover:text-indigo-400 transition text-xs font-medium">
@@ -116,7 +116,7 @@ export default function AdminTeamAccess() {
             )}
 
             {/* Info Note */}
-            <div className="rounded-xl bg-indigo-500/5 border border-indigo-500/10 px-4 py-3 text-[11px] text-slate-500">
+            <div className="rounded-xl bg-indigo-500/5 border border-indigo-500/10 px-4 py-3 text-[14px] text-slate-500">
                 <ShieldCheck size={13} className="inline mr-1.5 text-indigo-400" />
                 To add a new team member, first have them sign up as a regular user, then change their role from the <strong className="text-indigo-400">Users</strong> page.
                 Team members shown here are users with admin, moderator, content_editor, or finance_viewer roles.
