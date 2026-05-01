@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Helmet } from "react-helmet-async"
 import { motion, AnimatePresence, useInView } from "framer-motion"
 import { Link } from "react-router-dom"
@@ -50,28 +50,15 @@ function CursorSpotlight() {
   )
 }
 
-/* ─── Instagram embed block ──────────────────────────────── */
-function InstagramEmbed({ url, label }) {
-  const ref = useRef(null)
-
-  useEffect(() => {
-    // Load or re-process Instagram embed script
-    if (window.instgrm) {
-      window.instgrm.Embeds.process()
-      return
-    }
-    const existing = document.getElementById("ig-embed-script")
-    if (existing) return
-    const script = document.createElement("script")
-    script.id = "ig-embed-script"
-    script.src = "https://www.instagram.com/embed.js"
-    script.async = true
-    script.onload = () => window.instgrm?.Embeds.process()
-    document.body.appendChild(script)
-  }, [])
-
+/* ─── Instagram post card (reliable, no iframe) ──────────── */
+function InstagramCard({ url, label, caption, date }) {
   return (
-    <div className="w-full flex flex-col items-center gap-3">
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex flex-col gap-4 rounded-3xl border border-white/[0.08] bg-white/[0.03] p-6 hover:border-white/[0.15] hover:bg-white/[0.05] transition-all duration-300"
+    >
       {label && (
         <p
           className="text-[11px] font-semibold uppercase tracking-widest text-white/30"
@@ -80,37 +67,38 @@ function InstagramEmbed({ url, label }) {
           {label}
         </p>
       )}
-      <div ref={ref} className="w-full max-w-[480px]">
-        <blockquote
-          className="instagram-media"
-          data-instgrm-captioned
-          data-instgrm-permalink={`${url}?utm_source=ig_embed&utm_campaign=loading`}
-          data-instgrm-version="14"
-          style={{
-            background: "#FFF",
-            border: 0,
-            borderRadius: "3px",
-            boxShadow: "0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15)",
-            margin: "1px",
-            maxWidth: "480px",
-            minWidth: "326px",
-            padding: 0,
-            width: "99.375%",
-          }}
-        >
-          <div style={{ padding: "16px" }}>
-            <a
-              href={`${url}?utm_source=ig_embed&utm_campaign=loading`}
-              style={{ background: "#FFFFFF", lineHeight: 0, padding: 0, textAlign: "center", textDecoration: "none", width: "100%" }}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              View this post on Instagram
-            </a>
-          </div>
-        </blockquote>
+
+      {/* Instagram header */}
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 flex items-center justify-center shrink-0">
+          <Instagram size={16} className="text-white" />
+        </div>
+        <div>
+          <p className="text-[13px] font-semibold text-white/90" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            @takshak.ed
+          </p>
+          <p className="text-[11px] text-white/35" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{date}</p>
+        </div>
+        <ExternalLink size={14} className="ml-auto text-white/25 group-hover:text-white/50 transition-colors" />
       </div>
-    </div>
+
+      {/* caption */}
+      <p
+        className="text-[14px] text-white/65 leading-relaxed"
+        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+      >
+        {caption}
+      </p>
+
+      {/* view CTA */}
+      <span
+        className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-pink-400 group-hover:text-pink-300 transition-colors"
+        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+      >
+        <Instagram size={12} />
+        View post on Instagram
+      </span>
+    </a>
   )
 }
 
@@ -457,16 +445,18 @@ export default function EventsPage() {
               </motion.p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
               <motion.div
                 initial={{ opacity: 0, x: -24 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
               >
-                <InstagramEmbed
+                <InstagramCard
                   url="https://www.instagram.com/p/DWa003kCCv4/"
                   label="The announcement"
+                  date="March 2026"
+                  caption="Last-minute topics? Prep tricks that actually work? Real guidance from seniors who've been there? Join us for a free NDA prep webinar — no lectures, just honest conversation. 🎖️ #nda #ndaexam #freewebinar"
                 />
               </motion.div>
 
@@ -476,9 +466,11 @@ export default function EventsPage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                <InstagramEmbed
+                <InstagramCard
                   url="https://www.instagram.com/p/DWl9N7kiBuY/"
                   label="After the seminar"
+                  date="April 1, 2026"
+                  caption="Grateful, humbled, and more driven than ever. Our NDA webinar turned out to be an incredible experience. The guidance shared by our mentors truly resonated with the students. This is just the beginning. — Team Takshak 🙏 #nda #webinar #education"
                 />
               </motion.div>
             </div>
