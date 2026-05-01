@@ -8,10 +8,12 @@ import path from 'path';
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
-const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+// Seed scripts require the service role key to bypass RLS — never the anon key
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error("Missing Supabase credentials in .env file");
+  console.error("Missing VITE_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env file");
+  console.error("Seed scripts must use the service role key, not the anon key.");
   process.exit(1);
 }
 

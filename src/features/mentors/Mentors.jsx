@@ -6,7 +6,7 @@ import {
   Clock, Calendar, MessageCircle, ArrowUpRight, Users, Filter,
 } from "lucide-react"
 import { getMentors, getMentorById, getMentorAvailability, getMentorReviews } from "@database/services/api"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import WaveBackground from "@components/ui/WaveBackground"
 
 /* ─── colour palette per card index ─── */
@@ -908,6 +908,53 @@ export default function Mentors() {
           </AnimatePresence>
         )}
       </div>
+
+      {/* ── Events CTA banner ───────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="mx-auto max-w-3xl mb-16 px-4"
+      >
+        <div
+          className="relative rounded-3xl border border-indigo-500/20 p-7 flex flex-col sm:flex-row items-center justify-between gap-5 overflow-hidden"
+          style={{ background: "rgba(99,102,241,0.07)" }}
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(99,102,241,0.10),transparent_60%)] pointer-events-none" />
+          <div className="relative text-center sm:text-left">
+            <p
+              className="text-[11px] font-semibold uppercase tracking-widest text-indigo-400 mb-1"
+              style={{ fontFamily: "'Plus Jakarta Sans',sans-serif" }}
+            >
+              From the community
+            </p>
+            <h3
+              className="text-[20px] font-bold text-white leading-snug"
+              style={{ fontFamily: "'Playfair Display',serif" }}
+            >
+              See where these mentors have spoken
+            </h3>
+            <p
+              className="text-[13px] mt-1"
+              style={{ color: "rgba(255,255,255,0.45)", fontFamily: "'Plus Jakarta Sans',sans-serif" }}
+            >
+              18+ free seminars · 8,400+ students · 12 cities
+            </p>
+          </div>
+          <Link
+            to="/events"
+            className="relative shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-[14px] font-semibold text-white transition-all duration-200 hover:scale-[1.03]"
+            style={{
+              background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
+              boxShadow: "0 8px 24px rgba(99,102,241,0.25)",
+              fontFamily: "'Plus Jakarta Sans',sans-serif",
+            }}
+          >
+            View Events
+            <ArrowUpRight size={15} />
+          </Link>
+        </div>
+      </motion.div>
 
       {/* ── Backdrop ────────────────────────────── */}
       <AnimatePresence>

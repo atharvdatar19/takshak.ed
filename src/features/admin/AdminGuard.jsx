@@ -1,11 +1,6 @@
 import { Navigate } from "react-router-dom"
 import { useAuth } from "@auth/AuthContext"
-
-export const ADMIN_EMAILS = [
-  "atharvd10166@gmail.com",
-  "punyatirthasahoo@gmail.com",
-  "takshak.info@gmail.com",
-]
+import { ADMIN_EMAILS } from "@/config/admins"
 
 export default function AdminGuard({ children }) {
   const { user, loading } = useAuth()

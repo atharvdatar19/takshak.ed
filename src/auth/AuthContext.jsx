@@ -2,12 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react"
 import { onAuthStateChanged } from "firebase/auth"
 import { doc, getDoc } from "firebase/firestore"
 import { auth, db, isFirebaseConfigured } from "@auth/firebase"
-
-const ADMIN_EMAILS = [
-    "takshak.notifications@gmail.com",
-    "atharvd10166@gmail.com",
-    "punyatirthasahoo@gmail.com",
-]
+import { ADMIN_EMAILS } from "@/config/admins"
 
 const AuthContext = createContext({
     user: null,

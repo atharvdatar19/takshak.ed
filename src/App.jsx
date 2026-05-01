@@ -10,6 +10,7 @@ import CookieBanner from "@components/CookieBanner"
 
 // ── Landing & Legal ───────────────────────────────────────────
 const LandingPage   = lazy(() => import("@pages/LandingPage"))
+const EventsPage    = lazy(() => import("@pages/EventsPage"))
 const PrivacyPolicy = lazy(() => import("@pages/PrivacyPolicy"))
 const TermsOfService= lazy(() => import("@pages/TermsOfService"))
 const CookiePolicy  = lazy(() => import("@pages/CookiePolicy"))
@@ -184,6 +185,7 @@ export default function App() {
                     <Route path="/defence" element={<DefenceAspirants />} />
                     <Route path="/mentors" element={<Mentors />} />
                     <Route path="/mentors/:id" element={<MentorDetail />} />
+                    <Route path="/events" element={<EventsPage />} />
 
                     {/* Authenticated */}
                     <Route path="/planner" element={<ProtectedRoute><StudyPlanner /></ProtectedRoute>} />
