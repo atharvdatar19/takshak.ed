@@ -53,7 +53,7 @@ const DEFAULTS = {
     siteSettings: {
         brandName: "TAKSHAK",
         tagline: "Where real experience meets real ambition",
-        supportEmail: "atharvd10166@gmail.com",
+        supportEmail: "support@takshak.ed",
         whatsappNumber: "",
         featureToggles: {
             chatbot: true,

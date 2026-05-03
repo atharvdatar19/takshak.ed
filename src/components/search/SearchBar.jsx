@@ -9,7 +9,16 @@ export default function SearchBar({ popularTags = [], onNavigate }) {
   const inputRef = useRef(null)
   const navigate = useNavigate()
 
-  const showDropdown = focused && query.trim().length >= 2
+  const [debouncedQuery, setDebouncedQuery] = useState(query)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query)
+    }, 300)
+    return () => clearTimeout(handler)
+  }, [query])
+
+  const showDropdown = focused && debouncedQuery.trim().length >= 2
 
   const handleSearch = () => {
     const q = query.trim()
@@ -20,6 +29,7 @@ export default function SearchBar({ popularTags = [], onNavigate }) {
 
   const handleTagClick = (tag) => {
     setQuery(tag)
+    setDebouncedQuery(tag)
     inputRef.current?.focus()
     navigate(`/colleges?q=${encodeURIComponent(tag)}`)
   }
@@ -30,6 +40,7 @@ export default function SearchBar({ popularTags = [], onNavigate }) {
 
   const handleClear = () => {
     setQuery('')
+    setDebouncedQuery('')
     inputRef.current?.focus()
   }
 

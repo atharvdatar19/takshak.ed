@@ -106,9 +106,18 @@ export default function AuthPage({ defaultTab = "signup" }) {
     }
 
     async function handleGoogleAuth() {
+        console.log("1. Before signInWithGoogle call")
         setError("")
-        const { error: err } = await signInWithGoogle()
-        if (err) setError(err.message)
+        setLoading(true)
+        const result = await signInWithGoogle()
+        console.log("2. Result:", result)
+        setLoading(false)
+        if (result.error) {
+            setError(result.error.message)
+        } else {
+            console.log("3. Navigating to:", from)
+            navigate(from, { replace: true })
+        }
     }
 
     async function handleForgotPassword(e) {

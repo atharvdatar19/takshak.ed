@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react"
+import { useRef, useMemo, useState, useEffect } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
 import { Float } from "@react-three/drei"
 import * as THREE from "three"
@@ -185,8 +185,33 @@ function Scene() {
 }
 
 export default function FloatingBackground() {
+    const containerRef = useRef()
+    const [active, setActive] = useState(true)
+    const scene = useMemo(() => <Scene />, [])
+
+    useEffect(() => {
+        const handleVisibility = () => setActive(!document.hidden)
+        document.addEventListener("visibilitychange", handleVisibility)
+        
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                // If not intersecting, we can stop the loop
+                if (!document.hidden) setActive(entry.isIntersecting)
+            },
+            { threshold: 0.01 }
+        )
+
+        if (containerRef.current) observer.observe(containerRef.current)
+
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibility)
+            observer.disconnect()
+        }
+    }, [])
+
     return (
         <div
+            ref={containerRef}
             className="pointer-events-none fixed inset-0 z-0"
             style={{ 
                 opacity: 0.85,
@@ -202,8 +227,10 @@ export default function FloatingBackground() {
                     powerPreference: "high-performance"
                 }}
                 style={{ background: "transparent" }}
+                // Stop rendering if not active
+                frameloop={active ? "always" : "never"}
             >
-                <Scene />
+                {active && scene}
             </Canvas>
         </div>
     )

@@ -11,6 +11,7 @@ import {
 import { useAuth } from "@auth/AuthContext"
 import { MeshGradient } from "@paper-design/shaders-react"
 import { ShinyButton } from "@components/ui/ShinyButton"
+import supabase from '@database/supabaseClient'
 
 /* ─────────────────────────────────────────────
    PHANTOM-INSPIRED: Custom easing curves
@@ -565,6 +566,19 @@ function DiscoverMockup() {
 ───────────────────────────────────────────── */
 export default function LandingPage() {
   const { user, loading } = useAuth()
+  const [stats, setStats] = useState({ user_count: 0, mentor_count: 0, college_count: 0, session_count: 0 })
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const { data, error } = await supabase.functions.invoke('get-platform-stats')
+        if (data) setStats(data)
+      } catch (err) {
+        console.error("Failed to fetch platform stats:", err)
+      }
+    }
+    fetchStats()
+  }, [])
   const [scrolled, setScrolled] = useState(false)
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll()
@@ -613,7 +627,9 @@ export default function LandingPage() {
             className="inline-flex items-center gap-2 rounded-full border border-purple-500/25 bg-purple-500/[0.08] px-4 py-1.5 text-[14px] font-bold text-purple-300 mb-8 backdrop-blur-sm">
             <motion.span animate={{ scale:[1,1.3,1] }} transition={{ duration:2, repeat:Infinity }}
               className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-            Trusted by 20,000+ students across India
+            <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '0px', letterSpacing: '0.05em' }}>
+              Trusted by {stats.user_count.toLocaleString()}+ students across India
+            </div>
           </motion.div>
 
           {/* Headline */}
@@ -681,9 +697,9 @@ export default function LandingPage() {
       <section className="relative border-y border-white/[0.05] bg-white/[0.02] backdrop-blur-sm overflow-hidden">
         <div className="max-w-5xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
-            { value:"20,000+", label:"Students helped"      },
-            { value:"500+",    label:"Colleges listed"      },
-            { value:"50+",     label:"Verified mentors"     },
+            { value: stats.user_count.toLocaleString() + '+', label:"Students helped"      },
+            { value: stats.college_count.toLocaleString() + '+', label:"Colleges listed"      },
+            { value: stats.mentor_count.toLocaleString() + '+', label:"Verified mentors"     },
             { value:"Free",    label:"Always free to start" },
           ].map((s, i) => (
             <motion.div key={s.label} initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
@@ -1052,14 +1068,12 @@ export default function LandingPage() {
               <p className="text-[14px] font-black uppercase tracking-widest text-slate-500 mb-4">Platform</p>
               <ul className="space-y-2.5">
                 {[
-                  { label:"Discover Colleges", to:"/discover"    },
-                  { label:"Cutoff Predictor",  to:"/cutoff"      },
-                  { label:"Rank Reality",      to:"/rank-reality"},
-                  { label:"Scholarship Finder",to:"/scholarships"},
-                  { label:"Compare Colleges",  to:"/compare"     },
+                  { label: 'Students helped', value: stats.user_count.toLocaleString() + '+' },
+                  { label: 'Colleges listed', value: stats.college_count.toLocaleString() + '+' },
+                  { label: 'Verified mentors', value: stats.mentor_count.toLocaleString() + '+' },
                 ].map(l => (
                   <li key={l.label}>
-                    <Link to={l.to} className="text-[12.5px] text-slate-500 hover:text-white transition-colors">{l.label}</Link>
+                    <div className="text-[12.5px] text-slate-500">{l.label}: <span className="text-white font-bold">{l.value}</span></div>
                   </li>
                 ))}
               </ul>

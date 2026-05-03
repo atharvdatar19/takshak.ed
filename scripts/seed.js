@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
-import csv from 'csv-parser';
+import { parse } from 'csv-parse/sync';
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -31,10 +31,15 @@ const parseJSONStr = (str) => {
 
 const importMentors = () => {
   return new Promise((resolve, reject) => {
-    const mentors = [];
-    fs.createReadStream(path.resolve(process.cwd(), 'Mentor_export.csv'))
-      .pipe(csv())
-      .on('data', (data) => {
+    try {
+      const mentors = [];
+      const fileContent = fs.readFileSync(path.resolve(process.cwd(), 'Mentor_export.csv'), 'utf-8');
+      const records = parse(fileContent, {
+        columns: true,
+        skip_empty_lines: true
+      });
+
+      for (const data of records) {
         mentors.push({
           name: data.name,
           email: data.email,
@@ -54,27 +59,13 @@ const importMentors = () => {
           teaching_style: data.teaching_style,
           // ignoring id, created_date etc as they will be re-generated or mapped
         });
-      })
-      .on('end', async () => {
-        console.log(`Loaded ${mentors.length} mentors from CSV.`);
-        for (const mentor of mentors) {
-          try {
-            // First step: We need to see if the user exists in `profiles`, or we create a dummy one, 
-            // OR we just directly insert into `mentors`. wait, `mentors.id` usually references `profiles.id`.
-            // Let's create a profile first. We bypass Auth, direct to "profiles" table.
-            console.log(`Processing mentor: ${mentor.name}`);
-            
-            // Check if profile exists by email first (we don't have email in profiles usually, but let's see)
-            // Wait, we need a UUID for profile.
-            // A safer approach: The mentors table has id (UUID PK referencing profiles), but wait, what is the schema?
-            // Let's verify the schema of `mentors` table and `profiles`.
-            console.log("Will insert later.");
-          } catch(e) {
-            console.error("Error", e);
-          }
-        }
-        resolve(mentors);
-      });
+      }
+
+      console.log(`Loaded ${mentors.length} mentors from CSV.`);
+      resolve(mentors);
+    } catch (err) {
+      reject(err);
+    }
   });
 };
 

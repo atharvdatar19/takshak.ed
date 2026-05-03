@@ -1,10 +1,10 @@
 /**
  * Single source of truth for admin emails.
- * Update here only — AuthContext and AdminGuard both import from this file.
- * Keep this list in sync with the Supabase SQL trigger in supabase/migrations/.
+ * Note: Admin status is transitioning to Firebase Custom Claims, 
+ * but this list acts as a fallback for visibility and guards.
  */
 export const ADMIN_EMAILS = [
-  "takshak.notifications@gmail.com",
-  "atharvd10166@gmail.com",
-  "punyatirthasahoo@gmail.com",
+    "atharvd10166@gmail.com",
+    "punyatirthasahoo@gmail.com",
+    "takshak.info@gmail.com"
 ]

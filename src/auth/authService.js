@@ -100,25 +100,24 @@ export async function signInWithGoogle() {
         const userCredential = await signInWithPopup(auth, provider)
         const user = userCredential.user
 
-        // Check if user profile exists, create if not
+        // Profile fetch is fire-and-forget — do NOT await it here.
+        // AuthContext handles profile loading separately via onAuthStateChanged.
         const userDocRef = doc(db, "users", user.uid)
-        const userDoc = await getDoc(userDocRef)
-
-        if (!userDoc.exists()) {
-            await setDoc(userDocRef, {
-                email: user.email,
-                displayName: user.displayName || "User",
-                role: "student",
-                photoURL: user.photoURL || null,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            })
-        }
-
-        const profile = userDoc.data() || { role: "student" }
+        getDoc(userDocRef).then((userDoc) => {
+            if (!userDoc.exists()) {
+                setDoc(userDocRef, {
+                    email: user.email,
+                    displayName: user.displayName || "User",
+                    role: "student",
+                    photoURL: user.photoURL || null,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                }).catch(err => console.warn("Failed to create profile:", err.message))
+            }
+        }).catch(err => console.warn("Profile check failed:", err.message))
 
         return { 
-            data: { user: { ...user, role: profile.role || "student" } }, 
+            data: { user }, 
             error: null 
         }
     } catch (error) {

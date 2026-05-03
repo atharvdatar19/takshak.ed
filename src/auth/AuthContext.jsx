@@ -46,6 +46,7 @@ export function AuthProvider({ children }) {
 
         // Firebase auth state listener
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            console.log("4. onAuthStateChanged fired, user:", firebaseUser?.email)
             if (!firebaseUser) {
                 setUser(null)
                 setProfile(null)
@@ -54,26 +55,33 @@ export function AuthProvider({ children }) {
             }
 
             setUser(firebaseUser)
+            setLoading(false) // ← ALWAYS called here, unconditionally
 
             try {
-                // Load profile from Firestore
+                // profile fetch — failure here is non-fatal
                 const snap = await getDoc(doc(db, "users", firebaseUser.uid))
                 setProfile(snap.exists() ? snap.data() : null)
             } catch (err) {
-                console.error("Profile load error:", err)
+                console.warn("Profile fetch failed, continuing without it:", err.message)
                 setProfile(null)
-            } finally {
-                setLoading(false)
             }
         })
 
         return () => unsubscribe()
     }, [])
 
-    const isAdmin = useMemo(
-        () => Boolean(user?.email && ADMIN_EMAILS.includes(user.email)),
-        [user],
-    )
+    const [isAdmin, setIsAdmin] = useState(false)
+
+    useEffect(() => {
+        if (user) {
+            user.getIdTokenResult().then((token) => {
+                // Check Firebase Custom Claims first, fallback to hardcoded emails if claims aren't deployed yet
+                setIsAdmin(!!token.claims.admin || ADMIN_EMAILS.includes(user.email))
+            })
+        } else {
+            setIsAdmin(false)
+        }
+    }, [user])
 
     const role = useMemo(() => {
         if (isAdmin) return "admin"
