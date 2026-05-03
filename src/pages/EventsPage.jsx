@@ -6,7 +6,6 @@ import {
   Calendar, MapPin, Clock, Users, ExternalLink, ArrowRight,
   Instagram, ChevronDown, GraduationCap, Play, Sparkles, Shield,
 } from "lucide-react"
-import WaveBackground from "@components/ui/WaveBackground"
 
 /* ─── FAQ data ───────────────────────────────────────────── */
 const FAQS = [
@@ -268,7 +267,6 @@ export default function EventsPage() {
       </Helmet>
 
       <div className="relative min-h-screen bg-[#07080f] text-white overflow-hidden">
-        <WaveBackground />
         <CursorSpotlight />
 
         {/* ── HERO ────────────────────────────────────────────── */}

@@ -22,8 +22,6 @@ import LeadCaptureModal from "./LeadCaptureModal"
 import AnimatedPage from "./motion/AnimatedPage"
 import { useScrollProgress } from "@hooks/useScrollProgress"
 
-const FloatingBackground = lazy(() => import("./3d/FloatingBackground"))
-
 class SafeBoundary extends Component {
   constructor(props) {
     super(props)
@@ -265,14 +263,6 @@ export default function AppLayout() {
 
   return (
     <div className="relative flex min-h-screen bg-app">
-      {/* 3D Background — only in dark mode */}
-      {isDark && (
-        <SafeBoundary>
-          <Suspense fallback={null}>
-            <FloatingBackground />
-          </Suspense>
-        </SafeBoundary>
-      )}
 
       {/* ── Desktop Sidebar ── */}
       <aside
@@ -311,6 +301,13 @@ export default function AppLayout() {
             {/* ── Global Footer ── */}
             <footer className="mt-20 border-t pt-8 pb-4" style={{ borderColor: "var(--obsidian-outline-variant)" }}>
               <div className="flex flex-col items-center gap-1">
+                <div className="flex items-center gap-4 mb-2 text-[12px] font-semibold" style={{ color: "var(--obsidian-on-surface-variant)" }}>
+                  <Link to="/become-mentor" className="hover:text-indigo-400 transition-colors">Become a Mentor</Link>
+                  <span className="opacity-20">•</span>
+                  <Link to="/privacy" className="hover:text-indigo-400 transition-colors">Privacy</Link>
+                  <span className="opacity-20">•</span>
+                  <Link to="/terms" className="hover:text-indigo-400 transition-colors">Terms</Link>
+                </div>
                 <p className="text-sm font-medium" style={{ color: "var(--obsidian-on-surface-variant)" }}>
                   Made with ❤️ by <span className="font-bold" style={{ color: "var(--obsidian-primary)" }}>TAKक्षक</span>
                 </p>

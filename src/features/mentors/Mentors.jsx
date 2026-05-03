@@ -7,7 +7,6 @@ import {
 } from "lucide-react"
 import { getMentors, getMentorById, getMentorAvailability, getMentorReviews } from "@database/services/api"
 import { useNavigate, Link } from "react-router-dom"
-import WaveBackground from "@components/ui/WaveBackground"
 
 /* ─── colour palette per card index ─── */
 const ACCENTS = [
@@ -642,9 +641,6 @@ export default function Mentors() {
         <title>Find a Mentor — TAKक्षक</title>
         <meta name="description" content="Connect with verified IIT, AIIMS & NDA seniors for 1:1 mentorship." />
       </Helmet>
-
-      {/* Wave canvas background */}
-      <WaveBackground />
 
       {/* Cursor spotlight */}
       <CursorSpotlight />
