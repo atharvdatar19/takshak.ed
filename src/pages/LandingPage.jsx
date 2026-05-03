@@ -1074,6 +1074,7 @@ export default function LandingPage() {
                   { label:"Book a Session",       to:"/mentors"           },
                   { label:"My Sessions",          to:"/sessions"          },
                   { label:"Events & Seminars",    to:"/events"            },
+                  { label:"Become a Mentor",      to:"/become-mentor"     },
                   { label:"Defence Specialists",  to:"/defence"           },
                 ].map(l => (
                   <li key={l.label}>

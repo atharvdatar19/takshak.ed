@@ -42,7 +42,7 @@ export default function AdminMentorApps() {
     const handleReject = async (id) => {
         try {
             setActionLoading(id)
-            await adminDeleteMentor(id)
+            await adminDeleteMentor(id, rejectReason)
             setApps(prev => prev.filter(a => a.id !== id))
             setRejectReason("")
         } catch (err) {

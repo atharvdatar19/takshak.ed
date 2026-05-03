@@ -181,9 +181,7 @@ export async function getExamsTimeline(params = {}) {
 export async function getMentors(params = {}) {
   if (!supabase || isDemoMode) return DEMO_MENTORS
 
-  let query = supabase.from("mentors").select("*").order("rating", { ascending: false })
-  // Stream is not a column in the currently audited mentors table, omitting filter to prevent error
-  // if (params.stream) query = query.eq("stream", params.stream)
+  let query = supabase.from("mentors").select("*").eq("is_verified", true).order("rating", { ascending: false })
 
   const { data, error } = await query
 

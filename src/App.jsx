@@ -7,11 +7,11 @@ import SplashScreen from "@components/SplashScreen"
 import AppLayout from "@components/AppLayout"
 import ProtectedRoute from "@components/ProtectedRoute"
 import CookieBanner from "@components/CookieBanner"
-import ParticleBackground from "@components/ui/ParticleBackground"
 
 // ── Landing & Legal ───────────────────────────────────────────
 const LandingPage   = lazy(() => import("@pages/LandingPage"))
 const EventsPage    = lazy(() => import("@pages/EventsPage"))
+const BecomeMentor  = lazy(() => import("@pages/BecomeMentor"))
 const PrivacyPolicy = lazy(() => import("@pages/PrivacyPolicy"))
 const TermsOfService= lazy(() => import("@pages/TermsOfService"))
 const CookiePolicy  = lazy(() => import("@pages/CookiePolicy"))
@@ -36,7 +36,6 @@ const CutoffPredictor = lazy(() => import("@features/colleges/CutoffPredictor"))
 
 // ── Mentors ───────────────────────────────────────────────────
 const Mentors = lazy(() => import("@features/mentors/Mentors"))
-const BecomeMentor = lazy(() => import("@pages/BecomeMentor"));
 const MentorDetail = lazy(() => import("@features/mentors/MentorDetail"))
 const MentorDashboard = lazy(() => import("@features/mentors/MentorDashboard"))
 const MentorMarketplace = lazy(() => import("@features/mentors/MentorMarketplace"))
@@ -157,7 +156,6 @@ export default function App() {
       <ToastProvider>
         <SplashScreen>
           <BrowserRouter>
-            <ParticleBackground />
             <AppErrorBoundary>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
@@ -187,7 +185,7 @@ export default function App() {
                     <Route path="/timeline" element={<Timeline />} />
                     <Route path="/defence" element={<DefenceAspirants />} />
                     <Route path="/mentors" element={<Mentors />} />
-                    <Route path="/become-mentor" element={<BecomeMentor />} />
+                    <Route path="/become-mentor" element={<ProtectedRoute><BecomeMentor /></ProtectedRoute>} />
                     <Route path="/mentors/:id" element={<MentorDetail />} />
                     <Route path="/events" element={<EventsPage />} />
 

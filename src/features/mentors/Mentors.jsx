@@ -7,6 +7,7 @@ import {
 } from "lucide-react"
 import { getMentors, getMentorById, getMentorAvailability, getMentorReviews } from "@database/services/api"
 import { useNavigate, Link } from "react-router-dom"
+import WaveBackground from "@components/ui/WaveBackground"
 
 /* ─── colour palette per card index ─── */
 const ACCENTS = [
@@ -642,6 +643,9 @@ export default function Mentors() {
         <meta name="description" content="Connect with verified IIT, AIIMS & NDA seniors for 1:1 mentorship." />
       </Helmet>
 
+      {/* Wave canvas background */}
+      <WaveBackground />
+
       {/* Cursor spotlight */}
       <CursorSpotlight />
 
@@ -947,6 +951,53 @@ export default function Mentors() {
             }}
           >
             View Events
+            <ArrowUpRight size={15} />
+          </Link>
+        </div>
+      </motion.div>
+
+      {/* ── Become a Mentor banner ───────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="mx-auto max-w-3xl mb-16 px-4"
+      >
+        <div
+          className="relative rounded-3xl border border-violet-500/20 p-7 flex flex-col sm:flex-row items-center justify-between gap-5 overflow-hidden"
+          style={{ background: "rgba(139,92,246,0.07)" }}
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(139,92,246,0.10),transparent_60%)] pointer-events-none" />
+          <div className="relative text-center sm:text-left">
+            <p
+              className="text-[11px] font-semibold uppercase tracking-widest text-violet-400 mb-1"
+              style={{ fontFamily: "'Plus Jakarta Sans',sans-serif" }}
+            >
+              For toppers & alumni
+            </p>
+            <h3
+              className="text-[20px] font-bold text-white leading-snug"
+              style={{ fontFamily: "'Playfair Display',serif" }}
+            >
+              You cracked it. Now guide someone else.
+            </h3>
+            <p
+              className="text-[13px] mt-1"
+              style={{ color: "rgba(255,255,255,0.45)", fontFamily: "'Plus Jakarta Sans',sans-serif" }}
+            >
+              IIT · AIIMS · IIM · NDA · NID — apply in 5 minutes
+            </p>
+          </div>
+          <Link
+            to="/become-mentor"
+            className="relative shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-[14px] font-semibold text-white transition-all duration-200 hover:scale-[1.03]"
+            style={{
+              background: "linear-gradient(135deg,#7c3aed,#a855f7)",
+              boxShadow: "0 8px 24px rgba(139,92,246,0.25)",
+              fontFamily: "'Plus Jakarta Sans',sans-serif",
+            }}
+          >
+            Become a Mentor
             <ArrowUpRight size={15} />
           </Link>
         </div>

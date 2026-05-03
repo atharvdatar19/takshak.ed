@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react"
+import WaveBackground from "@components/ui/WaveBackground"
 import { Helmet } from "react-helmet-async"
 import { motion, AnimatePresence, useInView } from "framer-motion"
 import { Link } from "react-router-dom"
@@ -267,6 +268,7 @@ export default function EventsPage() {
       </Helmet>
 
       <div className="relative min-h-screen bg-[#07080f] text-white overflow-hidden">
+        <WaveBackground />
         <CursorSpotlight />
 
         {/* ── HERO ────────────────────────────────────────────── */}

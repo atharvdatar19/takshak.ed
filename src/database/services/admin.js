@@ -104,10 +104,31 @@ export async function adminToggleVerified(id, value) {
         .eq("id", id)
 
     if (error) throw new Error(error.message)
+
+    // Trigger email notification
+    if (value === true) {
+        try {
+            await supabase.functions.invoke("mentor-decision", {
+                body: { mentor_id: id, decision: "approved" }
+            })
+        } catch (err) {
+            console.error("Failed to send approval email:", err)
+        }
+    }
 }
 
-export async function adminDeleteMentor(id) {
+export async function adminDeleteMentor(id, reason = "") {
     if (!supabase) return
+    
+    // Trigger email notification BEFORE deleting (so we can fetch mentor details in function)
+    try {
+        await supabase.functions.invoke("mentor-decision", {
+            body: { mentor_id: id, decision: "rejected", reason }
+        })
+    } catch (err) {
+        console.error("Failed to send rejection email:", err)
+    }
+
     const { error } = await supabase.from("mentors").delete().eq("id", id)
     if (error) throw new Error(error.message)
 }

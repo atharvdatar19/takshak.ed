@@ -22,6 +22,8 @@ import LeadCaptureModal from "./LeadCaptureModal"
 import AnimatedPage from "./motion/AnimatedPage"
 import { useScrollProgress } from "@hooks/useScrollProgress"
 
+const FloatingBackground = lazy(() => import("./3d/FloatingBackground"))
+
 class SafeBoundary extends Component {
   constructor(props) {
     super(props)
@@ -263,6 +265,14 @@ export default function AppLayout() {
 
   return (
     <div className="relative flex min-h-screen bg-app">
+      {/* 3D Background — only in dark mode */}
+      {isDark && (
+        <SafeBoundary>
+          <Suspense fallback={null}>
+            <FloatingBackground />
+          </Suspense>
+        </SafeBoundary>
+      )}
 
       {/* ── Desktop Sidebar ── */}
       <aside

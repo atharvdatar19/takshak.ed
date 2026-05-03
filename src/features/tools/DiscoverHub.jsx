@@ -126,7 +126,6 @@ export default function DiscoverHub() {
                 style={{
                   background: `linear-gradient(135deg, ${card.gradient.replace("from-", "").replace(" to-", ", ")})`,
                   border: `1px solid ${card.border}`,
-                  background: "var(--obsidian-surface)",
                   boxShadow: "0 1px 3px var(--shadow-glass)",
                 }}
                 onMouseEnter={(e) => {
